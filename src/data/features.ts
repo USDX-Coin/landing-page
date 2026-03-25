@@ -1,7 +1,9 @@
+export type FeatureIcon = "shield" | "zap" | "dollar" | "layers" | "check" | "globe";
+
 export interface Feature {
   title: string;
   description: string;
-  icon: string;
+  icon: FeatureIcon;
 }
 
 export const features: Feature[] = [

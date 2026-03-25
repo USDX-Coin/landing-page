@@ -1,7 +1,9 @@
+export type SocialIcon = "twitter" | "telegram" | "discord" | "github" | "medium";
+
 export interface Social {
   name: string;
   url: string;
-  icon: string;
+  icon: SocialIcon;
 }
 
 export const socials: Social[] = [

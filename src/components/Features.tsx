@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+import type { FeatureIcon } from "../data/features";
 import { features } from "../data/features";
 
-const iconMap: Record<string, JSX.Element> = {
+const iconMap: Record<FeatureIcon, ReactNode> = {
   shield: (
     <path
       strokeLinecap="round"
