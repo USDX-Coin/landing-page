@@ -1,13 +1,7 @@
 import type { ReactNode } from "react";
+import { navLinks } from "../data/navigation";
 import type { SocialIcon } from "../data/socials";
 import { socials } from "../data/socials";
-
-const footerLinks = [
-  { label: "Why USDX", href: "#why-usdx" },
-  { label: "Features", href: "#features" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Ecosystem", href: "#ecosystem" },
-];
 
 const socialIcons: Record<SocialIcon, ReactNode> = {
   twitter: (
@@ -52,7 +46,7 @@ export default function Footer() {
               Quick Links
             </h4>
             <div className="flex flex-col gap-3">
-              {footerLinks.map((link) => (
+              {navLinks.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}

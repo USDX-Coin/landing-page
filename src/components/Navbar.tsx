@@ -1,11 +1,5 @@
 import { useState, useEffect } from "react";
-
-const navLinks = [
-  { label: "Why USDX", href: "#why-usdx" },
-  { label: "Features", href: "#features" },
-  { label: "How it Works", href: "#how-it-works" },
-  { label: "Ecosystem", href: "#ecosystem" },
-];
+import { navLinks } from "../data/navigation";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -13,7 +7,7 @@ export default function Navbar() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 

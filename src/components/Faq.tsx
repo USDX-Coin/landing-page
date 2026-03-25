@@ -49,13 +49,15 @@ export default function Faq() {
                   />
                 </svg>
               </button>
-              {openIndex === index && (
-                <div className="px-6 pb-6">
-                  <p className="text-gray-600 leading-relaxed">
-                    {item.answer}
-                  </p>
-                </div>
-              )}
+              <div
+                className={`px-6 overflow-hidden transition-all duration-300 ${
+                  openIndex === index ? "max-h-96 pb-6 opacity-100" : "max-h-0 pb-0 opacity-0"
+                }`}
+              >
+                <p className="text-gray-600 leading-relaxed">
+                  {item.answer}
+                </p>
+              </div>
             </div>
           ))}
         </div>

@@ -42,7 +42,7 @@ export default function Ecosystem() {
           <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10" />
           <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10" />
 
-          <div className="flex animate-marquee w-max">
+          <div className="flex animate-marquee w-max will-change-transform">
             {[...partners, ...partners].map((partner, i) => (
               <a
                 key={`${partner.name}-${i}`}
