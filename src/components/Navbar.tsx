@@ -41,7 +41,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <a
-          href="https://app.usdx.com"
+          href="https://app-usdx.netlify.app/"
           target="_blank"
           rel="noopener noreferrer"
           className="hidden md:inline-flex items-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
@@ -87,7 +87,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="https://app.usdx.com"
+            href="https://app-usdx.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"

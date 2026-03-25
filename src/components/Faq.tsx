@@ -26,9 +26,12 @@ export default function Faq() {
   };
 
   return (
-    <section id="faq" className="py-24 px-6 bg-gray-50">
+    <section id="faq" className="py-24 px-6 bg-dark relative overflow-hidden">
+      {/* Decorative glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
+
       <motion.div
-        className="max-w-[800px] mx-auto"
+        className="max-w-[800px] mx-auto relative z-10"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
@@ -38,7 +41,7 @@ export default function Faq() {
           <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
             FAQ
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-dark">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">
             Frequently Asked Questions
           </h2>
         </div>
@@ -54,17 +57,17 @@ export default function Faq() {
             <motion.div
               key={item.question}
               variants={itemVariants}
-              className="bg-white rounded-xl border border-gray-100 overflow-hidden"
+              className="bg-white/5 rounded-xl border border-white/10 overflow-hidden"
             >
               <button
                 onClick={() => toggle(index)}
                 className="w-full flex items-center justify-between p-6 text-left bg-transparent border-none cursor-pointer"
               >
-                <span className="text-dark font-semibold pr-4">
+                <span className="text-white font-semibold pr-4">
                   {item.question}
                 </span>
                 <svg
-                  className={`w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-300 ${
+                  className={`w-5 h-5 text-gray-500 flex-shrink-0 transition-transform duration-300 ${
                     openIndex === index ? "rotate-180" : ""
                   }`}
                   fill="none"
@@ -84,7 +87,7 @@ export default function Faq() {
                   openIndex === index ? "max-h-96 pb-6 opacity-100" : "max-h-0 pb-0 opacity-0"
                 }`}
               >
-                <p className="text-gray-600 leading-relaxed">
+                <p className="text-gray-400 leading-relaxed">
                   {item.answer}
                 </p>
               </div>

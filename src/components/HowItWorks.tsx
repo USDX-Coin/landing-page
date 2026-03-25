@@ -63,19 +63,23 @@ const stepVariants = {
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 px-6 bg-gray-50">
+    <section id="how-it-works" className="py-24 px-6 bg-gradient-to-br from-primary to-primary-900 relative overflow-hidden">
+      {/* Decorative shapes */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
+
       <motion.div
-        className="max-w-[1200px] mx-auto"
+        className="max-w-[1200px] mx-auto relative z-10"
         initial={{ opacity: 0, y: 40 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div className="text-center mb-16">
-          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
+          <p className="text-white/70 font-semibold text-sm uppercase tracking-widest mb-3">
             How It Works
           </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-dark">
+          <h2 className="text-3xl md:text-4xl font-bold text-white">
             Mint and Redeem with Ease
           </h2>
         </div>
@@ -88,7 +92,7 @@ export default function HowItWorks() {
           viewport={{ once: true, amount: 0.2 }}
         >
           {/* Connector line (desktop only) */}
-          <div className="hidden md:block absolute top-24 left-[20%] right-[20%] h-0.5 bg-primary/20" />
+          <div className="hidden md:block absolute top-24 left-[20%] right-[20%] h-0.5 bg-white/20" />
 
           {steps.map((step) => (
             <motion.div
@@ -97,13 +101,13 @@ export default function HowItWorks() {
               className="text-center relative"
             >
               {/* Number circle */}
-              <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center mx-auto mb-6 text-lg font-bold relative z-10">
+              <div className="w-16 h-16 rounded-full bg-white text-primary flex items-center justify-center mx-auto mb-6 text-lg font-bold relative z-10">
                 {step.number}
               </div>
               {/* Icon */}
-              <div className="w-14 h-14 rounded-xl bg-primary-light flex items-center justify-center mx-auto mb-5">
+              <div className="w-14 h-14 rounded-xl bg-white/10 flex items-center justify-center mx-auto mb-5">
                 <svg
-                  className="w-7 h-7 text-primary"
+                  className="w-7 h-7 text-white"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -111,10 +115,10 @@ export default function HowItWorks() {
                   {step.icon}
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-dark mb-3">
+              <h3 className="text-xl font-semibold text-white mb-3">
                 {step.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed max-w-xs mx-auto">
+              <p className="text-white/70 leading-relaxed max-w-xs mx-auto">
                 {step.description}
               </p>
             </motion.div>

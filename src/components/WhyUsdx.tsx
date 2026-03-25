@@ -48,7 +48,8 @@ const cardVariants = {
 
 export default function WhyUsdx() {
   return (
-    <section id="why-usdx" className="py-24 px-6 bg-gray-50">
+    <section id="why-usdx" className="py-24 px-6 bg-gray-50 relative">
+      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
       <motion.div
         className="max-w-[1200px] mx-auto"
         initial={{ opacity: 0, y: 40 }}

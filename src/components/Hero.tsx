@@ -2,8 +2,19 @@ import { motion } from "motion/react";
 
 export default function Hero() {
   return (
-    <section className="pt-40 pb-20 px-6 bg-white">
-      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-12">
+    <section className="pt-40 pb-20 px-6 bg-white relative overflow-hidden">
+      {/* Dot grid pattern */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: "radial-gradient(circle, #1eaed5 1px, transparent 1px)",
+          backgroundSize: "24px 24px",
+        }}
+      />
+      {/* Gradient glow */}
+      <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
+
+      <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
         {/* Text */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -22,7 +33,7 @@ export default function Hero() {
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center gap-4 md:justify-start justify-center">
             <a
-              href="https://app.usdx.com"
+              href="https://app-usdx.netlify.app/"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline text-base"
