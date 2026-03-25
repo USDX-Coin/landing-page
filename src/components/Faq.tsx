@@ -23,7 +23,7 @@ export default function Faq() {
         <div className="flex flex-col gap-3">
           {faqItems.map((item, index) => (
             <div
-              key={index}
+              key={item.question}
               className="bg-white rounded-xl border border-gray-100 overflow-hidden"
             >
               <button

@@ -48,7 +48,7 @@ export default function Hero() {
         <div className="flex-shrink-0">
           <div className="relative w-64 h-64 md:w-80 md:h-80">
             {/* Outer ring */}
-            <div className="absolute inset-0 rounded-full border-4 border-primary/20 animate-pulse" />
+            <div className="absolute inset-0 rounded-full border-4 border-primary/20 motion-safe:animate-pulse" />
             {/* Middle ring */}
             <div className="absolute inset-4 rounded-full border-2 border-primary/30" />
             {/* Inner coin */}
