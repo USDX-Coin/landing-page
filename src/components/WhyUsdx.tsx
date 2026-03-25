@@ -57,9 +57,11 @@ export default function WhyUsdx() {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
-          Why USDX
-        </p>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+          <span className="text-primary font-semibold text-sm uppercase tracking-widest">Why USDX</span>
+        </div>
+        <div className="h-px bg-gray-200 mb-8" />
         <h2 className="text-3xl md:text-4xl font-bold text-dark mb-6">
           Built on Transparency and Trust
         </h2>

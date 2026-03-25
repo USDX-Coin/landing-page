@@ -85,6 +85,14 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Brand tagline */}
+        <div className="mb-12">
+          <h3 className="text-2xl md:text-3xl font-bold text-white leading-tight">
+            The Future of<br />
+            <span className="text-primary">Digital Dollars</span>
+          </h3>
+        </div>
+
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-gray-500 text-sm">

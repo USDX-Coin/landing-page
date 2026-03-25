@@ -80,14 +80,14 @@ export default function Features() {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="text-center mb-16">
-          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
-            Features
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-dark">
-            Key Features
-          </h2>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+          <span className="text-primary font-semibold text-sm uppercase tracking-widest">Features</span>
         </div>
+        <div className="h-px bg-gray-200 mb-8" />
+        <h2 className="text-3xl md:text-4xl font-bold text-dark text-center mb-16">
+          Key Features
+        </h2>
 
         <motion.div
           className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -115,7 +115,8 @@ export default function Features() {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-dark mb-3">
-                {feature.title}
+                <span className="text-primary">{feature.title.split(" ")[0]}</span>{" "}
+                {feature.title.split(" ").slice(1).join(" ")}
               </h3>
               <p className="text-gray-600 leading-relaxed text-sm">
                 {feature.description}

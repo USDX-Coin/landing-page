@@ -1,6 +1,17 @@
 import { motion } from "motion/react";
 import { chains, partners } from "../data/chains";
 
+const chainColors: Record<string, string> = {
+  ETH: "#627EEA",
+  BSC: "#F0B90B",
+  MATIC: "#8247E5",
+  ARB: "#28A0F0",
+  OP: "#FF0420",
+  AVAX: "#E84142",
+  SOL: "#9945FF",
+  BASE: "#0052FF",
+};
+
 const containerVariants = {
   hidden: {},
   visible: {
@@ -27,14 +38,14 @@ export default function Ecosystem() {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="text-center mb-16">
-          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
-            Ecosystem
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-dark">
-            Supported Chains
-          </h2>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+          <span className="text-primary font-semibold text-sm uppercase tracking-widest">Ecosystem</span>
         </div>
+        <div className="h-px bg-gray-200 mb-8" />
+        <h2 className="text-3xl md:text-4xl font-bold text-dark text-center mb-16">
+          Supported Chains
+        </h2>
 
         {/* Chain logos grid */}
         <motion.div
@@ -52,8 +63,14 @@ export default function Ecosystem() {
               transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="flex flex-col items-center justify-center p-6 rounded-xl border border-gray-100"
             >
-              <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center mb-3">
-                <span className="text-primary font-bold text-xs">
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center mb-3"
+                style={{ backgroundColor: `${chainColors[chain.shortName] ?? "#1eaed5"}15` }}
+              >
+                <span
+                  className="font-bold text-xs"
+                  style={{ color: chainColors[chain.shortName] ?? "#1eaed5" }}
+                >
                   {chain.shortName}
                 </span>
               </div>

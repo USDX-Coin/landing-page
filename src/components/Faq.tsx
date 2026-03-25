@@ -37,17 +37,17 @@ export default function Faq() {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="text-center mb-16">
-          <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
-            FAQ
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white">
-            Frequently Asked Questions
-          </h2>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+          <span className="text-primary font-semibold text-sm uppercase tracking-widest">FAQ</span>
         </div>
+        <div className="h-px bg-white/20 mb-8" />
+        <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
+          Frequently Asked Questions
+        </h2>
 
         <motion.div
-          className="flex flex-col gap-3"
+          className="flex flex-col"
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -57,11 +57,11 @@ export default function Faq() {
             <motion.div
               key={item.question}
               variants={itemVariants}
-              className="bg-white/5 rounded-xl border border-white/10 overflow-hidden"
+              className="border-b border-white/10 last:border-b-0"
             >
               <button
                 onClick={() => toggle(index)}
-                className="w-full flex items-center justify-between p-6 text-left bg-transparent border-none cursor-pointer"
+                className="w-full flex items-center justify-between py-6 text-left bg-transparent border-none cursor-pointer"
               >
                 <span className="text-white font-semibold pr-4">
                   {item.question}
@@ -83,7 +83,7 @@ export default function Faq() {
                 </svg>
               </button>
               <div
-                className={`px-6 overflow-hidden transition-all duration-300 ${
+                className={`overflow-hidden transition-all duration-300 ${
                   openIndex === index ? "max-h-96 pb-6 opacity-100" : "max-h-0 pb-0 opacity-0"
                 }`}
               >

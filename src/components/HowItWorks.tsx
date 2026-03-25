@@ -75,14 +75,14 @@ export default function HowItWorks() {
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="text-center mb-16">
-          <p className="text-white/70 font-semibold text-sm uppercase tracking-widest mb-3">
-            How It Works
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-white">
-            Mint and Redeem with Ease
-          </h2>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="w-2.5 h-2.5 rounded-full bg-white" />
+          <span className="text-white/70 font-semibold text-sm uppercase tracking-widest">How It Works</span>
         </div>
+        <div className="h-px bg-white/20 mb-8" />
+        <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
+          Mint and Redeem with Ease
+        </h2>
 
         <motion.div
           className="grid md:grid-cols-3 gap-8 relative"
