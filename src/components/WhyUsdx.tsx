@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { motion } from "motion/react";
 import type { WhyUsdxIcon } from "../data/why-usdx";
 import { whyUsdxPoints } from "../data/why-usdx";
 
@@ -29,10 +30,32 @@ const iconMap: Record<WhyUsdxIcon, ReactNode> = {
   ),
 };
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
 export default function WhyUsdx() {
   return (
     <section id="why-usdx" className="py-24 px-6 bg-gray-50">
-      <div className="max-w-[1200px] mx-auto">
+      <motion.div
+        className="max-w-[1200px] mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
           Why USDX
         </p>
@@ -45,10 +68,19 @@ export default function WhyUsdx() {
           audited, and redeemable at a guaranteed 1:1 rate.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <motion.div
+          className="grid md:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {whyUsdxPoints.map((point) => (
-            <div
+            <motion.div
               key={point.title}
+              variants={cardVariants}
+              whileHover={{ y: -4, boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
               className="bg-white rounded-xl p-8 border border-gray-100 shadow-sm"
             >
               <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mb-5">
@@ -67,9 +99,9 @@ export default function WhyUsdx() {
               <p className="text-gray-600 leading-relaxed">
                 {point.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         <div className="mt-10 text-center">
           <a
@@ -79,7 +111,7 @@ export default function WhyUsdx() {
             View Audit Reports
           </a>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

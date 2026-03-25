@@ -1,9 +1,32 @@
+import { motion } from "motion/react";
 import { chains, partners } from "../data/chains";
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+  },
+};
 
 export default function Ecosystem() {
   return (
     <section id="ecosystem" className="py-24 px-6 bg-white">
-      <div className="max-w-[1200px] mx-auto">
+      <motion.div
+        className="max-w-[1200px] mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <div className="text-center mb-16">
           <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
             Ecosystem
@@ -14,11 +37,20 @@ export default function Ecosystem() {
         </div>
 
         {/* Chain logos grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-20">
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-20"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {chains.map((chain) => (
-            <div
+            <motion.div
               key={chain.shortName}
-              className="flex flex-col items-center justify-center p-6 rounded-xl border border-gray-100 hover:shadow-md transition-shadow"
+              variants={cardVariants}
+              whileHover={{ y: -4, boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="flex flex-col items-center justify-center p-6 rounded-xl border border-gray-100"
             >
               <div className="w-12 h-12 rounded-full bg-primary-light flex items-center justify-center mb-3">
                 <span className="text-primary font-bold text-xs">
@@ -28,9 +60,9 @@ export default function Ecosystem() {
               <span className="text-dark font-medium text-sm">
                 {chain.name}
               </span>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Partners marquee */}
         <div className="text-center mb-10">
@@ -58,7 +90,7 @@ export default function Ecosystem() {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

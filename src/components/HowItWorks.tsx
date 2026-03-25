@@ -1,3 +1,5 @@
+import { motion } from "motion/react";
+
 const steps = [
   {
     number: "01",
@@ -43,10 +45,32 @@ const steps = [
   },
 ];
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const stepVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
 export default function HowItWorks() {
   return (
     <section id="how-it-works" className="py-24 px-6 bg-gray-50">
-      <div className="max-w-[1200px] mx-auto">
+      <motion.div
+        className="max-w-[1200px] mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <div className="text-center mb-16">
           <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
             How It Works
@@ -56,12 +80,22 @@ export default function HowItWorks() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 relative">
+        <motion.div
+          className="grid md:grid-cols-3 gap-8 relative"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {/* Connector line (desktop only) */}
           <div className="hidden md:block absolute top-24 left-[20%] right-[20%] h-0.5 bg-primary/20" />
 
           {steps.map((step) => (
-            <div key={step.number} className="text-center relative">
+            <motion.div
+              key={step.number}
+              variants={stepVariants}
+              className="text-center relative"
+            >
               {/* Number circle */}
               <div className="w-16 h-16 rounded-full bg-primary text-white flex items-center justify-center mx-auto mb-6 text-lg font-bold relative z-10">
                 {step.number}
@@ -83,10 +117,10 @@ export default function HowItWorks() {
               <p className="text-gray-600 leading-relaxed max-w-xs mx-auto">
                 {step.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

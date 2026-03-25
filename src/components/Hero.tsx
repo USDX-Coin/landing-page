@@ -1,9 +1,16 @@
+import { motion } from "motion/react";
+
 export default function Hero() {
   return (
     <section className="pt-40 pb-20 px-6 bg-white">
       <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-12">
         {/* Text */}
-        <div className="flex-1 text-center md:text-left">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="flex-1 text-center md:text-left"
+        >
           <h1 className="text-3xl md:text-5xl lg:text-[52px] font-bold text-dark leading-tight tracking-tight">
             The Transparent &amp; Regulated{" "}
             <span className="text-primary">USD Stablecoin</span>
@@ -42,13 +49,22 @@ export default function Hero() {
               </svg>
             </a>
           </div>
-        </div>
+        </motion.div>
 
         {/* Coin Illustration */}
-        <div className="flex-shrink-0">
-          <div className="relative w-64 h-64 md:w-80 md:h-80">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
+          className="flex-shrink-0"
+        >
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="relative w-64 h-64 md:w-80 md:h-80"
+          >
             {/* Outer ring */}
-            <div className="absolute inset-0 rounded-full border-4 border-primary/20 motion-safe:animate-pulse" />
+            <div className="absolute inset-0 rounded-full border-4 border-primary/20" />
             {/* Middle ring */}
             <div className="absolute inset-4 rounded-full border-2 border-primary/30" />
             {/* Inner coin */}
@@ -62,8 +78,8 @@ export default function Hero() {
                 </p>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

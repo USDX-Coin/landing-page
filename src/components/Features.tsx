@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { motion } from "motion/react";
 import type { FeatureIcon } from "../data/features";
 import { features } from "../data/features";
 
@@ -53,10 +54,32 @@ const iconMap: Record<FeatureIcon, ReactNode> = {
   ),
 };
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
+};
+
 export default function Features() {
   return (
     <section id="features" className="py-24 px-6 bg-white">
-      <div className="max-w-[1200px] mx-auto">
+      <motion.div
+        className="max-w-[1200px] mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <div className="text-center mb-16">
           <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
             Features
@@ -66,11 +89,20 @@ export default function Features() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {features.map((feature) => (
-            <div
+            <motion.div
               key={feature.title}
-              className="p-8 rounded-xl border border-gray-100 hover:shadow-md transition-shadow"
+              variants={cardVariants}
+              whileHover={{ y: -4, boxShadow: "0 10px 40px -10px rgba(0,0,0,0.1)" }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              className="p-8 rounded-xl border border-gray-100"
             >
               <div className="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mb-5">
                 <svg
@@ -88,10 +120,10 @@ export default function Features() {
               <p className="text-gray-600 leading-relaxed text-sm">
                 {feature.description}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }

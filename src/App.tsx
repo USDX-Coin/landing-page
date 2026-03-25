@@ -1,3 +1,4 @@
+import { MotionConfig } from "motion/react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import WhyUsdx from "./components/WhyUsdx";
@@ -7,19 +8,19 @@ import Ecosystem from "./components/Ecosystem";
 import Faq from "./components/Faq";
 import Footer from "./components/Footer";
 
-function App() {
+export default function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Navbar />
-      <Hero />
-      <WhyUsdx />
-      <Features />
-      <HowItWorks />
-      <Ecosystem />
-      <Faq />
-      <Footer />
-    </div>
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-screen bg-white">
+        <Navbar />
+        <Hero />
+        <WhyUsdx />
+        <Features />
+        <HowItWorks />
+        <Ecosystem />
+        <Faq />
+        <Footer />
+      </div>
+    </MotionConfig>
   );
 }
-
-export default App;

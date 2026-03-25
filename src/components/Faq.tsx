@@ -1,5 +1,22 @@
 import { useState } from "react";
+import { motion } from "motion/react";
 import { faqItems } from "../data/faq";
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.08 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" as const },
+  },
+};
 
 export default function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -10,7 +27,13 @@ export default function Faq() {
 
   return (
     <section id="faq" className="py-24 px-6 bg-gray-50">
-      <div className="max-w-[800px] mx-auto">
+      <motion.div
+        className="max-w-[800px] mx-auto"
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <div className="text-center mb-16">
           <p className="text-primary font-semibold text-sm uppercase tracking-widest mb-3">
             FAQ
@@ -20,10 +43,17 @@ export default function Faq() {
           </h2>
         </div>
 
-        <div className="flex flex-col gap-3">
+        <motion.div
+          className="flex flex-col gap-3"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
           {faqItems.map((item, index) => (
-            <div
+            <motion.div
               key={item.question}
+              variants={itemVariants}
               className="bg-white rounded-xl border border-gray-100 overflow-hidden"
             >
               <button
@@ -58,10 +88,10 @@ export default function Faq() {
                   {item.answer}
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
