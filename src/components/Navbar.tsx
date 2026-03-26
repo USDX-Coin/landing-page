@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { navLinks } from "../data/navigation";
+import { navLinks, APP_URL } from "../data/navigation";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -39,7 +39,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <a
-          href="https://app-usdx.netlify.app/"
+          href={APP_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="hidden md:inline-flex items-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
@@ -85,7 +85,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="https://app-usdx.netlify.app/"
+            href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
