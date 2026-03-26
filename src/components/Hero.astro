@@ -1,4 +1,5 @@
 ---
+import { APP_URL } from "../data/navigation";
 const headingText = "The Transparent & Regulated ";
 const highlightText = "USD Stablecoin";
 ---
@@ -28,7 +29,7 @@ const highlightText = "USD Stablecoin";
       </p>
       <div class="mt-8 flex flex-col sm:flex-row items-center gap-4 md:justify-start justify-center" style="opacity: 0;" id="hero-ctas">
         <a
-          href="https://app-usdx.netlify.app/"
+          href={APP_URL}
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark hover:scale-105 hover:shadow-xl transition-all duration-300 no-underline text-base"
@@ -143,6 +144,13 @@ const highlightText = "USD Stablecoin";
     50% { transform: rotateY(8deg); }
   }
   .animate-coin-rotate { animation: coin-rotate 6s ease-in-out infinite; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-glow-pulse,
+    .animate-spin-slow,
+    .animate-spin-slower,
+    .animate-coin-rotate { animation: none; }
+  }
 </style>
 
 <script>

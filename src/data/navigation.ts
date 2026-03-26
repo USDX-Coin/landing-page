@@ -1,3 +1,5 @@
+export const APP_URL = "https://app-usdx.netlify.app/";
+
 export interface NavLink {
   label: string;
   href: string;

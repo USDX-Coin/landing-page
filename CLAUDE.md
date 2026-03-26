@@ -24,7 +24,7 @@ Single-page responsive landing page for **USDX**, a USD-pegged stablecoin positi
 ├── package.json
 ├── tsconfig.json            # Extends astro/tsconfigs/strict
 ├── public/
-│   ├── favicon.svg          # USDX branded favicon
+│   ├── favicon.svg          # Legacy (unused, Logo.svg is the actual favicon)
 │   ├── icon/                # Chain SVG icons (8 files)
 │   └── image/               # USDX Logo.svg
 ├── src/
@@ -101,7 +101,6 @@ All other sections are **static HTML** — zero JS shipped.
 | `primary-dark` | `#1899bc` | Hover states |
 | `primary-light` | `#e8f7fb` | Icon backgrounds |
 | `primary-900` | `#0e7490` | HowItWorks gradient end |
-| `primary-950` | `#0a4f5c` | FAQ gradient start |
 | `dark` | `#1a1a2e` | Headings, footer bg |
 
 ## Verification
