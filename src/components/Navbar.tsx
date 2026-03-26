@@ -21,7 +21,7 @@ export default function Navbar() {
         {/* Logo */}
         <a href="#" className="flex items-center gap-2 no-underline">
           <img src="/image/Logo.svg" alt="USDX" className="w-8 h-8" />
-          <span className="text-dark font-bold text-xl">USDX</span>
+          <span className="text-primary font-bold text-xl">USDX</span>
         </a>
 
         {/* Desktop Menu */}
