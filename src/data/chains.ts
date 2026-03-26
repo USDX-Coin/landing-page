@@ -1,17 +1,18 @@
 export interface Chain {
   name: string;
   shortName: string;
+  icon: string;
 }
 
 export const chains: Chain[] = [
-  { name: "Ethereum", shortName: "ETH" },
-  { name: "BNB Smart Chain", shortName: "BSC" },
-  { name: "Polygon", shortName: "MATIC" },
-  { name: "Arbitrum", shortName: "ARB" },
-  { name: "Optimism", shortName: "OP" },
-  { name: "Avalanche", shortName: "AVAX" },
-  { name: "Solana", shortName: "SOL" },
-  { name: "Base", shortName: "BASE" },
+  { name: "Ethereum", shortName: "ETH", icon: "/icon/ethereum.svg" },
+  { name: "BNB Smart Chain", shortName: "BSC", icon: "/icon/bnb.svg" },
+  { name: "Polygon", shortName: "MATIC", icon: "/icon/polygon.svg" },
+  { name: "Arbitrum", shortName: "ARB", icon: "/icon/arbitrum.svg" },
+  { name: "Optimism", shortName: "OP", icon: "/icon/optimism.svg" },
+  { name: "Avalanche", shortName: "AVAX", icon: "/icon/avalanche.svg" },
+  { name: "Solana", shortName: "SOL", icon: "/icon/solana.svg" },
+  { name: "Base", shortName: "BASE", icon: "/icon/base.svg" },
 ];
 
 export interface Partner {

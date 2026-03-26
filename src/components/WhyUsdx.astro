@@ -1,0 +1,51 @@
+---
+import { whyUsdxPoints } from "../data/why-usdx";
+
+const iconPaths: Record<string, string> = {
+  shield: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z",
+  clipboard: "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4",
+  eye: "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
+};
+---
+<section id="why-usdx" class="min-h-screen py-24 px-6 bg-gray-50 relative flex items-center">
+  <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+
+  <div class="max-w-[1200px] mx-auto animate-on-scroll">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+      <span class="text-primary font-semibold text-sm uppercase tracking-widest">Why USDX</span>
+    </div>
+    <div class="h-px bg-gray-200 mb-8"></div>
+    <h2 class="text-3xl md:text-4xl font-bold text-dark mb-6">
+      Built on Transparency and Trust
+    </h2>
+    <p class="text-gray-600 text-lg max-w-2xl mb-12">
+      USDX is designed from the ground up to be the most transparent and
+      regulated USD stablecoin. Every token is fully backed, independently
+      audited, and redeemable at a guaranteed 1:1 rate.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      {whyUsdxPoints.map((point, index) => (
+        <div
+          class="bg-white rounded-xl p-8 border border-gray-100 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300 animate-on-scroll"
+          style={`transition-delay: ${index * 100}ms;`}
+        >
+          <div class="w-12 h-12 rounded-lg bg-primary-light flex items-center justify-center mb-5">
+            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={iconPaths[point.icon]} />
+            </svg>
+          </div>
+          <h3 class="text-xl font-semibold text-dark mb-3">{point.title}</h3>
+          <p class="text-gray-600 leading-relaxed">{point.description}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-10 text-center">
+      <a href="#" class="inline-flex items-center px-6 py-3 border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors no-underline">
+        View Audit Reports
+      </a>
+    </div>
+  </div>
+</section>

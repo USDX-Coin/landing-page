@@ -20,10 +20,8 @@ export default function Navbar() {
       <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2 no-underline">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-sm">$</span>
-          </div>
-          <span className="text-dark font-bold text-xl">USDX</span>
+          <img src="/image/Logo.svg" alt="USDX" className="w-8 h-8" />
+          <span className="text-primary font-bold text-xl">USDX</span>
         </a>
 
         {/* Desktop Menu */}
@@ -41,7 +39,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <a
-          href="https://app.usdx.com"
+          href="https://app-usdx.netlify.app/"
           target="_blank"
           rel="noopener noreferrer"
           className="hidden md:inline-flex items-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
@@ -87,7 +85,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="https://app.usdx.com"
+            href="https://app-usdx.netlify.app/"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"

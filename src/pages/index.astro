@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar";
+import Hero from "../components/Hero.astro";
+import WhyUsdx from "../components/WhyUsdx.astro";
+import Features from "../components/Features.astro";
+import HowItWorks from "../components/HowItWorks.astro";
+import Ecosystem from "../components/Ecosystem.astro";
+import Faq from "../components/Faq";
+import Footer from "../components/Footer.astro";
+---
+<Layout>
+  <div class="min-h-screen bg-white">
+    <Navbar client:load />
+    <Hero />
+    <WhyUsdx />
+    <Features />
+    <HowItWorks />
+    <Ecosystem />
+    <Faq client:visible />
+    <Footer />
+  </div>
+</Layout>

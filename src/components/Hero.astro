@@ -1,0 +1,172 @@
+---
+const headingText = "The Transparent & Regulated ";
+const highlightText = "USD Stablecoin";
+---
+<section class="min-h-screen px-6 bg-white relative overflow-hidden flex items-center pt-16">
+  <!-- Dot grid pattern -->
+  <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle, #1eaed5 1px, transparent 1px); background-size: 24px 24px;"></div>
+  <!-- Gradient glow -->
+  <div class="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl"></div>
+  <div class="absolute bottom-1/4 left-0 w-[300px] h-[300px] bg-primary/3 rounded-full blur-3xl"></div>
+
+  <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10 w-full">
+    <!-- Text (55%) -->
+    <div class="md:w-[55%] text-center md:text-left animate-on-scroll">
+      <h1 id="hero-heading" class="text-3xl md:text-5xl lg:text-[52px] font-bold leading-tight tracking-tight">
+        {headingText.split("").map((char) => (
+          <span data-char class="text-dark" style="opacity: 0; transition: opacity 0.01s;">{char === " " ? "\u00A0" : char}</span>
+        ))}
+        {highlightText.split("").map((char) => (
+          <span data-char class="text-primary" style="opacity: 0; transition: opacity 0.01s;">{char === " " ? "\u00A0" : char}</span>
+        ))}
+        <span id="hero-cursor" class="text-primary" style="animation: cursor-blink 1s infinite;">|</span>
+      </h1>
+      <p class="mt-6 text-gray-600 text-lg leading-relaxed max-w-xl" style="opacity: 0;" id="hero-desc">
+        USDX is a fully-backed digital dollar, redeemable 1:1 for USD.
+        Secured by US Treasury bonds and cash reserves, audited by
+        independent third-party firms.
+      </p>
+      <div class="mt-8 flex flex-col sm:flex-row items-center gap-4 md:justify-start justify-center" style="opacity: 0;" id="hero-ctas">
+        <a
+          href="https://app-usdx.netlify.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark hover:scale-105 hover:shadow-xl transition-all duration-300 no-underline text-base"
+        >
+          Get USDX
+        </a>
+        <a
+          href="#why-usdx"
+          class="group inline-flex items-center gap-2 text-primary font-semibold hover:text-primary-dark transition-all duration-300 no-underline text-base"
+        >
+          Learn More
+          <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Coin Animation (45%) -->
+    <div class="md:w-[45%] flex items-center justify-center animate-on-scroll" style="transition-delay: 300ms;">
+      <div class="relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
+        <!-- Glow pulse behind coin -->
+        <div class="absolute inset-0 rounded-full bg-primary/10 blur-2xl animate-glow-pulse"></div>
+
+        <!-- Orbiting particles -->
+        <div class="absolute inset-0 animate-spin-slow">
+          <div class="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary/40"></div>
+          <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-primary/30"></div>
+          <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-primary/50"></div>
+          <div class="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+        </div>
+
+        <!-- Second orbit ring (slower, larger) -->
+        <div class="absolute -inset-4 animate-spin-slower">
+          <div class="absolute top-2 right-4 w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+          <div class="absolute bottom-4 left-2 w-1 h-1 rounded-full bg-primary/30"></div>
+        </div>
+
+        <!-- Main coin with float + 3D rotate -->
+        <div class="animate-float">
+          <div class="animate-coin-rotate" style="perspective: 800px;">
+            <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-2xl">
+              <defs>
+                <radialGradient id="coinFace" cx="40%" cy="35%">
+                  <stop offset="0%" stop-color="#22c5e8" />
+                  <stop offset="50%" stop-color="#1eaed5" />
+                  <stop offset="100%" stop-color="#1580a0" />
+                </radialGradient>
+                <linearGradient id="coinEdge" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#1899bc" />
+                  <stop offset="100%" stop-color="#0e6b82" />
+                </linearGradient>
+                <radialGradient id="highlight" cx="35%" cy="30%">
+                  <stop offset="0%" stop-color="white" stop-opacity="0.35" />
+                  <stop offset="100%" stop-color="white" stop-opacity="0" />
+                </radialGradient>
+                <linearGradient id="outerRing" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#1eaed5" stop-opacity="0.3" />
+                  <stop offset="100%" stop-color="#1899bc" stop-opacity="0.1" />
+                </linearGradient>
+              </defs>
+              <!-- Outer rings -->
+              <circle cx="100" cy="100" r="96" fill="none" stroke="url(#outerRing)" stroke-width="1.5" />
+              <circle cx="100" cy="100" r="88" fill="none" stroke="url(#outerRing)" stroke-width="0.5" />
+              <!-- Coin edge (3D depth) -->
+              <ellipse cx="100" cy="106" rx="75" ry="75" fill="url(#coinEdge)" />
+              <!-- Coin face -->
+              <circle cx="100" cy="100" r="75" fill="url(#coinFace)" />
+              <!-- Highlight -->
+              <circle cx="100" cy="100" r="75" fill="url(#highlight)" />
+              <!-- Inner ring -->
+              <circle cx="100" cy="100" r="62" fill="none" stroke="white" stroke-width="0.8" opacity="0.2" />
+              <!-- X logo pattern (matching Logo.svg) -->
+              <g transform="translate(100,100) scale(0.65)" opacity="0.95">
+                <path d="M-9.7 -18H-18L9.7 18H18L-9.7 -18Z" fill="white" />
+                <path d="M9.7 -18H18L-9.7 18H-18L9.7 -18Z" fill="white" />
+                <path d="M12.4 -18H15.4L-12.6 18H-15.5L12.4 -18Z" fill="#1eaed5" />
+              </g>
+              <!-- USDX label below X -->
+              <text x="100" y="138" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="10" fill="white" opacity="0.7">USDX</text>
+              <!-- Shadow -->
+              <ellipse cx="100" cy="190" rx="45" ry="6" fill="black" opacity="0.06" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  @keyframes glow-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.3; }
+    50% { transform: scale(1.15); opacity: 0.6; }
+  }
+  .animate-glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
+
+  @keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .animate-spin-slow { animation: spin-slow 20s linear infinite; }
+
+  @keyframes spin-slower {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+  }
+  .animate-spin-slower { animation: spin-slower 30s linear infinite; }
+
+  @keyframes coin-rotate {
+    0%, 100% { transform: rotateY(0deg); }
+    50% { transform: rotateY(8deg); }
+  }
+  .animate-coin-rotate { animation: coin-rotate 6s ease-in-out infinite; }
+</style>
+
+<script>
+  const heading = document.getElementById('hero-heading');
+  const desc = document.getElementById('hero-desc');
+  const ctas = document.getElementById('hero-ctas');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (heading && !reducedMotion) {
+    const spans = heading.querySelectorAll<HTMLSpanElement>('span[data-char]');
+    spans.forEach((span, i) => {
+      setTimeout(() => { span.style.opacity = '1'; }, i * 30 + 500);
+    });
+    const cursor = document.getElementById('hero-cursor');
+    if (cursor) {
+      setTimeout(() => { cursor.style.display = 'none'; }, spans.length * 30 + 2500);
+    }
+    if (desc) setTimeout(() => { desc.style.opacity = '1'; desc.style.transition = 'opacity 0.5s ease-out'; }, spans.length * 30 + 800);
+    if (ctas) setTimeout(() => { ctas.style.opacity = '1'; ctas.style.transition = 'opacity 0.5s ease-out'; }, spans.length * 30 + 1000);
+  } else {
+    heading?.querySelectorAll<HTMLSpanElement>('span[data-char]').forEach(s => { s.style.opacity = '1'; });
+    if (desc) desc.style.opacity = '1';
+    if (ctas) ctas.style.opacity = '1';
+    const cursor = document.getElementById('hero-cursor');
+    if (cursor) cursor.style.display = 'none';
+  }
+</script>
