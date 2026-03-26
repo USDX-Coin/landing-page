@@ -1,22 +1,5 @@
 import { useState } from "react";
-import { motion } from "motion/react";
 import { faqItems } from "../data/faq";
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: "easeOut" as const },
-  },
-};
 
 export default function Faq() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -26,17 +9,11 @@ export default function Faq() {
   };
 
   return (
-    <section id="faq" className="py-24 px-6 bg-dark relative overflow-hidden">
+    <section id="faq" className="py-24 px-6 bg-gradient-to-b from-primary-950 to-dark relative overflow-hidden">
       {/* Decorative glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
 
-      <motion.div
-        className="max-w-[800px] mx-auto relative z-10"
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
+      <div className="max-w-[800px] mx-auto relative z-10">
         <div className="flex items-center gap-3 mb-6">
           <span className="w-2.5 h-2.5 rounded-full bg-primary" />
           <span className="text-primary font-semibold text-sm uppercase tracking-widest">FAQ</span>
@@ -46,17 +23,10 @@ export default function Faq() {
           Frequently Asked Questions
         </h2>
 
-        <motion.div
-          className="flex flex-col"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-        >
+        <div className="flex flex-col">
           {faqItems.map((item, index) => (
-            <motion.div
+            <div
               key={item.question}
-              variants={itemVariants}
               className="border-b border-white/10 last:border-b-0"
             >
               <button
@@ -91,10 +61,10 @@ export default function Faq() {
                   {item.answer}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </section>
   );
 }

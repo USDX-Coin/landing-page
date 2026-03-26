@@ -20,9 +20,7 @@ export default function Navbar() {
       <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-16">
         {/* Logo */}
         <a href="#" className="flex items-center gap-2 no-underline">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-white font-bold text-sm">$</span>
-          </div>
+          <img src="/image/Logo.svg" alt="USDX" className="w-8 h-8" />
           <span className="text-dark font-bold text-xl">USDX</span>
         </a>
 

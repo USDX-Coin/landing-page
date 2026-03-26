@@ -1,0 +1,50 @@
+---
+import { chains, partners } from "../data/chains";
+---
+<section id="ecosystem" class="py-24 px-6 bg-white">
+  <div class="max-w-[1200px] mx-auto animate-on-scroll">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+      <span class="text-primary font-semibold text-sm uppercase tracking-widest">Ecosystem</span>
+    </div>
+    <div class="h-px bg-gray-200 mb-8"></div>
+    <h2 class="text-3xl md:text-4xl font-bold text-dark text-center mb-16">Supported Chains</h2>
+
+    <!-- Chain logos grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-20">
+      {chains.map((chain, index) => (
+        <div
+          class="flex flex-col items-center justify-center p-6 rounded-xl border border-gray-100 bg-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300 animate-on-scroll"
+          style={`transition-delay: ${index * 80}ms;`}
+        >
+          <img src={chain.icon} alt={chain.name} class="w-10 h-10 mb-3" loading="lazy" />
+          <span class="text-dark font-medium text-sm">{chain.name}</span>
+        </div>
+      ))}
+    </div>
+
+    <!-- Partners marquee -->
+    <div class="text-center mb-10">
+      <h3 class="text-2xl font-bold text-dark">Trusted Partners</h3>
+    </div>
+
+    <div class="overflow-hidden relative">
+      <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10"></div>
+      <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10"></div>
+
+      <div class="flex animate-marquee w-max will-change-transform">
+        {[...partners, ...partners].map((partner, i) => (
+          <a
+            key={`${partner.name}-${i}`}
+            href={partner.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center justify-center px-10 py-4 mx-2 rounded-lg border border-gray-100 hover:border-primary/30 transition-colors no-underline min-w-[160px]"
+          >
+            <span class="text-gray-500 font-semibold text-sm">{partner.name}</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
