@@ -35,7 +35,6 @@ import { chains, partners } from "../data/chains";
       <div class="flex animate-marquee w-max will-change-transform">
         {[...partners, ...partners].map((partner, i) => (
           <a
-            key={`${partner.name}-${i}`}
             href={partner.url}
             target="_blank"
             rel="noopener noreferrer"
