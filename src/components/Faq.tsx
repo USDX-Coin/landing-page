@@ -16,7 +16,7 @@ export default function Faq() {
           <span className="text-primary font-semibold text-sm uppercase tracking-widest">FAQ</span>
         </div>
         <div className="h-px bg-gray-200 mb-8" />
-        <h2 className="text-3xl md:text-4xl font-bold text-dark text-center mb-16">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-dark text-center mb-16">
           Frequently Asked Questions
         </h2>
 

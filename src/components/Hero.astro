@@ -10,10 +10,10 @@ const highlightText = "USD Stablecoin";
   <div class="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl"></div>
   <div class="absolute bottom-1/4 left-0 w-[300px] h-[300px] bg-primary/3 rounded-full blur-3xl"></div>
 
-  <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-16 relative z-10 w-full">
+  <div class="max-w-[1200px] mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-16 relative z-10 w-full">
     <!-- Text (55%) -->
     <div class="md:w-[55%] text-center md:text-left animate-on-scroll">
-      <h1 id="hero-heading" class="text-3xl md:text-5xl lg:text-[52px] font-bold leading-tight tracking-tight">
+      <h1 id="hero-heading" class="text-2xl sm:text-3xl md:text-5xl lg:text-[52px] font-bold leading-tight tracking-tight">
         {headingText.split("").map((char) => (
           <span data-char class="text-dark" style="opacity: 0; transition: opacity 0.01s;">{char === " " ? "\u00A0" : char}</span>
         ))}
@@ -50,7 +50,7 @@ const highlightText = "USD Stablecoin";
 
     <!-- Coin Animation (45%) -->
     <div class="md:w-[45%] flex items-center justify-center animate-on-scroll" style="transition-delay: 300ms;">
-      <div class="relative w-64 h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
+      <div class="relative w-52 h-52 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80">
         <!-- Glow pulse behind coin -->
         <div class="absolute inset-0 rounded-full bg-primary/10 blur-2xl animate-glow-pulse"></div>
 

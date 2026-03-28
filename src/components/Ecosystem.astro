@@ -8,17 +8,17 @@ import { chains, partners } from "../data/chains";
       <span class="text-primary font-semibold text-sm uppercase tracking-widest">Ecosystem</span>
     </div>
     <div class="h-px bg-gray-200 mb-8"></div>
-    <h2 class="text-3xl md:text-4xl font-bold text-dark text-center mb-16">Supported Chains</h2>
+    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-dark text-center mb-16">Supported Chains</h2>
 
     <!-- Chain logos grid -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-20">
       {chains.map((chain, index) => (
         <div
-          class="flex flex-col items-center justify-center p-6 rounded-xl border border-gray-100 bg-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300 animate-on-scroll"
+          class="flex flex-col items-center justify-center p-3 sm:p-6 rounded-xl border border-gray-100 bg-white hover:-translate-y-1 hover:shadow-lg transition-all duration-300 animate-on-scroll"
           style={`transition-delay: ${index * 80}ms;`}
         >
-          <img src={chain.icon} alt={chain.name} class="w-10 h-10 mb-3" loading="lazy" />
-          <span class="text-dark font-medium text-sm">{chain.name}</span>
+          <img src={chain.icon} alt={chain.name} class="w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-3" loading="lazy" />
+          <span class="text-dark font-medium text-xs sm:text-sm text-center leading-tight">{chain.name}</span>
         </div>
       ))}
     </div>
