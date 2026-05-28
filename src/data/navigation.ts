@@ -6,8 +6,7 @@ export interface NavLink {
 }
 
 export const navLinks: NavLink[] = [
-  { label: "Why USDX", href: "#why-usdx" },
   { label: "Features", href: "#features" },
-  { label: "How it Works", href: "#how-it-works" },
   { label: "Ecosystem", href: "#ecosystem" },
+  { label: "FAQ", href: "#faq" },
 ];
