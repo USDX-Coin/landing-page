@@ -34,17 +34,15 @@ Single-page responsive landing page for **USDX**, a USD-pegged stablecoin positi
 │   │   └── index.astro      # Main page — assembles all sections
 │   ├── components/
 │   │   ├── Navbar.tsx        # React island (client:load) — scroll shadow, mobile menu
-│   │   ├── Hero.astro        # Static + typewriter vanilla JS script
-│   │   ├── WhyUsdx.astro     # Static
-│   │   ├── Features.astro    # Static
-│   │   ├── HowItWorks.astro  # Static (gradient teal background)
-│   │   ├── Ecosystem.astro   # Static (real chain icons)
-│   │   ├── Faq.tsx           # React island (client:visible) — accordion
+│   │   ├── Hero.astro        # Static + GSAP (phone wallet mockup, intro timeline, scroll parallax)
+│   │   ├── Features.astro    # Static + GSAP (trust ribbon + horizontal pinned-scroll card track; mobile swipe carousel)
+│   │   ├── Ecosystem.astro   # Static + GSAP (USDX hub + single ring of chains orbiting clockwise; scroll-scale; hover tooltip + pause; click-through to chain) + partners marquee
+│   │   ├── Faq.tsx           # React island (client:visible) — click accordion (toggle, all-closeable) + per-row visuals
 │   │   └── Footer.astro      # Static (real USDX logo)
 │   ├── data/                 # Typed content arrays (unchanged from Vite era)
 │   │   ├── navigation.ts
 │   │   ├── features.ts
-│   │   ├── why-usdx.ts
+│   │   ├── whyUsdx.ts        # Trust points — now consumed by Features trust ribbon
 │   │   ├── faq.ts
 │   │   ├── chains.ts        # Now includes icon path field
 │   │   └── socials.ts
@@ -69,21 +67,22 @@ pnpm lint       # ESLint check
 
 ### Astro Islands
 
-Only 2 components ship JavaScript to the browser:
+Only 2 components hydrate React in the browser:
 - **Navbar** (`client:load`) — needs immediate scroll detection + mobile menu state
 - **FAQ** (`client:visible`) — accordion state, deferred until scrolled into view
 
-All other sections are **static HTML** — zero JS shipped.
+Hero & Features stay **static HTML** but ship small GSAP `<script>` modules (no React hydration). Smooth scroll + ScrollTrigger are wired globally in `Layout.astro`.
 
-### Animations (no library)
+### Animations (GSAP + Lenis)
 
-- **Scroll fade-in**: CSS `.animate-on-scroll` class + IntersectionObserver in Layout.astro
-- **Stagger**: `transition-delay` inline styles on cards
-- **Typewriter**: Vanilla JS `setTimeout` loop in Hero.astro
-- **Float**: CSS `@keyframes float` on hero coin
+- **Smooth scroll**: Lenis (inertia/easing) initialized in `Layout.astro`, synced to GSAP's ticker; anchor links routed through `lenis.scrollTo`
+- **Hero**: GSAP intro timeline (headline lines, copy, phone, balance count-up), idle float, ScrollTrigger parallax on phone + background blobs
+- **Features**: trust-ribbon reveals + a **horizontal pinned scroll** card track via `gsap.matchMedia('(min-width:1024px)')` (ScrollTrigger `pin` + scrubbed `x` translate, `invalidateOnRefresh`). The left-aligned heading lives inside the pinned section, which is `lg:h-screen flex-col justify-center` so heading + track sit centered as one group. Cards grow on `xl`/`2xl` (up to 460px) so the track keeps overflowing — and stays legible — on large monitors; the pin is compressed (full card travel mapped over ~0.6× the vertical scroll, so the "travel room" stays short) and only skipped when there is genuinely no overflow. Below `lg` the track is a native `overflow-x-auto` snap carousel (no pin)
+- **FAQ**: click-toggle accordion (single open, can be all-closed); smooth height via `grid-rows-[0fr]→[1fr]`; open row reveals answer + a styled visual (chain icons for the multi-chain question)
+- **Ecosystem**: USDX logo hub with a single ring of chains (positions = % of a square stage, so they scale at any size). One `[data-orbit]` ring rotates clockwise; each `[data-counter]` icon counter-rotates to stay upright. ScrollTrigger scrubs the stage scale (small→large on entry); orbit pauses on chain hover (tooltip + scale); each chain is an `<a>` to its site. Light bg, works desktop + mobile
+- **Legacy reveal**: CSS `.animate-on-scroll` + IntersectionObserver in Layout.astro (still used by Ecosystem/Footer)
 - **Marquee**: CSS `@keyframes marquee` on partner logos
-- **Hover**: Tailwind `hover:-translate-y-1 hover:shadow-lg transition-all duration-300`
-- **Reduced motion**: `@media (prefers-reduced-motion: reduce)` disables all animations
+- **Reduced motion**: every script checks `prefers-reduced-motion`; Lenis is skipped and content renders fully visible
 
 ### Conventions
 
