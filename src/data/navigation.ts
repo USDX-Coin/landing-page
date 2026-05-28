@@ -1,4 +1,4 @@
-export const APP_URL = "https://app-usdx.netlify.app/";
+export const APP_URL = "https://app.usdxcoin.xyz/";
 
 export interface NavLink {
   label: string;
