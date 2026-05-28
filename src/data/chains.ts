@@ -1,17 +1,18 @@
 export interface Chain {
   name: string;
   icon: string;
+  url: string;
 }
 
 export const chains: Chain[] = [
-  { name: "Ethereum", icon: "/icon/ethereum.svg" },
-  { name: "BNB Smart Chain", icon: "/icon/bnb.svg" },
-  { name: "Polygon", icon: "/icon/polygon.svg" },
-  { name: "Arbitrum", icon: "/icon/arbitrum.svg" },
-  { name: "Optimism", icon: "/icon/optimism.svg" },
-  { name: "Avalanche", icon: "/icon/avalanche.svg" },
-  { name: "Solana", icon: "/icon/solana.svg" },
-  { name: "Base", icon: "/icon/base.svg" },
+  { name: "Ethereum", icon: "/icon/ethereum.svg", url: "https://ethereum.org" },
+  { name: "BNB Smart Chain", icon: "/icon/bnb.svg", url: "https://www.bnbchain.org" },
+  { name: "Polygon", icon: "/icon/polygon.svg", url: "https://polygon.technology" },
+  { name: "Arbitrum", icon: "/icon/arbitrum.svg", url: "https://arbitrum.io" },
+  { name: "Optimism", icon: "/icon/optimism.svg", url: "https://www.optimism.io" },
+  { name: "Avalanche", icon: "/icon/avalanche.svg", url: "https://www.avax.network" },
+  { name: "Solana", icon: "/icon/solana.svg", url: "https://solana.com" },
+  { name: "Base", icon: "/icon/base.svg", url: "https://www.base.org" },
 ];
 
 export interface Partner {
