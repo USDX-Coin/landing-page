@@ -1,0 +1,14 @@
+---
+// Renders a translated string in every language. The inactive language is
+// hidden via CSS keyed on `<html lang>` (see global.css). `[data-l]` defaults to
+// `display: contents`, so the wrapper adds no box and inner markup/layout is
+// preserved.
+import type { Translated } from "../i18n";
+
+interface Props {
+  t: Translated;
+}
+
+const { t } = Astro.props;
+---
+<span data-l="id">{t.id}</span><span data-l="en">{t.en}</span>

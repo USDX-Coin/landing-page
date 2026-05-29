@@ -26,6 +26,17 @@
   51%, 100% { opacity: 0; }
 }
 
+/* Language toggle: render both languages, hide the inactive one (keyed on
+   <html lang>). `display: contents` keeps the wrapper layout-neutral so inner
+   markup (colored spans, block lines) is preserved. */
+[data-l] {
+  display: contents;
+}
+html[lang="id"] [data-l="en"],
+html[lang="en"] [data-l="id"] {
+  display: none;
+}
+
 /* Scroll-triggered animations */
 .animate-on-scroll {
   opacity: 0;

@@ -13,13 +13,15 @@ export function resolveAppUrl(hostname: string): string {
   return APP_URL_BY_HOST[host] ?? APP_URL;
 }
 
+import type { Translated } from "../i18n";
+
 export interface NavLink {
-  label: string;
+  label: Translated;
   href: string;
 }
 
 export const navLinks: NavLink[] = [
-  { label: "Fitur", href: "#features" },
-  { label: "Ekosistem", href: "#ecosystem" },
-  { label: "FAQ", href: "#faq" },
+  { label: { id: "Fitur", en: "Features" }, href: "#features" },
+  { label: { id: "Ekosistem", en: "Ecosystem" }, href: "#ecosystem" },
+  { label: { id: "FAQ", en: "FAQ" }, href: "#faq" },
 ];

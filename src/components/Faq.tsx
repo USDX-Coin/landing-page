@@ -2,6 +2,8 @@ import { useState } from "react";
 import { faqItems } from "../data/faq";
 import { iconPaths } from "../data/icons";
 import { chains } from "../data/chains";
+import { ui } from "../i18n";
+import { T } from "./LangText";
 
 export default function Faq() {
   // Click to toggle, single open at a time, and "all closed" is a valid state.
@@ -14,13 +16,13 @@ export default function Faq() {
       <div className="max-w-[960px] mx-auto">
         <div className="flex items-center gap-3 mb-4">
           <span className="w-2.5 h-2.5 rounded-full bg-primary" />
-          <span className="text-primary font-semibold text-sm uppercase tracking-widest">FAQ</span>
+          <span className="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.faq.eyebrow} /></span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight mb-3">
-          Pertanyaan, terjawab
+          <T t={ui.faq.heading} />
         </h2>
         <p className="text-gray-600 text-base sm:text-lg mb-12 max-w-xl">
-          Semua yang perlu Anda ketahui tentang bagaimana USDX tetap stabil, terjamin, dan menjadi milik Anda.
+          <T t={ui.faq.sub} />
         </p>
 
         <div className="flex flex-col gap-3">
@@ -28,7 +30,7 @@ export default function Faq() {
             const isOpen = openIndex === index;
             return (
               <div
-                key={item.question}
+                key={index}
                 className={`rounded-2xl border overflow-hidden transition-colors duration-300 ${
                   isOpen
                     ? "border-primary/30 bg-gradient-to-br from-primary-light/40 to-white"
@@ -52,7 +54,7 @@ export default function Faq() {
                       isOpen ? "text-primary" : "text-dark"
                     }`}
                   >
-                    {item.question}
+                    <T t={item.question} />
                   </span>
                   <span
                     className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${
@@ -72,7 +74,7 @@ export default function Faq() {
                 >
                   <div className="overflow-hidden">
                     <div className="px-5 sm:px-6 pb-6 flex flex-col sm:flex-row gap-5 sm:items-center">
-                      <p className="text-gray-600 leading-relaxed flex-1">{item.answer}</p>
+                      <p className="text-gray-600 leading-relaxed flex-1"><T t={item.answer} /></p>
                       <div className="shrink-0 w-44 h-28 rounded-2xl bg-gradient-to-br from-primary/10 to-primary/[0.02] border border-primary/10 relative overflow-hidden hidden sm:flex items-center justify-center">
                         <div
                           className="absolute inset-0 opacity-[0.06]"
