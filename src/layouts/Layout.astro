@@ -28,6 +28,15 @@ const {
   <body>
     <slot />
     <script>
+      // Point static app links at the app for the current landing domain.
+      import { resolveAppUrl } from "../data/navigation";
+
+      const appUrl = resolveAppUrl(window.location.hostname);
+      document
+        .querySelectorAll<HTMLAnchorElement>("a[data-app-link]")
+        .forEach((a) => (a.href = appUrl));
+    </script>
+    <script>
       import Lenis from "lenis";
       import { gsap } from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";

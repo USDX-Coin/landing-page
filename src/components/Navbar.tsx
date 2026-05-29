@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { navLinks, APP_URL } from "../data/navigation";
+import { navLinks, APP_URL, resolveAppUrl } from "../data/navigation";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [appUrl, setAppUrl] = useState(APP_URL);
 
   useEffect(() => {
+    setAppUrl(resolveAppUrl(window.location.hostname));
     const onScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -39,7 +41,7 @@ export default function Navbar() {
 
         {/* CTA */}
         <a
-          href={APP_URL}
+          href={appUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="hidden md:inline-flex items-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
