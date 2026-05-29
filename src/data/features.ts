@@ -8,39 +8,39 @@ export interface Feature {
 
 export const features: Feature[] = [
   {
-    title: "Fully Backed & Audited",
+    title: "Dijamin Penuh & Diaudit",
     description:
-      "Every USDX token is backed 1:1 by USD cash and US Treasury bonds, with regular audits conducted by independent third-party firms.",
+      "Setiap token USDX dijamin 1:1 oleh kas USD dan obligasi US Treasury, dengan audit rutin oleh firma pihak ketiga independen.",
     icon: "shield",
   },
   {
-    title: "Instant Settlement",
+    title: "Penyelesaian Instan",
     description:
-      "Transactions are processed in seconds across all supported blockchains, available around the clock, 365 days a year.",
+      "Transaksi diproses dalam hitungan detik di seluruh blockchain yang didukung, tersedia sepanjang waktu, 365 hari setahun.",
     icon: "zap",
   },
   {
-    title: "Near-Zero Transaction Fees",
+    title: "Biaya Transaksi Nyaris Nol",
     description:
-      "Transfer USDX globally with fees so low they are nearly zero, making it one of the most cost-effective stablecoins available.",
+      "Transfer USDX ke seluruh dunia dengan biaya yang sangat rendah hingga nyaris nol, menjadikannya salah satu stablecoin paling hemat biaya.",
     icon: "dollar",
   },
   {
-    title: "Multi-Chain Support",
+    title: "Dukungan Multi-Chain",
     description:
-      "USDX is available on Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, and Base.",
+      "USDX tersedia di Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, dan Base.",
     icon: "layers",
   },
   {
-    title: "Regulatory Compliant",
+    title: "Patuh Regulasi",
     description:
-      "USDX operates in full compliance with applicable regulatory standards, ensuring a secure and legally sound digital asset.",
+      "USDX beroperasi dengan kepatuhan penuh terhadap standar regulasi yang berlaku, memastikan aset digital yang aman dan sah secara hukum.",
     icon: "check",
   },
   {
-    title: "24/7 Global Access",
+    title: "Akses Global 24/7",
     description:
-      "Anyone with an internet connection and a digital wallet can send and receive USDX from anywhere in the world, at any time.",
+      "Siapa pun dengan koneksi internet dan dompet digital dapat mengirim dan menerima USDX dari mana saja, kapan saja.",
     icon: "globe",
   },
 ];

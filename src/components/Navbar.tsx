@@ -46,14 +46,14 @@ export default function Navbar() {
           rel="noopener noreferrer"
           className="hidden md:inline-flex items-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
         >
-          Get USDX
+          Dapatkan USDX
         </a>
 
         {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden flex flex-col gap-1.5 p-2 bg-transparent border-none cursor-pointer"
-          aria-label="Toggle menu"
+          aria-label="Buka menu"
         >
           <span
             className={`block w-5 h-0.5 bg-dark transition-transform duration-300 ${

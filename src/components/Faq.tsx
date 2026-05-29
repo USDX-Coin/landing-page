@@ -17,10 +17,10 @@ export default function Faq() {
           <span className="text-primary font-semibold text-sm uppercase tracking-widest">FAQ</span>
         </div>
         <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight mb-3">
-          Questions, answered
+          Pertanyaan, terjawab
         </h2>
         <p className="text-gray-600 text-base sm:text-lg mb-12 max-w-xl">
-          Everything you need to know about how USDX stays stable, backed, and yours.
+          Semua yang perlu Anda ketahui tentang bagaimana USDX tetap stabil, terjamin, dan menjadi milik Anda.
         </p>
 
         <div className="flex flex-col gap-3">

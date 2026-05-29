@@ -19,7 +19,7 @@ export interface NavLink {
 }
 
 export const navLinks: NavLink[] = [
-  { label: "Features", href: "#features" },
-  { label: "Ecosystem", href: "#ecosystem" },
+  { label: "Fitur", href: "#features" },
+  { label: "Ekosistem", href: "#ecosystem" },
   { label: "FAQ", href: "#faq" },
 ];
