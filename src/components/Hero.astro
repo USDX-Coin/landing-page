@@ -1,11 +1,7 @@
 ---
 import { APP_URL } from "../data/navigation";
-
-const txns = [
-  { name: "Received", sub: "From 0x8f…2a1", amt: "+1,200.00", tone: "up" },
-  { name: "Swapped", sub: "USDC → USDX", amt: "+800.00", tone: "swap" },
-  { name: "Sent", sub: "To 0x3c…9be", amt: "−450.00", tone: "down" },
-];
+import { ui, txns } from "../i18n";
+import T from "./T.astro";
 ---
 <section id="hero" class="relative overflow-hidden bg-white pt-28 pb-20 md:pt-32 md:pb-28 lg:min-h-screen lg:flex lg:items-center">
   <!-- Dot grid pattern -->
@@ -19,18 +15,24 @@ const txns = [
     <div class="text-center lg:text-left">
       <span data-hero-el class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light text-primary text-xs font-semibold tracking-wide uppercase">
         <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-        Regulated USD Stablecoin
+        <T t={ui.hero.badge} />
       </span>
 
       <h1 class="mt-6 text-[2rem] leading-[1.1] sm:text-5xl lg:text-[56px] font-bold lg:leading-[1.08] tracking-tight text-dark">
-        <span data-hero-line class="block">The dollar,</span>
-        <span data-hero-line class="block">reimagined for</span>
-        <span data-hero-line class="block text-primary">the on-chain world</span>
+        <span data-l="id">
+          <span data-hero-line class="block">{ui.hero.line1.id}</span>
+          <span data-hero-line class="block">{ui.hero.line2.id}</span>
+          <span data-hero-line class="block text-primary">{ui.hero.line3.id}</span>
+        </span>
+        <span data-l="en">
+          <span data-hero-line class="block">{ui.hero.line1.en}</span>
+          <span data-hero-line class="block">{ui.hero.line2.en}</span>
+          <span data-hero-line class="block text-primary">{ui.hero.line3.en}</span>
+        </span>
       </h1>
 
       <p data-hero-el class="mt-6 text-gray-600 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-        USDX is a fully-backed digital dollar, redeemable 1:1 for USD — secured by
-        cash and US Treasuries, audited by independent firms, and live across 8 chains.
+        <T t={ui.hero.paragraph} />
       </p>
 
       <div data-hero-el class="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
@@ -41,13 +43,13 @@ const txns = [
           rel="noopener noreferrer"
           class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/25 hover:-translate-y-0.5 transition-all duration-300 no-underline text-base"
         >
-          Get USDX
+          <T t={ui.cta} />
         </a>
         <a
           href="#features"
           class="group inline-flex items-center gap-2 px-6 py-3.5 text-dark font-semibold hover:text-primary transition-colors duration-300 no-underline text-base"
         >
-          Explore features
+          <T t={ui.hero.explore} />
           <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
           </svg>
@@ -58,15 +60,15 @@ const txns = [
       <div data-hero-el class="mt-12 grid grid-cols-3 gap-4 sm:gap-6 max-w-md mx-auto lg:mx-0">
         <div class="text-center lg:text-left">
           <div class="text-xl sm:text-2xl font-bold text-dark">1:1</div>
-          <div class="text-xs text-gray-500 mt-1">USD Backed</div>
+          <div class="text-xs text-gray-500 mt-1"><T t={ui.hero.stat1} /></div>
         </div>
         <div class="text-center lg:text-left border-x border-gray-100 px-2 sm:px-4">
           <div class="text-xl sm:text-2xl font-bold text-dark">8</div>
-          <div class="text-xs text-gray-500 mt-1">Blockchains</div>
+          <div class="text-xs text-gray-500 mt-1"><T t={ui.hero.stat2} /></div>
         </div>
         <div class="text-center lg:text-left">
           <div class="text-xl sm:text-2xl font-bold text-dark">24/7</div>
-          <div class="text-xs text-gray-500 mt-1">Global Access</div>
+          <div class="text-xs text-gray-500 mt-1"><T t={ui.hero.stat3} /></div>
         </div>
       </div>
     </div>
@@ -82,8 +84,8 @@ const txns = [
             </svg>
           </div>
           <div>
-            <div class="text-[11px] font-semibold text-dark leading-tight whitespace-nowrap">Fully Audited</div>
-            <div class="text-[10px] text-gray-400 leading-tight whitespace-nowrap">Reserves verified</div>
+            <div class="text-[11px] font-semibold text-dark leading-tight whitespace-nowrap"><T t={ui.hero.floatAuditTitle} /></div>
+            <div class="text-[10px] text-gray-400 leading-tight whitespace-nowrap"><T t={ui.hero.floatAuditSub} /></div>
           </div>
         </div>
 
@@ -94,8 +96,8 @@ const txns = [
             </svg>
           </div>
           <div>
-            <div class="text-[11px] font-semibold text-dark leading-tight whitespace-nowrap">Instant</div>
-            <div class="text-[10px] text-gray-400 leading-tight whitespace-nowrap">Settled in seconds</div>
+            <div class="text-[11px] font-semibold text-dark leading-tight whitespace-nowrap"><T t={ui.hero.floatInstantTitle} /></div>
+            <div class="text-[10px] text-gray-400 leading-tight whitespace-nowrap"><T t={ui.hero.floatInstantSub} /></div>
           </div>
         </div>
 
@@ -130,7 +132,7 @@ const txns = [
             <div class="flex items-center justify-between px-5 pt-3">
               <div class="flex items-center gap-2">
                 <img src="/image/Logo.svg" alt="USDX" class="w-7 h-7" />
-                <span class="font-bold text-dark text-sm">USDX App</span>
+                <span class="font-bold text-dark text-sm"><T t={ui.hero.appName} /></span>
               </div>
               <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-900 ring-2 ring-white shadow-sm"></div>
             </div>
@@ -139,21 +141,21 @@ const txns = [
             <div class="mx-5 mt-4 rounded-3xl bg-gradient-to-br from-primary to-primary-900 p-5 text-white shadow-lg shadow-primary/30 relative overflow-hidden">
               <div class="absolute -right-8 -top-8 w-28 h-28 bg-white/10 rounded-full"></div>
               <div class="absolute right-6 bottom-4 w-16 h-16 bg-white/5 rounded-full"></div>
-              <div class="text-[11px] uppercase tracking-wider text-white/70">Total Balance</div>
+              <div class="text-[11px] uppercase tracking-wider text-white/70"><T t={ui.hero.totalBalance} /></div>
               <div class="mt-1 text-[28px] font-bold leading-none" data-balance>$12,840.50</div>
               <div class="text-xs text-white/70 mt-1.5">≈ 12,840.50 USDX</div>
               <div class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/15 backdrop-blur text-[10px] font-medium">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                Backed 1:1 · Audited
+                <T t={ui.hero.backedAudited} />
               </div>
             </div>
 
             <!-- actions -->
             <div class="grid grid-cols-3 gap-3 px-5 mt-5">
               {[
-                { label: "Send", d: "M5 10l7-7m0 0l7 7m-7-7v18" },
-                { label: "Receive", d: "M19 14l-7 7m0 0l-7-7m7 7V3" },
-                { label: "Swap", d: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
+                { label: ui.hero.actionSend, d: "M5 10l7-7m0 0l7 7m-7-7v18" },
+                { label: ui.hero.actionReceive, d: "M19 14l-7 7m0 0l-7-7m7 7V3" },
+                { label: ui.hero.actionSwap, d: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
               ].map((a) => (
                 <div data-phone-row class="flex flex-col items-center gap-1.5">
                   <div class="w-12 h-12 rounded-2xl bg-primary-light flex items-center justify-center">
@@ -161,7 +163,7 @@ const txns = [
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={a.d} />
                     </svg>
                   </div>
-                  <span class="text-[11px] font-medium text-dark">{a.label}</span>
+                  <span class="text-[11px] font-medium text-dark"><T t={a.label} /></span>
                 </div>
               ))}
             </div>
@@ -169,24 +171,24 @@ const txns = [
             <!-- reserve composition -->
             <div data-phone-row class="mx-5 mt-5 rounded-2xl border border-gray-100 bg-white px-4 py-3">
               <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-semibold text-dark">Reserves</span>
-                <span class="text-[10px] font-medium text-emerald-500">100% backed</span>
+                <span class="text-[11px] font-semibold text-dark"><T t={ui.hero.reserves} /></span>
+                <span class="text-[10px] font-medium text-emerald-500"><T t={ui.hero.backed100} /></span>
               </div>
               <div class="flex h-2 rounded-full overflow-hidden bg-gray-100">
                 <span class="bg-primary" style="width: 72%"></span>
                 <span class="bg-primary/40" style="width: 28%"></span>
               </div>
               <div class="flex items-center gap-4 mt-2 text-[10px] text-gray-400">
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span>Cash 72%</span>
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary/40"></span>T-Bills 28%</span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span><T t={ui.hero.cash} /></span>
+                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary/40"></span><T t={ui.hero.tbills} /></span>
               </div>
             </div>
 
             <!-- recent activity -->
             <div class="px-5 mt-5">
               <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-semibold text-dark">Recent Activity</span>
-                <span class="text-[10px] text-primary font-medium">See all</span>
+                <span class="text-xs font-semibold text-dark"><T t={ui.hero.recentActivity} /></span>
+                <span class="text-[10px] text-primary font-medium"><T t={ui.hero.seeAll} /></span>
               </div>
               <div class="space-y-2.5">
                 {txns.map((t) => (
@@ -198,8 +200,8 @@ const txns = [
                         </svg>
                       </div>
                       <div>
-                        <div class="text-[12px] font-semibold text-dark leading-tight">{t.name}</div>
-                        <div class="text-[10px] text-gray-400 leading-tight">{t.sub}</div>
+                        <div class="text-[12px] font-semibold text-dark leading-tight"><T t={t.name} /></div>
+                        <div class="text-[10px] text-gray-400 leading-tight"><T t={t.sub} /></div>
                       </div>
                     </div>
                     <span class={`text-[12px] font-semibold ${t.tone === "down" ? "text-dark" : "text-emerald-500"}`}>{t.amt}</span>
