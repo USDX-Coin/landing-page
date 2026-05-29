@@ -94,28 +94,31 @@ export default function Navbar() {
           </a>
         </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden flex flex-col gap-1.5 p-2 bg-transparent border-none cursor-pointer"
-          aria-label={ui.toggleMenu[lang]}
-        >
-          <span
-            className={`block w-5 h-0.5 bg-dark transition-transform duration-300 ${
-              mobileOpen ? "rotate-45 translate-y-2" : ""
-            }`}
-          />
-          <span
-            className={`block w-5 h-0.5 bg-dark transition-opacity duration-300 ${
-              mobileOpen ? "opacity-0" : ""
-            }`}
-          />
-          <span
-            className={`block w-5 h-0.5 bg-dark transition-transform duration-300 ${
-              mobileOpen ? "-rotate-45 -translate-y-2" : ""
-            }`}
-          />
-        </button>
+        {/* Mobile: language switch + hamburger */}
+        <div className="flex items-center gap-2 md:hidden">
+          <LangSwitch current={lang} onChange={changeLang} />
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="flex flex-col gap-1.5 p-2 bg-transparent border-none cursor-pointer"
+            aria-label={ui.toggleMenu[lang]}
+          >
+            <span
+              className={`block w-5 h-0.5 bg-dark transition-transform duration-300 ${
+                mobileOpen ? "rotate-45 translate-y-2" : ""
+              }`}
+            />
+            <span
+              className={`block w-5 h-0.5 bg-dark transition-opacity duration-300 ${
+                mobileOpen ? "opacity-0" : ""
+              }`}
+            />
+            <span
+              className={`block w-5 h-0.5 bg-dark transition-transform duration-300 ${
+                mobileOpen ? "-rotate-45 -translate-y-2" : ""
+              }`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Mobile Menu */}
@@ -131,7 +134,6 @@ export default function Navbar() {
               <T t={link.label} />
             </a>
           ))}
-          <LangSwitch current={lang} onChange={changeLang} />
           <a
             href={appUrl}
             target="_blank"
