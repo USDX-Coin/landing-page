@@ -102,6 +102,36 @@ export const ui = {
     },
   },
 
+  realimpact: {
+    eyebrow: { id: "Dampak nyata", en: "Real impact" },
+    heading: {
+      id: "Dolar stabil, di tangan yang paling membutuhkan",
+      en: "Stable dollars, in the hands that need them most",
+    },
+    sub: {
+      id: "Bukan sekadar teknologi — USDX mengubah cara orang menyimpan, mengirim, dan melindungi nilai.",
+      en: "Not just technology — USDX changes how people save, send, and protect value.",
+    },
+    s1Tag: { id: "Akses", en: "Access" },
+    s1Title: { id: "Bank di dalam genggaman", en: "A bank in your pocket" },
+    s1Line: {
+      id: "Cukup HP dan koneksi internet untuk mengakses dolar digital — tanpa rekening bank tradisional.",
+      en: "Just a phone and an internet connection to access digital dollars — no traditional bank account.",
+    },
+    s2Tag: { id: "Lindung nilai", en: "Hedge" },
+    s2Title: { id: "Tabungan yang tak tergerus inflasi", en: "Savings inflation can't erode" },
+    s2Line: {
+      id: "Pedagang dan keluarga menyimpan nilai dalam dolar stabil, meski mata uang lokal melemah.",
+      en: "Vendors and families hold their value in stable dollars, even as the local currency slips.",
+    },
+    s3Tag: { id: "Remitansi", en: "Remittance" },
+    s3Title: { id: "Kirim ke keluarga, sampai seketika", en: "Send home, arrives instantly" },
+    s3Line: {
+      id: "Remitansi lintas negara dalam hitungan detik — bukan berhari-hari — dengan biaya nyaris nol.",
+      en: "Cross-border remittance in seconds — not days — at near-zero cost.",
+    },
+  },
+
   features: {
     eyebrow: { id: "Fitur", en: "Features" },
     heading: {

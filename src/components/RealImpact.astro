@@ -1,0 +1,160 @@
+---
+import { ui } from "../i18n";
+import T from "./T.astro";
+
+const stories = [
+  { img: "/image/realimpact/access.jpg", tag: ui.realimpact.s1Tag, title: ui.realimpact.s1Title, line: ui.realimpact.s1Line },
+  { img: "/image/realimpact/savings.jpg", tag: ui.realimpact.s2Tag, title: ui.realimpact.s2Title, line: ui.realimpact.s2Line },
+  { img: "/image/realimpact/send.jpg", tag: ui.realimpact.s3Tag, title: ui.realimpact.s3Title, line: ui.realimpact.s3Line },
+];
+---
+<section id="realimpact" class="relative bg-white py-20 md:py-28">
+  <div class="max-w-[1080px] mx-auto px-6">
+    <!-- Heading -->
+    <div class="max-w-2xl mb-10 md:mb-14">
+      <div data-fade class="flex items-center gap-3 mb-4">
+        <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+        <span class="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.realimpact.eyebrow} /></span>
+      </div>
+      <h2 data-reveal class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight">
+        <T t={ui.realimpact.heading} />
+      </h2>
+      <p data-fade class="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed">
+        <T t={ui.realimpact.sub} />
+      </p>
+    </div>
+
+    <!-- Stacked story cards (Apple-style sticky stack) -->
+    <div class="ri-stack">
+      {stories.map((s, i) => (
+        <article data-inview class="ri-card" style={`--i:${i}`}>
+          <img class="ri-img" src={s.img} alt="" loading="lazy" />
+          <span class="ri-tint" aria-hidden="true"></span>
+          <span class="ri-shade" aria-hidden="true"></span>
+
+          <img class="ri-coin" src="/image/Logo.svg" alt="" aria-hidden="true" />
+
+          <div class="ri-body">
+            <span class="ri-tag"><T t={s.tag} /></span>
+            <h3 class="ri-title"><T t={s.title} /></h3>
+            <p class="ri-line"><T t={s.line} /></p>
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <p class="mt-6 text-center text-xs text-gray-400">
+      Foto dokumenter via <a class="underline hover:text-primary" href="https://commons.wikimedia.org" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a> — CC0 / CC BY-SA.
+    </p>
+  </div>
+</section>
+
+<style>
+  .ri-stack { display: flex; flex-direction: column; gap: 28px; }
+
+  .ri-card {
+    position: sticky;
+    top: 92px;
+    height: 64vh;
+    max-height: 540px;
+    min-height: 380px;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 30px 60px -28px rgba(10, 22, 40, 0.45);
+    isolation: isolate; /* keep the cyan blend contained to this card */
+  }
+
+  .ri-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(0.75) contrast(1.05) brightness(0.92);
+    transform: scale(1.04);
+    transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .ri-card.in-view .ri-img { transform: scale(1); }
+
+  /* brand cyan duotone */
+  .ri-tint {
+    position: absolute;
+    inset: 0;
+    background: #1eaed5;
+    mix-blend-mode: color;
+    opacity: 0.4;
+  }
+  /* readability gradient */
+  .ri-shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(10, 22, 40, 0.1) 0%, rgba(10, 22, 40, 0.25) 45%, rgba(10, 22, 40, 0.82) 100%);
+  }
+
+  .ri-coin {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transform: translateY(-10px) scale(0.8);
+    transition: opacity 0.5s ease 0.2s, transform 0.6s cubic-bezier(0.2, 1.5, 0.4, 1) 0.2s;
+  }
+  .ri-card.in-view .ri-coin { opacity: 1; transform: translateY(0) scale(1); }
+
+  .ri-body {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 28px 28px 34px;
+    color: #fff;
+  }
+  @media (min-width: 640px) {
+    .ri-body { padding: 40px 44px 46px; max-width: 600px; }
+  }
+
+  .ri-tag,
+  .ri-title,
+  .ri-line {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .ri-card.in-view .ri-tag { transition-delay: 0.1s; opacity: 1; transform: none; }
+  .ri-card.in-view .ri-title { transition-delay: 0.2s; opacity: 1; transform: none; }
+  .ri-card.in-view .ri-line { transition-delay: 0.32s; opacity: 1; transform: none; }
+
+  .ri-tag {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(6px);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .ri-title {
+    font-size: clamp(1.5rem, 3.2vw, 2.25rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+  }
+  .ri-line {
+    margin-top: 12px;
+    font-size: clamp(0.95rem, 1.4vw, 1.075rem);
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ri-img, .ri-coin, .ri-tag, .ri-title, .ri-line { transition: none; }
+    .ri-card { position: relative; top: auto; }
+  }
+</style>
