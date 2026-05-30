@@ -49,8 +49,9 @@ const {
       import Lenis from "lenis";
       import { gsap } from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
+      import { SplitText } from "gsap/SplitText";
 
-      gsap.registerPlugin(ScrollTrigger);
+      gsap.registerPlugin(ScrollTrigger, SplitText);
 
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -71,6 +72,24 @@ const {
               e.preventDefault();
               lenis.scrollTo(target, { offset: -64 });
             }
+          });
+        });
+
+        // Bold heading reveals (SplitText, per-word) + simple fade-ups, on the
+        // active language only. Opt-in via [data-reveal] / [data-fade].
+        const lang = document.documentElement.lang === "en" ? "en" : "id";
+        document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => {
+          const target = el.querySelector<HTMLElement>(`[data-l="${lang}"]`) || el;
+          const split = new SplitText(target, { type: "words" });
+          gsap.from(split.words, {
+            yPercent: 60, opacity: 0, duration: 0.7, stagger: 0.045, ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 85%", once: true },
+          });
+        });
+        document.querySelectorAll<HTMLElement>("[data-fade]").forEach((el) => {
+          gsap.from(el, {
+            y: 22, opacity: 0, duration: 0.7, ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 88%", once: true },
           });
         });
 

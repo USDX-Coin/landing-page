@@ -14,15 +14,15 @@ const stats = [
 <section id="stats" class="relative bg-white py-20 md:py-28">
   <div class="max-w-[1200px] mx-auto px-6">
     <!-- Heading -->
-    <div data-stats-head class="max-w-2xl mx-auto text-center mb-12 md:mb-16">
-      <div class="flex items-center justify-center gap-3 mb-4">
+    <div class="max-w-2xl mx-auto text-center mb-12 md:mb-16">
+      <div data-fade class="flex items-center justify-center gap-3 mb-4">
         <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
         <span class="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.stats.eyebrow} /></span>
       </div>
-      <h2 class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight">
+      <h2 data-reveal class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight">
         <T t={ui.stats.heading} />
       </h2>
-      <p class="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed">
+      <p data-fade class="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed">
         <T t={ui.stats.sub} />
       </p>
     </div>
@@ -55,11 +55,7 @@ const stats = [
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduced) {
-    gsap.from("[data-stats-head]", {
-      y: 28, opacity: 0, duration: 0.8, ease: "power3.out",
-      scrollTrigger: { trigger: "[data-stats-head]", start: "top 82%" },
-    });
-
+    // Heading + eyebrow + sub reveal handled globally via [data-reveal]/[data-fade].
     gsap.from("[data-stat-item]", {
       y: 24, opacity: 0, duration: 0.7, stagger: 0.1, ease: "power3.out",
       scrollTrigger: { trigger: "#stats", start: "top 75%" },
