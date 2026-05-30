@@ -93,6 +93,15 @@ const {
           });
         });
 
+        // CSS-driven reveals: add `.in-view` when the element enters (reliable
+        // even after pinned sections, where component-local triggers can go stale).
+        document.querySelectorAll<HTMLElement>("[data-inview]").forEach((el) => {
+          ScrollTrigger.create({
+            trigger: el, start: "top 85%", once: true,
+            onEnter: () => el.classList.add("in-view"),
+          });
+        });
+
         // Reveal for legacy .animate-on-scroll sections (untouched components)
         const observer = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
@@ -105,6 +114,7 @@ const {
         document.querySelectorAll(".animate-on-scroll").forEach((el) => observer.observe(el));
       } else {
         document.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("visible"));
+        document.querySelectorAll("[data-inview]").forEach((el) => el.classList.add("in-view"));
       }
     </script>
   </body>
