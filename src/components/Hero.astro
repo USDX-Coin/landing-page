@@ -97,16 +97,24 @@ import HeroGlobe from "./HeroGlobe.tsx";
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { SplitText } from "gsap/SplitText";
 
-  gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger, SplitText);
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduced) {
     const ease = "power3.out";
 
+    // Split the active-language headline into characters for a bold, editorial reveal.
+    const lang = document.documentElement.lang === "en" ? "en" : "id";
+    const chars: Element[] = [];
+    gsap.utils.toArray<HTMLElement>(`#hero h1 [data-l="${lang}"] [data-hero-line]`).forEach((line) => {
+      chars.push(...new SplitText(line, { type: "words,chars" }).chars);
+    });
+
     const tl = gsap.timeline({ defaults: { ease } });
     tl.from("[data-hero-el]", { y: 24, opacity: 0, duration: 0.7, stagger: 0.12 }, 0.1)
-      .from("[data-hero-line]", { yPercent: 110, opacity: 0, duration: 0.8, stagger: 0.1 }, 0)
+      .from(chars, { yPercent: 70, opacity: 0, duration: 0.7, stagger: 0.018 }, 0)
       .from("[data-hero-stage]", { opacity: 0, scale: 0.94, duration: 1 }, 0.25);
 
     // Scroll parallax
