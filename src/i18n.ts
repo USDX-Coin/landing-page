@@ -56,6 +56,23 @@ export const ui = {
     tbills: { id: "Obligasi 28%", en: "T-Bills 28%" },
     recentActivity: { id: "Aktivitas Terbaru", en: "Recent Activity" },
     seeAll: { id: "Lihat semua", en: "See all" },
+    globeCaption: { id: "Aliran nilai lintas batas", en: "Cross-border value flows" },
+  },
+
+  stats: {
+    eyebrow: { id: "USDX dalam angka", en: "USDX by the numbers" },
+    heading: {
+      id: "Dolar digital yang dibangun untuk dunia nyata",
+      en: "A digital dollar built for the real world",
+    },
+    sub: {
+      id: "Stabil, transparan, dan murah — dirancang agar nilai bisa berpindah ke mana saja, untuk siapa saja.",
+      en: "Stable, transparent, and low-cost — built so value can move anywhere, for anyone.",
+    },
+    s1Label: { id: "Dijamin cadangan kas & US Treasury", en: "Backed by cash & US Treasury reserves" },
+    s2Label: { id: "Blockchain didukung", en: "Blockchains supported" },
+    s3Label: { id: "Biaya rata-rata per transfer", en: "Average fee per transfer" },
+    s4Label: { id: "Hari aktif, tanpa henti", en: "Active days, non-stop" },
   },
 
   features: {
