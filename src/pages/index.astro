@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero.astro";
+import Stats from "../components/Stats.astro";
 import Features from "../components/Features.astro";
 import Ecosystem from "../components/Ecosystem.astro";
 import Faq from "../components/Faq";
@@ -11,6 +12,7 @@ import Footer from "../components/Footer.astro";
   <div class="min-h-screen bg-white">
     <Navbar client:load />
     <Hero />
+    <Stats />
     <Features />
     <Ecosystem />
     <Faq client:visible />
