@@ -34,6 +34,8 @@ const cards = [
               <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths[c.icon]} />
               </svg>
+              <!-- impact ripple when the coin lands -->
+              <span class="em-ripple absolute inset-0 rounded-2xl" aria-hidden="true"></span>
               <!-- USDX coin that drops in and lands on the icon -->
               <img class="em-coin absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full ring-2 ring-white shadow-md" src="/image/Logo.svg" alt="" />
             </div>
@@ -48,47 +50,65 @@ const cards = [
 </section>
 
 <style>
+  /* Per-card delay so each coin drop is felt in sequence (desktop row enters together) */
+  [data-em-card] { --d: 0.15s; }
+  [data-em-card]:nth-child(2) { --d: 0.5s; }
+  [data-em-card]:nth-child(3) { --d: 0.85s; }
+
   [data-em-card] {
-    transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.5s ease, border-color 0.5s ease;
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.6s ease, border-color 0.6s ease;
   }
   [data-em-card] [data-em-icon] {
-    transition: background-color 0.45s ease, transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition: background-color 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
-  [data-em-card] [data-em-icon] svg {
-    transition: color 0.4s ease;
-  }
-  .em-coin {
+  [data-em-card] [data-em-icon] svg { transition: color 0.45s ease; }
+
+  .em-coin { opacity: 0; transform: translateY(-90px) scale(0.3) rotate(-15deg); }
+  .em-ripple {
     opacity: 0;
-    transform: translateY(-38px) scale(0.4) rotate(-12deg);
-    transition: opacity 0.35s ease, transform 0.6s cubic-bezier(0.2, 1.55, 0.35, 1);
+    border: 2px solid #1eaed5;
+    transform: scale(0.7);
   }
 
+  /* Coin lands (~0.62s into the drop); icon + lift + ripple react on impact */
+  [data-em-card].in-view .em-coin {
+    animation: em-coin-drop 1.05s cubic-bezier(0.3, 0.85, 0.35, 1) var(--d) both;
+  }
+  [data-em-card].in-view .em-ripple {
+    animation: em-ripple 0.75s ease-out calc(var(--d) + 0.6s) both;
+  }
   [data-em-card].in-view {
     transform: translateY(-6px);
     border-color: rgba(30, 174, 213, 0.32);
     box-shadow: 0 24px 50px -18px rgba(30, 174, 213, 0.28);
+    transition-delay: calc(var(--d) + 0.45s);
   }
   [data-em-card].in-view [data-em-icon] {
     background-color: #1eaed5;
     transform: scale(1.06);
+    transition-delay: calc(var(--d) + 0.5s);
   }
   [data-em-card].in-view [data-em-icon] svg {
     color: #fff;
-  }
-  [data-em-card].in-view .em-coin {
-    opacity: 1;
-    transform: translateY(0) scale(1) rotate(0deg);
+    transition-delay: calc(var(--d) + 0.5s);
   }
 
-  /* Stagger the cascade when the row enters together (desktop) */
-  [data-em-card]:nth-child(2) .em-coin,
-  [data-em-card]:nth-child(2) [data-em-icon],
-  [data-em-card]:nth-child(2).in-view { transition-delay: 0.12s; }
-  [data-em-card]:nth-child(3) .em-coin,
-  [data-em-card]:nth-child(3) [data-em-icon],
-  [data-em-card]:nth-child(3).in-view { transition-delay: 0.24s; }
+  @keyframes em-coin-drop {
+    0% { opacity: 0; transform: translateY(-90px) scale(0.3) rotate(-15deg); }
+    35% { opacity: 1; }
+    62% { transform: translateY(8px) scale(1.14) rotate(4deg); } /* impact + overshoot */
+    78% { transform: translateY(-3px) scale(0.96) rotate(-2deg); }
+    90% { transform: translateY(1px) scale(1.02) rotate(1deg); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  }
+  @keyframes em-ripple {
+    0% { opacity: 0.55; transform: scale(0.7); }
+    100% { opacity: 0; transform: scale(1.7); }
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    [data-em-card], [data-em-card] [data-em-icon], .em-coin { transition: none; }
+    [data-em-card], [data-em-card] [data-em-icon] { transition: none; }
+    [data-em-card].in-view .em-coin { animation: none; opacity: 1; transform: none; }
+    [data-em-card].in-view .em-ripple { animation: none; }
   }
 </style>
