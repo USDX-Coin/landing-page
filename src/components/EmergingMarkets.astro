@@ -8,14 +8,11 @@ const cards = [
   { icon: "shield" as const, title: ui.emerging.c2Title, desc: ui.emerging.c2Desc },
   { icon: "zap" as const, title: ui.emerging.c3Title, desc: ui.emerging.c3Desc },
 ];
-
-// Gentle left→right flow curve shared by the static track and the drawn line.
-const FLOW = "M0,120 C220,40 420,40 600,100 S980,160 1200,56";
 ---
 <section id="emerging" class="relative bg-white py-20 md:py-28 overflow-hidden">
   <div class="max-w-[1200px] mx-auto px-6">
     <!-- Heading -->
-    <div class="max-w-2xl mx-auto text-center mb-10 md:mb-14">
+    <div class="max-w-2xl mx-auto text-center mb-12 md:mb-16">
       <div data-fade class="flex items-center justify-center gap-3 mb-4">
         <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
         <span class="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.emerging.eyebrow} /></span>
@@ -28,37 +25,66 @@ const FLOW = "M0,120 C220,40 420,40 600,100 S980,160 1200,56";
       </p>
     </div>
 
-    <!-- Animated value-flow line: a USDX coin draws a path across the world -->
-    <div class="relative mb-4 md:mb-2" aria-hidden="true">
-      <svg class="w-full h-[120px] md:h-[150px]" viewBox="0 0 1200 160" fill="none" preserveAspectRatio="xMidYMid meet">
-        <!-- faint static track -->
-        <path d={FLOW} stroke="#1eaed5" stroke-opacity="0.14" stroke-width="2" stroke-linecap="round" />
-        <!-- drawn line -->
-        <path data-flow-path d={FLOW} stroke="#1eaed5" stroke-width="2.5" stroke-linecap="round" />
-        <!-- travelling USDX coin -->
-        <image data-flow-coin href="/image/Logo.svg" width="36" height="36" opacity="0" />
+    <!-- Value-delivery track: a USDX coin travels card→card; each card activates on arrival -->
+    <div data-em-track class="relative">
+      <!-- connector + travelling coin overlay (drawn through measured icon centres) -->
+      <svg data-em-svg class="absolute inset-0 w-full h-full pointer-events-none z-20" fill="none" preserveAspectRatio="none" aria-hidden="true">
+        <path data-em-track-path stroke="#1eaed5" stroke-opacity="0.16" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path data-em-draw-path stroke="#1eaed5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+        <image data-em-coin href="/image/Logo.svg" width="38" height="38" opacity="0" />
       </svg>
-    </div>
 
-    <!-- Value cards -->
-    <div id="emerging-cards" class="grid md:grid-cols-3 gap-5 sm:gap-6">
-      {cards.map((c, i) => (
-        <article data-fade class="relative rounded-3xl border border-gray-100 bg-white p-7 sm:p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
-          <div class="flex items-center justify-between">
-            <div class="w-14 h-14 rounded-2xl bg-primary-light flex items-center justify-center">
-              <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths[c.icon]} />
-              </svg>
+      <div class="grid md:grid-cols-3 gap-5 sm:gap-6">
+        {cards.map((c, i) => (
+          <article data-em-card class="relative rounded-3xl border border-gray-100 bg-white p-7 sm:p-8">
+            <div class="flex items-center justify-between">
+              <div data-em-icon class="relative w-14 h-14 rounded-2xl bg-primary-light flex items-center justify-center">
+                <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths[c.icon]} />
+                </svg>
+                <!-- mini USDX coin that "lands" on arrival -->
+                <img data-em-badge src="/image/Logo.svg" alt="" class="absolute -top-2 -right-2 w-6 h-6 rounded-full ring-2 ring-white shadow" />
+              </div>
+              <span class="text-sm font-semibold text-primary/50 tracking-widest">0{i + 1}</span>
             </div>
-            <span class="text-sm font-semibold text-primary/50 tracking-widest">0{i + 1}</span>
-          </div>
-          <h3 class="mt-5 text-lg font-semibold text-dark"><T t={c.title} /></h3>
-          <p class="mt-2.5 text-gray-600 leading-relaxed text-sm"><T t={c.desc} /></p>
-        </article>
-      ))}
+            <h3 class="mt-5 text-lg font-semibold text-dark"><T t={c.title} /></h3>
+            <p class="mt-2.5 text-gray-600 leading-relaxed text-sm"><T t={c.desc} /></p>
+          </article>
+        ))}
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  [data-em-card] {
+    transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.45s ease, border-color 0.45s ease;
+  }
+  [data-em-card].em-active {
+    transform: translateY(-10px);
+    border-color: rgba(30, 174, 213, 0.4);
+    box-shadow: 0 24px 50px -16px rgba(30, 174, 213, 0.3);
+  }
+  [data-em-icon] {
+    transition: background-color 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  [data-em-card].em-active [data-em-icon] {
+    background-color: #1eaed5;
+    transform: scale(1.08);
+  }
+  [data-em-card].em-active [data-em-icon] svg {
+    color: #fff;
+  }
+  [data-em-badge] {
+    opacity: 0;
+    transform: scale(0.3);
+    transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.2, 1.5, 0.4, 1);
+  }
+  [data-em-card].em-active [data-em-badge] {
+    opacity: 1;
+    transform: scale(1);
+  }
+</style>
 
 <script>
   import { gsap } from "gsap";
@@ -69,24 +95,73 @@ const FLOW = "M0,120 C220,40 420,40 600,100 S980,160 1200,56";
   gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin, MotionPathPlugin);
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!reduced) {
-    // Card reveal handled globally via [data-fade] (reliable after the pinned
-    // Features section, which can leave component-local triggers with stale positions).
 
-    // Draw the flow line + ride a USDX coin along it, scrubbed on scroll
-    const path = document.querySelector<SVGPathElement>("[data-flow-path]");
-    const coin = document.querySelector<SVGImageElement>("[data-flow-coin]");
-    if (path && coin) {
-      gsap.set(path, { drawSVG: "0%" });
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: "#emerging", start: "top 72%", end: "center 55%", scrub: 0.8 },
+  const track = document.querySelector<HTMLElement>("[data-em-track]");
+  const svg = document.querySelector<SVGSVGElement>("[data-em-svg]");
+  const trackPath = document.querySelector<SVGPathElement>("[data-em-track-path]");
+  const drawPath = document.querySelector<SVGPathElement>("[data-em-draw-path]");
+  const coin = document.querySelector<SVGImageElement>("[data-em-coin]");
+  const cards = Array.from(document.querySelectorAll<HTMLElement>("[data-em-card]"));
+
+  if (track && svg && trackPath && drawPath && coin && cards.length) {
+    if (reduced) {
+      cards.forEach((c) => c.classList.add("em-active"));
+    } else {
+      const icons = cards.map((c) => c.querySelector<HTMLElement>("[data-em-icon]")!);
+      let tl: gsap.core.Timeline | null = null;
+
+      const build = () => {
+        const tr = track.getBoundingClientRect();
+        if (!tr.width || !tr.height) return;
+        svg.setAttribute("viewBox", `0 0 ${tr.width} ${tr.height}`);
+
+        const pts = icons.map((ic) => {
+          const r = ic.getBoundingClientRect();
+          return [r.left - tr.left + r.width / 2, r.top - tr.top + r.height / 2];
+        });
+        const d = `M ${pts[0][0]} ${pts[0][1]} L ${pts[1][0]} ${pts[1][1]} L ${pts[2][0]} ${pts[2][1]}`;
+        trackPath.setAttribute("d", d);
+        drawPath.setAttribute("d", d);
+
+        const len01 = Math.hypot(pts[1][0] - pts[0][0], pts[1][1] - pts[0][1]);
+        const len12 = Math.hypot(pts[2][0] - pts[1][0], pts[2][1] - pts[1][1]);
+        const total = len01 + len12 || 1;
+        const thr = [0.02, len01 / total, 0.97];
+
+        tl?.scrollTrigger?.kill();
+        tl?.kill();
+        gsap.set(drawPath, { drawSVG: "0%" });
+        gsap.set(coin, { opacity: 0 });
+
+        tl = gsap.timeline({
+          defaults: { ease: "none" },
+          scrollTrigger: {
+            trigger: "#emerging",
+            start: "top 62%",
+            end: "center 52%",
+            scrub: 0.8,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const p = self.progress;
+              coin.style.opacity = p > 0.005 ? "1" : "0";
+              cards.forEach((c, i) => c.classList.toggle("em-active", p >= thr[i]));
+            },
+          },
+        });
+        tl.to(drawPath, { drawSVG: "100%" }, 0).to(
+          coin,
+          { motionPath: { path: drawPath, alignOrigin: [0.5, 0.5] } },
+          0,
+        );
+      };
+
+      build();
+      let t: ReturnType<typeof setTimeout> | null = null;
+      const ro = new ResizeObserver(() => {
+        if (t) clearTimeout(t);
+        t = setTimeout(build, 150);
       });
-      tl.to(coin, { opacity: 1, duration: 0.05 }, 0)
-        .to(path, { drawSVG: "100%", ease: "none" }, 0)
-        .to(coin, {
-          ease: "none",
-          motionPath: { path, alignOrigin: [0.5, 0.5] },
-        }, 0);
+      ro.observe(track);
     }
   }
 </script>
