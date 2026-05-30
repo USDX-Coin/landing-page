@@ -56,6 +56,80 @@ export const ui = {
     tbills: { id: "Obligasi 28%", en: "T-Bills 28%" },
     recentActivity: { id: "Aktivitas Terbaru", en: "Recent Activity" },
     seeAll: { id: "Lihat semua", en: "See all" },
+    globeCaption: { id: "Aliran nilai lintas batas", en: "Cross-border value flows" },
+  },
+
+  stats: {
+    eyebrow: { id: "USDX dalam angka", en: "USDX by the numbers" },
+    heading: {
+      id: "Dolar digital yang dibangun untuk dunia nyata",
+      en: "A digital dollar built for the real world",
+    },
+    sub: {
+      id: "Stabil, transparan, dan murah — dirancang agar nilai bisa berpindah ke mana saja, untuk siapa saja.",
+      en: "Stable, transparent, and low-cost — built so value can move anywhere, for anyone.",
+    },
+    s1Label: { id: "Dijamin cadangan kas & US Treasury", en: "Backed by cash & US Treasury reserves" },
+    s2Label: { id: "Blockchain didukung", en: "Blockchains supported" },
+    s3Label: { id: "Biaya rata-rata per transfer", en: "Average fee per transfer" },
+    s4Label: { id: "Hari aktif, tanpa henti", en: "Active days, non-stop" },
+  },
+
+  emerging: {
+    eyebrow: { id: "Untuk pasar berkembang", en: "For emerging markets" },
+    heading: {
+      id: "Dolar yang akhirnya bisa diakses semua orang",
+      en: "A dollar everyone can finally access",
+    },
+    sub: {
+      id: "USDX dibangun untuk tempat yang paling membutuhkan dolar stabil — akses, simpan, dan kirim lintas batas tanpa hambatan.",
+      en: "USDX is built for the places that need a stable dollar most — access it, hold it, and move it across borders without friction.",
+    },
+    c1Title: { id: "Akses dolar tanpa batas", en: "Borderless dollar access" },
+    c1Desc: {
+      id: "Pegang dan transaksikan dolar digital cukup dengan dompet dan koneksi internet — tanpa perlu rekening bank AS.",
+      en: "Hold and spend digital dollars with just a wallet and an internet connection — no US bank account needed.",
+    },
+    c2Title: { id: "Lindung nilai dari inflasi", en: "Hedge against inflation" },
+    c2Desc: {
+      id: "Jaga nilai tabungan dari pelemahan mata uang lokal dengan aset yang dipatok 1:1 ke dolar AS.",
+      en: "Protect your savings from local-currency depreciation with an asset pegged 1:1 to the US dollar.",
+    },
+    c3Title: { id: "Kirim dalam hitungan detik", en: "Send in seconds" },
+    c3Desc: {
+      id: "Remitansi dan pembayaran lintas negara selesai dalam hitungan detik dengan biaya nyaris nol.",
+      en: "Cross-border remittance and payments settle in seconds at near-zero cost.",
+    },
+  },
+
+  realimpact: {
+    eyebrow: { id: "Dampak nyata", en: "Real impact" },
+    heading: {
+      id: "Dolar stabil, di tangan yang paling membutuhkan",
+      en: "Stable dollars, in the hands that need them most",
+    },
+    sub: {
+      id: "Bukan sekadar teknologi — USDX mengubah cara orang menyimpan, mengirim, dan melindungi nilai.",
+      en: "Not just technology — USDX changes how people save, send, and protect value.",
+    },
+    s1Tag: { id: "Akses", en: "Access" },
+    s1Title: { id: "Bank di dalam genggaman", en: "A bank in your pocket" },
+    s1Line: {
+      id: "Cukup HP dan koneksi internet untuk mengakses dolar digital — tanpa rekening bank tradisional.",
+      en: "Just a phone and an internet connection to access digital dollars — no traditional bank account.",
+    },
+    s2Tag: { id: "Lindung nilai", en: "Hedge" },
+    s2Title: { id: "Tabungan yang tak tergerus inflasi", en: "Savings inflation can't erode" },
+    s2Line: {
+      id: "Pedagang dan keluarga menyimpan nilai dalam dolar stabil, meski mata uang lokal melemah.",
+      en: "Vendors and families hold their value in stable dollars, even as the local currency slips.",
+    },
+    s3Tag: { id: "Remitansi", en: "Remittance" },
+    s3Title: { id: "Kirim ke keluarga, sampai seketika", en: "Send home, arrives instantly" },
+    s3Line: {
+      id: "Remitansi lintas negara dalam hitungan detik — bukan berhari-hari — dengan biaya nyaris nol.",
+      en: "Cross-border remittance in seconds — not days — at near-zero cost.",
+    },
   },
 
   features: {

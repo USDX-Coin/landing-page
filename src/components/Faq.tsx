@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { gsap } from "gsap";
 import { faqItems } from "../data/faq";
 import { iconPaths } from "../data/icons";
 import { chains } from "../data/chains";
@@ -11,19 +12,33 @@ export default function Faq() {
   const toggle = (index: number) =>
     setOpenIndex((prev) => (prev === index ? null : index));
 
+  // Cinematic entrance — runs on hydration, which (client:visible) lands right
+  // as the section scrolls into view.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = gsap.context(() => {
+      gsap.from("[data-faq-head] > *", { y: 24, opacity: 0, duration: 0.7, stagger: 0.1, ease: "power3.out" });
+      gsap.from("[data-faq-item]", { y: 22, opacity: 0, duration: 0.6, stagger: 0.08, delay: 0.15, ease: "power3.out" });
+    }, rootRef);
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section id="faq" className="py-24 md:py-32 px-6 bg-white">
-      <div className="max-w-[960px] mx-auto">
-        <div className="flex items-center gap-3 mb-4">
-          <span className="w-2.5 h-2.5 rounded-full bg-primary" />
-          <span className="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.faq.eyebrow} /></span>
+      <div ref={rootRef} className="max-w-[960px] mx-auto">
+        <div data-faq-head>
+          <div className="flex items-center gap-3 mb-4">
+            <span className="w-2.5 h-2.5 rounded-full bg-primary" />
+            <span className="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.faq.eyebrow} /></span>
+          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight mb-3">
+            <T t={ui.faq.heading} />
+          </h2>
+          <p className="text-gray-600 text-base sm:text-lg mb-12 max-w-xl">
+            <T t={ui.faq.sub} />
+          </p>
         </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight mb-3">
-          <T t={ui.faq.heading} />
-        </h2>
-        <p className="text-gray-600 text-base sm:text-lg mb-12 max-w-xl">
-          <T t={ui.faq.sub} />
-        </p>
 
         <div className="flex flex-col gap-3">
           {faqItems.map((item, index) => {
@@ -31,6 +46,7 @@ export default function Faq() {
             return (
               <div
                 key={index}
+                data-faq-item
                 className={`rounded-2xl border overflow-hidden transition-colors duration-300 ${
                   isOpen
                     ? "border-primary/30 bg-gradient-to-br from-primary-light/40 to-white"

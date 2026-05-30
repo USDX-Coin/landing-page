@@ -1,0 +1,114 @@
+---
+import { ui } from "../i18n";
+import { iconPaths } from "../data/icons";
+import T from "./T.astro";
+
+const cards = [
+  { icon: "globe" as const, title: ui.emerging.c1Title, desc: ui.emerging.c1Desc },
+  { icon: "shield" as const, title: ui.emerging.c2Title, desc: ui.emerging.c2Desc },
+  { icon: "zap" as const, title: ui.emerging.c3Title, desc: ui.emerging.c3Desc },
+];
+---
+<section id="emerging" class="relative bg-white py-20 md:py-28 overflow-hidden">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <!-- Heading -->
+    <div class="max-w-2xl mx-auto text-center mb-12 md:mb-16">
+      <div data-fade class="flex items-center justify-center gap-3 mb-4">
+        <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+        <span class="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.emerging.eyebrow} /></span>
+      </div>
+      <h2 data-reveal class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight">
+        <T t={ui.emerging.heading} />
+      </h2>
+      <p data-fade class="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed">
+        <T t={ui.emerging.sub} />
+      </p>
+    </div>
+
+    <!-- Value cards: a USDX coin drops into each card as it enters -->
+    <div class="grid md:grid-cols-3 gap-5 sm:gap-6">
+      {cards.map((c, i) => (
+        <article data-em-card data-inview class="relative rounded-3xl border border-gray-100 bg-white p-7 sm:p-8">
+          <div class="flex items-center justify-between">
+            <div data-em-icon class="relative w-14 h-14 rounded-2xl bg-primary-light flex items-center justify-center">
+              <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths[c.icon]} />
+              </svg>
+              <!-- impact ripple when the coin lands -->
+              <span class="em-ripple absolute inset-0 rounded-2xl" aria-hidden="true"></span>
+              <!-- USDX coin that drops in and lands on the icon -->
+              <img class="em-coin absolute -top-2.5 -right-2.5 w-7 h-7 rounded-full ring-2 ring-white shadow-md" src="/image/Logo.svg" alt="" />
+            </div>
+            <span class="text-sm font-semibold text-primary/50 tracking-widest">0{i + 1}</span>
+          </div>
+          <h3 class="mt-5 text-lg font-semibold text-dark"><T t={c.title} /></h3>
+          <p class="mt-2.5 text-gray-600 leading-relaxed text-sm"><T t={c.desc} /></p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Per-card delay so each coin drop is felt in sequence (desktop row enters together) */
+  [data-em-card] { --d: 0.15s; }
+  [data-em-card]:nth-child(2) { --d: 0.5s; }
+  [data-em-card]:nth-child(3) { --d: 0.85s; }
+
+  [data-em-card] {
+    transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.6s ease, border-color 0.6s ease;
+  }
+  [data-em-card] [data-em-icon] {
+    transition: background-color 0.5s ease, transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  [data-em-card] [data-em-icon] svg { transition: color 0.45s ease; }
+
+  .em-coin { opacity: 0; transform: translateY(-90px) scale(0.3) rotate(-15deg); }
+  .em-ripple {
+    opacity: 0;
+    border: 2px solid #1eaed5;
+    transform: scale(0.7);
+  }
+
+  /* Coin lands (~0.62s into the drop); icon + lift + ripple react on impact */
+  [data-em-card].in-view .em-coin {
+    animation: em-coin-drop 1.05s cubic-bezier(0.3, 0.85, 0.35, 1) var(--d) both;
+  }
+  [data-em-card].in-view .em-ripple {
+    animation: em-ripple 0.75s ease-out calc(var(--d) + 0.6s) both;
+  }
+  [data-em-card].in-view {
+    transform: translateY(-6px);
+    border-color: rgba(30, 174, 213, 0.32);
+    box-shadow: 0 24px 50px -18px rgba(30, 174, 213, 0.28);
+    transition-delay: calc(var(--d) + 0.45s);
+  }
+  [data-em-card].in-view [data-em-icon] {
+    background-color: #1eaed5;
+    transform: scale(1.06);
+    transition-delay: calc(var(--d) + 0.5s);
+  }
+  [data-em-card].in-view [data-em-icon] svg {
+    color: #fff;
+    transition-delay: calc(var(--d) + 0.5s);
+  }
+
+  @keyframes em-coin-drop {
+    0% { opacity: 0; transform: translateY(-90px) scale(0.3) rotate(-15deg); }
+    35% { opacity: 1; }
+    62% { transform: translateY(8px) scale(1.14) rotate(4deg); } /* impact + overshoot */
+    78% { transform: translateY(-3px) scale(0.96) rotate(-2deg); }
+    90% { transform: translateY(1px) scale(1.02) rotate(1deg); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+  }
+  @keyframes em-ripple {
+    0% { opacity: 0.55; transform: scale(0.7); }
+    100% { opacity: 0; transform: scale(1.7); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-em-card], [data-em-card] [data-em-icon] { transition: none; }
+    [data-em-card].in-view .em-coin { animation: none; opacity: 1; transform: none; }
+    [data-em-card].in-view .em-ripple { animation: none; }
+  }
+</style>

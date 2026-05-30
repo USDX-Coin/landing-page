@@ -49,8 +49,9 @@ const {
       import Lenis from "lenis";
       import { gsap } from "gsap";
       import { ScrollTrigger } from "gsap/ScrollTrigger";
+      import { SplitText } from "gsap/SplitText";
 
-      gsap.registerPlugin(ScrollTrigger);
+      gsap.registerPlugin(ScrollTrigger, SplitText);
 
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -74,6 +75,33 @@ const {
           });
         });
 
+        // Bold heading reveals (SplitText, per-word) + simple fade-ups, on the
+        // active language only. Opt-in via [data-reveal] / [data-fade].
+        const lang = document.documentElement.lang === "en" ? "en" : "id";
+        document.querySelectorAll<HTMLElement>("[data-reveal]").forEach((el) => {
+          const target = el.querySelector<HTMLElement>(`[data-l="${lang}"]`) || el;
+          const split = new SplitText(target, { type: "words" });
+          gsap.from(split.words, {
+            yPercent: 60, opacity: 0, duration: 0.7, stagger: 0.045, ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 85%", once: true },
+          });
+        });
+        document.querySelectorAll<HTMLElement>("[data-fade]").forEach((el) => {
+          gsap.from(el, {
+            y: 22, opacity: 0, duration: 0.7, ease: "power3.out",
+            scrollTrigger: { trigger: el, start: "top 88%", once: true },
+          });
+        });
+
+        // CSS-driven reveals: add `.in-view` when the element enters (reliable
+        // even after pinned sections, where component-local triggers can go stale).
+        document.querySelectorAll<HTMLElement>("[data-inview]").forEach((el) => {
+          ScrollTrigger.create({
+            trigger: el, start: "top 85%", once: true,
+            onEnter: () => el.classList.add("in-view"),
+          });
+        });
+
         // Reveal for legacy .animate-on-scroll sections (untouched components)
         const observer = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
@@ -86,6 +114,7 @@ const {
         document.querySelectorAll(".animate-on-scroll").forEach((el) => observer.observe(el));
       } else {
         document.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("visible"));
+        document.querySelectorAll("[data-inview]").forEach((el) => el.classList.add("in-view"));
       }
     </script>
   </body>
