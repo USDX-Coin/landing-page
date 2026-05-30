@@ -75,6 +75,33 @@ export const ui = {
     s4Label: { id: "Hari aktif, tanpa henti", en: "Active days, non-stop" },
   },
 
+  emerging: {
+    eyebrow: { id: "Untuk pasar berkembang", en: "For emerging markets" },
+    heading: {
+      id: "Dolar yang akhirnya bisa diakses semua orang",
+      en: "A dollar everyone can finally access",
+    },
+    sub: {
+      id: "USDX dibangun untuk tempat yang paling membutuhkan dolar stabil — akses, simpan, dan kirim lintas batas tanpa hambatan.",
+      en: "USDX is built for the places that need a stable dollar most — access it, hold it, and move it across borders without friction.",
+    },
+    c1Title: { id: "Akses dolar tanpa batas", en: "Borderless dollar access" },
+    c1Desc: {
+      id: "Pegang dan transaksikan dolar digital cukup dengan dompet dan koneksi internet — tanpa perlu rekening bank AS.",
+      en: "Hold and spend digital dollars with just a wallet and an internet connection — no US bank account needed.",
+    },
+    c2Title: { id: "Lindung nilai dari inflasi", en: "Hedge against inflation" },
+    c2Desc: {
+      id: "Jaga nilai tabungan dari pelemahan mata uang lokal dengan aset yang dipatok 1:1 ke dolar AS.",
+      en: "Protect your savings from local-currency depreciation with an asset pegged 1:1 to the US dollar.",
+    },
+    c3Title: { id: "Kirim dalam hitungan detik", en: "Send in seconds" },
+    c3Desc: {
+      id: "Remitansi dan pembayaran lintas negara selesai dalam hitungan detik dengan biaya nyaris nol.",
+      en: "Cross-border remittance and payments settle in seconds at near-zero cost.",
+    },
+  },
+
   features: {
     eyebrow: { id: "Fitur", en: "Features" },
     heading: {

@@ -1,0 +1,92 @@
+---
+import { ui } from "../i18n";
+import { iconPaths } from "../data/icons";
+import T from "./T.astro";
+
+const cards = [
+  { icon: "globe" as const, title: ui.emerging.c1Title, desc: ui.emerging.c1Desc },
+  { icon: "shield" as const, title: ui.emerging.c2Title, desc: ui.emerging.c2Desc },
+  { icon: "zap" as const, title: ui.emerging.c3Title, desc: ui.emerging.c3Desc },
+];
+
+// Gentle left→right flow curve shared by the static track and the drawn line.
+const FLOW = "M0,120 C220,40 420,40 600,100 S980,160 1200,56";
+---
+<section id="emerging" class="relative bg-white py-20 md:py-28 overflow-hidden">
+  <div class="max-w-[1200px] mx-auto px-6">
+    <!-- Heading -->
+    <div class="max-w-2xl mx-auto text-center mb-10 md:mb-14">
+      <div data-fade class="flex items-center justify-center gap-3 mb-4">
+        <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+        <span class="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.emerging.eyebrow} /></span>
+      </div>
+      <h2 data-reveal class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight">
+        <T t={ui.emerging.heading} />
+      </h2>
+      <p data-fade class="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed">
+        <T t={ui.emerging.sub} />
+      </p>
+    </div>
+
+    <!-- Animated value-flow line: a USDX coin draws a path across the world -->
+    <div class="relative mb-4 md:mb-2" aria-hidden="true">
+      <svg class="w-full h-[120px] md:h-[150px]" viewBox="0 0 1200 160" fill="none" preserveAspectRatio="xMidYMid meet">
+        <!-- faint static track -->
+        <path d={FLOW} stroke="#1eaed5" stroke-opacity="0.14" stroke-width="2" stroke-linecap="round" />
+        <!-- drawn line -->
+        <path data-flow-path d={FLOW} stroke="#1eaed5" stroke-width="2.5" stroke-linecap="round" />
+        <!-- travelling USDX coin -->
+        <image data-flow-coin href="/image/Logo.svg" width="36" height="36" opacity="0" />
+      </svg>
+    </div>
+
+    <!-- Value cards -->
+    <div id="emerging-cards" class="grid md:grid-cols-3 gap-5 sm:gap-6">
+      {cards.map((c, i) => (
+        <article data-fade class="relative rounded-3xl border border-gray-100 bg-white p-7 sm:p-8 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10">
+          <div class="flex items-center justify-between">
+            <div class="w-14 h-14 rounded-2xl bg-primary-light flex items-center justify-center">
+              <svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths[c.icon]} />
+              </svg>
+            </div>
+            <span class="text-sm font-semibold text-primary/50 tracking-widest">0{i + 1}</span>
+          </div>
+          <h3 class="mt-5 text-lg font-semibold text-dark"><T t={c.title} /></h3>
+          <p class="mt-2.5 text-gray-600 leading-relaxed text-sm"><T t={c.desc} /></p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+  import { DrawSVGPlugin } from "gsap/DrawSVGPlugin";
+  import { MotionPathPlugin } from "gsap/MotionPathPlugin";
+
+  gsap.registerPlugin(ScrollTrigger, DrawSVGPlugin, MotionPathPlugin);
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduced) {
+    // Card reveal handled globally via [data-fade] (reliable after the pinned
+    // Features section, which can leave component-local triggers with stale positions).
+
+    // Draw the flow line + ride a USDX coin along it, scrubbed on scroll
+    const path = document.querySelector<SVGPathElement>("[data-flow-path]");
+    const coin = document.querySelector<SVGImageElement>("[data-flow-coin]");
+    if (path && coin) {
+      gsap.set(path, { drawSVG: "0%" });
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: "#emerging", start: "top 72%", end: "center 55%", scrub: 0.8 },
+      });
+      tl.to(coin, { opacity: 1, duration: 0.05 }, 0)
+        .to(path, { drawSVG: "100%", ease: "none" }, 0)
+        .to(coin, {
+          ease: "none",
+          motionPath: { path, alignOrigin: [0.5, 0.5] },
+        }, 0);
+    }
+  }
+</script>
