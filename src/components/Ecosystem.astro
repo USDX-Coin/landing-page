@@ -4,14 +4,21 @@ import { APP_URL } from "../data/navigation";
 import { ui } from "../i18n";
 import T from "./T.astro";
 
-// Single ring: all chains evenly spaced, orbiting clockwise. Positions are
-// percentages of the (square) stage so they scale at any size.
-const RADIUS = 0.46;
-const pos = (angle: number, r: number) => {
-  const rad = (angle * Math.PI) / 180;
-  return { left: 50 + r * 100 * Math.cos(rad), top: 50 + r * 100 * Math.sin(rad) };
-};
-const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i - 90, RADIUS) }));
+// Static layout (no orbit): 4 chains down each side, curving outward at the
+// vertical middle — positions as % of the stage so they scale. Index matches
+// the `chains` array order (Ethereum, BNB, Polygon, Arbitrum, Optimism,
+// Avalanche, Solana, Base).
+const spots = [
+  { left: 80, top: 13 }, // Ethereum  (right, top)
+  { left: 87, top: 32 }, // BNB       (right)
+  { left: 90, top: 54 }, // Polygon   (right)
+  { left: 89, top: 78 }, // Arbitrum  (right, bottom)
+  { left: 11, top: 78 }, // Optimism  (left, bottom)
+  { left: 10, top: 54 }, // Avalanche (left)
+  { left: 14, top: 32 }, // Solana    (left)
+  { left: 20, top: 13 }, // Base      (left, top)
+];
+const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
 ---
 <!-- Card 1: red orbital panel -->
 <section id="ecosystem" class="relative mx-auto w-full max-w-[1320px] rounded-[28px] overflow-hidden border border-white/[0.07]">
@@ -26,21 +33,23 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
 
   <!-- Orbital stage holds chains around the edges; content sits centered on top -->
   <div data-eco-stage class="relative mx-auto w-full aspect-[16/11] sm:aspect-[16/9] max-h-[640px]">
-      <!-- orbit ring -->
-      <div data-orbit data-dir="1" data-dur="64" class="absolute inset-[8%] sm:inset-[6%]">
+      <!-- static chain badges -->
+      <div class="absolute inset-0">
         {ring.map(({ chain, left, top }) => (
           <a
             href={chain.url}
             target="_blank"
             rel="noopener noreferrer"
             title={chain.name}
-            data-orbit-item
             class="group absolute z-20 no-underline"
             style={`left:${left}%; top:${top}%; transform: translate(-50%,-50%);`}
           >
-            <div data-counter class="relative flex items-center justify-center">
-              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#141414] border border-white/10 shadow-lg shadow-black/40 flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:border-gold/40">
-                <img src={chain.icon} alt={chain.name} class="w-7 h-7 sm:w-8 sm:h-8" loading="lazy" />
+            <div class="relative flex items-center justify-center">
+              <!-- 1px white-gradient ring around a #141414 disc (Figma spec) -->
+              <div class="w-[68px] h-[68px] sm:w-[86px] sm:h-[86px] rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-xl shadow-black/50 transition-transform duration-300 group-hover:scale-110">
+                <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
+                  <img src={chain.icon} alt={chain.name} class="w-8 h-8 sm:w-10 sm:h-10" loading="lazy" />
+                </div>
               </div>
               <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1 rounded-lg bg-black/80 text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
                 {chain.name}
@@ -123,22 +132,6 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
       y: 24, opacity: 0, duration: 0.7, ease: "power3.out",
       scrollTrigger: { trigger: "[data-eco-partners]", start: "top 88%" },
     });
-
-    // Continuous clockwise orbit + upright counter-rotation
-    const orbitTweens: gsap.core.Tween[] = [];
-    gsap.utils.toArray<HTMLElement>("[data-orbit]").forEach((orbit) => {
-      const dir = Number(orbit.dataset.dir);
-      const dur = Number(orbit.dataset.dur);
-      orbitTweens.push(gsap.to(orbit, { rotation: 360 * dir, duration: dur, ease: "none", repeat: -1 }));
-      orbit.querySelectorAll<HTMLElement>("[data-counter]").forEach((c) => {
-        orbitTweens.push(gsap.to(c, { rotation: -360 * dir, duration: dur, ease: "none", repeat: -1 }));
-      });
-    });
-
-    // Pause the orbit while inspecting a chain (easier to hover/click)
-    document.querySelectorAll<HTMLElement>("[data-orbit-item]").forEach((item) => {
-      item.addEventListener("mouseenter", () => orbitTweens.forEach((t) => t.pause()));
-      item.addEventListener("mouseleave", () => orbitTweens.forEach((t) => t.resume()));
-    });
+    // Chains are static (no orbit) — they only react to hover via CSS.
   }
 </script>
