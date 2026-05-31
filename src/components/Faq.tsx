@@ -16,8 +16,8 @@ export default function Faq() {
         {/* Left: heading + CTA */}
         <div className="lg:pt-4">
           <span
-            className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full text-white text-sm font-semibold shadow-md shadow-black/30 border border-white/10"
-            style={{ backgroundImage: "linear-gradient(to left,#620000 0%,#EFB74F 40%)" }}
+            className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full text-white text-sm font-semibold shadow-md shadow-black/30"
+            style={{ backgroundImage: "linear-gradient(to right,#EFB74F 40%,rgba(98,0,0,0) 100%)" }}
           >
             <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#F8DD93] to-[#E0A93C] flex items-center justify-center text-[#5a0f0f] shrink-0">
               <span className="text-[13px] font-bold leading-none">?</span>
