@@ -15,10 +15,14 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
 ---
 <!-- Card 1: red orbital panel -->
 <section id="ecosystem" class="relative mx-auto w-full max-w-[1320px] rounded-[28px] overflow-hidden border border-white/[0.07]">
-  <!-- red gradient background -->
-  <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,#7a1018,#3a0a0e_55%,#140405)]"></div>
-  <!-- dotted world map texture -->
-  <div class="absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle, #fff 1.1px, transparent 1.1px); background-size: 16px 16px; mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 35%, transparent 78%); -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 35%, transparent 78%);"></div>
+  <!-- red curved-band background -->
+  <img src="/image/eco-bg.jpg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover" />
+  <!-- dotted world map -->
+  <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+    <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="w-[74%] max-w-[840px] opacity-[0.22]" />
+  </div>
+  <!-- edge vignette to deepen corners -->
+  <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_62%_62%_at_50%_50%,transparent_32%,rgba(12,4,5,0.55))]"></div>
 
   <!-- Orbital stage holds chains around the edges; content sits centered on top -->
   <div data-eco-stage class="relative mx-auto w-full aspect-[16/11] sm:aspect-[16/9] max-h-[640px]">
@@ -48,8 +52,15 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
 
       <!-- Center content -->
       <div data-eco-head class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 sm:px-12">
-        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold-light text-xs font-semibold tracking-wide uppercase backdrop-blur-sm">
-          <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+        <span class="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full bg-gradient-to-r from-gold-dark to-gold text-white text-sm font-semibold shadow-lg shadow-black/40">
+          <span class="w-5 h-5 rounded-full bg-black/35 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-gold-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M12 7.2 L6.6 15 M12 7.2 L17.4 15 M7 15.4 H17" stroke-linecap="round" />
+              <circle cx="12" cy="6" r="2.3" fill="currentColor" stroke="none" />
+              <circle cx="6" cy="16.4" r="2.3" fill="currentColor" stroke="none" />
+              <circle cx="18" cy="16.4" r="2.3" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
           <T t={ui.ecosystem.badge} />
         </span>
         <h2 class="mt-5 font-serif font-medium text-3xl sm:text-4xl lg:text-[44px] leading-[1.08] tracking-tight max-w-xl">
