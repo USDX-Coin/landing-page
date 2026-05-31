@@ -136,12 +136,7 @@ export default function Navbar() {
         scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      {/* Top utility bar: language (desktop) */}
-      <div className="hidden lg:flex max-w-[1440px] mx-auto px-[76px] h-10 items-center justify-end border-b border-white/10">
-        <LangDropdown current={lang} onChange={changeLang} />
-      </div>
-
-      {/* Main nav */}
+      {/* Main nav (single row; language lives here, not a separate top bar) */}
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-[76px] h-[72px] flex items-center justify-between border-b border-white/10">
         {/* Logo */}
         <a href="#hero" className="flex items-center gap-2.5 no-underline shrink-0">
@@ -149,8 +144,8 @@ export default function Navbar() {
           <span className="font-bold text-xl tracking-tight text-gold-light">USDX</span>
         </a>
 
-        {/* Desktop: nav links + CTA */}
-        <div className="hidden lg:flex items-center gap-8">
+        {/* Desktop: nav links + language + CTA */}
+        <div className="hidden lg:flex items-center gap-5">
           <div className="flex items-center gap-6">
             {navLinks.map((link) => (
               <a
@@ -162,6 +157,7 @@ export default function Navbar() {
               </a>
             ))}
           </div>
+          <LangDropdown current={lang} onChange={changeLang} />
           <a
             href={appUrl}
             target="_blank"
