@@ -20,37 +20,39 @@ const avatars = [
   { grad: "from-emerald-400 to-teal-600", top: 30, left: 38 },
 ];
 ---
-<section id="features" class="relative mx-auto w-full max-w-[1320px] rounded-[28px] border border-white/[0.07] overflow-hidden bg-[#0b0b0b]">
-  <!-- red radial glow behind the heading -->
-  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[min(900px,90%)] h-[440px] bg-primary/[0.13] blur-[120px] rounded-full pointer-events-none"></div>
+<section id="features" class="relative mx-auto w-full max-w-[1376px] rounded-2xl overflow-hidden bg-[#0f0f0f]">
+  <!-- red glow behind the heading (#B60000 ellipse) -->
+  <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[1100px] h-[360px] bg-[#b60000]/35 blur-[130px] rounded-[50%] pointer-events-none"></div>
+  <!-- faint grid pattern -->
+  <div class="absolute inset-0 opacity-[0.04]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 48px 48px;"></div>
 
-  <div class="relative px-5 sm:px-8 lg:px-12 py-14 md:py-16">
+  <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px]">
     <!-- Heading (centered) -->
-    <div data-feat-head class="text-center max-w-2xl mx-auto">
-      <span class="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full text-white text-sm font-semibold shadow-md shadow-black/30" style="background-image:linear-gradient(to right,#EFB74F 40%,rgba(98,0,0,0) 100%)">
-        <span class="w-6 h-6 rounded-full bg-gradient-to-br from-[#F8DD93] to-[#E0A93C] flex items-center justify-center text-[#5a0f0f] shrink-0">
-          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.7 6.7L20 10l-6.3 1.3L12 18l-1.7-6.7L4 10l6.3-1.3z"/></svg>
+    <div data-feat-head class="text-center max-w-[600px] mx-auto flex flex-col items-center gap-4">
+      <span class="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
+        <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.7 6.7L20 10l-6.3 1.3L12 18l-1.7-6.7L4 10l6.3-1.3z"/></svg>
         </span>
         <T t={ui.features.eyebrow} />
       </span>
-      <h2 class="mt-6 font-serif font-medium text-4xl sm:text-5xl lg:text-[52px] leading-[1.08] tracking-tight">
-        <span class="block text-white"><T t={ui.features.heading1} /></span>
-        <span class="block text-gray-500"><T t={ui.features.heading2} /></span>
+      <h2 class="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent">
+        <span class="block"><T t={ui.features.heading1} /></span>
+        <span class="block"><T t={ui.features.heading2} /></span>
       </h2>
-      <p class="mt-5 text-gray-400 text-base sm:text-lg leading-relaxed">
+      <p class="text-zinc-400 text-base leading-[26px] max-w-[511px]">
         <T t={ui.features.sub} />
       </p>
     </div>
 
     <!-- 6-card grid -->
-    <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+    <div class="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
       {features.map((feature) => (
         <article
           data-feat-card
-          class="group relative rounded-2xl border border-white/[0.08] bg-[#121212] overflow-hidden transition-all duration-300 hover:border-white/20 hover:-translate-y-1"
+          class="group relative rounded-2xl border border-white/[0.06] bg-[#141414] overflow-hidden transition-all duration-300 hover:border-white/15 hover:-translate-y-1"
         >
           <!-- Visual panel -->
-          <div class="relative h-48 overflow-hidden border-b border-white/[0.06] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent_70%)]">
+          <div class="relative h-60 overflow-hidden border-b border-white/[0.06] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent_70%)]">
             <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 20px 20px;"></div>
 
             {feature.icon === "shield" && (
@@ -155,9 +157,9 @@ const avatars = [
           </div>
 
           <!-- Text -->
-          <div class="p-6">
-            <h3 class="text-lg font-semibold text-white mb-2"><T t={feature.title} /></h3>
-            <p class="text-gray-400 leading-relaxed text-sm"><T t={feature.description} /></p>
+          <div class="p-6 flex flex-col gap-2">
+            <h3 class="text-xl font-medium text-white"><T t={feature.title} /></h3>
+            <p class="text-zinc-400 leading-[26px] text-base"><T t={feature.description} /></p>
           </div>
         </article>
       ))}

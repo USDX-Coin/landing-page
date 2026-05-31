@@ -21,7 +21,7 @@ const spots = [
 const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
 ---
 <!-- Card 1: red orbital panel -->
-<section id="ecosystem" class="relative mx-auto w-full max-w-[1320px] rounded-[28px] overflow-hidden border border-white/[0.07]">
+<section id="ecosystem" class="relative mx-auto w-full max-w-[1376px] rounded-2xl overflow-hidden border border-white/[0.07]">
   <!-- red curved-band background -->
   <img src="/image/eco-bg.jpg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover" />
   <!-- dotted world map -->
@@ -32,7 +32,7 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
   <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_64%_64%_at_50%_50%,transparent_38%,rgba(12,4,5,0.5))]"></div>
 
   <!-- Orbital stage holds chains around the edges; content sits centered on top -->
-  <div data-eco-stage class="relative mx-auto w-full aspect-[16/11] sm:aspect-[16/9] max-h-[640px]">
+  <div data-eco-stage class="relative mx-auto w-full aspect-[16/12] sm:aspect-[1376/652]">
       <!-- static chain badges -->
       <div class="absolute inset-0">
         {ring.map(({ chain, left, top }) => (
@@ -48,7 +48,7 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
               <!-- 1px white-gradient ring around a #141414 disc (Figma spec) -->
               <div class="w-[68px] h-[68px] sm:w-[86px] sm:h-[86px] rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-xl shadow-black/50 transition-transform duration-300 group-hover:scale-110">
                 <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
-                  <img src={chain.icon} alt={chain.name} class="w-8 h-8 sm:w-10 sm:h-10" loading="lazy" />
+                  <img src={chain.icon} alt={chain.name} class="w-9 h-9 sm:w-11 sm:h-11" loading="lazy" />
                 </div>
               </div>
               <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1 rounded-lg bg-black/80 text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
@@ -61,9 +61,9 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
 
       <!-- Center content -->
       <div data-eco-head class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 sm:px-12">
-        <span class="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full text-white text-sm font-semibold shadow-md shadow-black/40" style="background-image:linear-gradient(to right,#EFB74F 40%,rgba(98,0,0,0) 100%)">
-          <span class="w-6 h-6 rounded-full bg-gradient-to-br from-[#F8DD93] to-[#E0A93C] flex items-center justify-center text-[#5a0f0f] shrink-0">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+        <span class="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
+          <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
               <path d="M12 7.2 L6.6 15 M12 7.2 L17.4 15 M7 15.4 H17" stroke-linecap="round" />
               <circle cx="12" cy="6" r="2.3" fill="currentColor" stroke="none" />
               <circle cx="6" cy="16.4" r="2.3" fill="currentColor" stroke="none" />
@@ -72,11 +72,11 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
           </span>
           <T t={ui.ecosystem.badge} />
         </span>
-        <h2 class="mt-5 font-serif font-medium text-3xl sm:text-4xl lg:text-[44px] leading-[1.08] tracking-tight max-w-xl">
-          <span class="block text-white"><T t={ui.ecosystem.heading1} /></span>
-          <span class="block text-white/55"><T t={ui.ecosystem.heading2} /></span>
+        <h2 class="mt-5 font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight max-w-2xl bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.55)_100%)] bg-clip-text text-transparent">
+          <span class="block"><T t={ui.ecosystem.heading1} /></span>
+          <span class="block"><T t={ui.ecosystem.heading2} /></span>
         </h2>
-        <p class="mt-4 text-white/70 text-sm sm:text-base max-w-md leading-relaxed">
+        <p class="mt-4 text-white text-base max-w-[511px] leading-[26px]">
           <T t={ui.ecosystem.sub} />
         </p>
         <a
@@ -84,7 +84,7 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
           data-app-link
           target="_blank"
           rel="noopener noreferrer"
-          class="mt-7 inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white text-sm font-semibold rounded-lg transition-colors no-underline shadow-lg shadow-black/30"
+          class="mt-7 inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors no-underline"
         >
           <T t={ui.cta} />
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
@@ -95,21 +95,21 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
 </section>
 
 <!-- Card 2: partner network (light-to-dark spotlight) -->
-<section data-eco-partners class="relative mx-auto w-full max-w-[1320px] rounded-[28px] overflow-hidden border border-white/[0.07] bg-[linear-gradient(180deg,#3a3a3a_0%,#1c1c1c_36%,#0b0b0b_100%)]">
-  <div class="relative px-5 sm:px-8 lg:px-12 py-12 md:py-16">
-    <h3 class="text-center font-serif font-medium text-3xl sm:text-4xl text-white tracking-tight">
+<section data-eco-partners class="relative mx-auto w-full max-w-[1376px] rounded-2xl overflow-hidden border border-white/[0.07] bg-[linear-gradient(180deg,#0f0f0f_0%,rgba(15,15,15,0)_100%)]">
+  <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-10 items-center">
+    <h3 class="text-center font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] text-white tracking-tight">
       <T t={ui.ecosystem.partners} />
     </h3>
-    <div class="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4 max-w-[900px] mx-auto">
+    <div class="flex flex-wrap justify-center gap-4 max-w-[1288px]">
       {partners.map((partner) => (
         <a
           href={partner.url}
           target="_blank"
           rel="noopener noreferrer"
-          class="flex items-center gap-2.5 px-5 py-3 rounded-xl border border-white/[0.14] bg-white/[0.05] hover:bg-white/[0.1] hover:border-white/25 transition-all no-underline backdrop-blur-sm"
+          class="flex items-center justify-center gap-3 w-full sm:w-[244px] h-20 rounded-xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] transition-all no-underline"
         >
-          <img src={partner.logo} alt={partner.name} class="w-6 h-6 object-contain flex-shrink-0" loading="lazy" />
-          <span class="text-gray-100 font-semibold text-sm whitespace-nowrap">{partner.name}</span>
+          <img src={partner.logo} alt={partner.name} class="w-7 h-7 object-contain flex-shrink-0" loading="lazy" />
+          <span class="text-white font-medium text-base whitespace-nowrap">{partner.name}</span>
         </a>
       ))}
     </div>

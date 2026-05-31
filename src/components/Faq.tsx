@@ -11,31 +11,35 @@ export default function Faq() {
     setOpenIndex((prev) => (prev === index ? null : index));
 
   return (
-    <section id="faq" className="relative mx-auto w-full max-w-[1320px] rounded-[28px] border border-white/[0.07] bg-[#0b0b0b] overflow-hidden">
-      <div className="px-5 sm:px-8 lg:px-12 py-12 md:py-16 grid lg:grid-cols-2 gap-10 lg:gap-16">
+    <section id="faq" className="relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
+      <div className="px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] grid lg:grid-cols-2 gap-8 lg:gap-4">
         {/* Left: heading + CTA */}
-        <div className="lg:pt-4">
-          <span
-            className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full text-white text-sm font-semibold shadow-md shadow-black/30"
-            style={{ backgroundImage: "linear-gradient(to right,#EFB74F 40%,rgba(98,0,0,0) 100%)" }}
-          >
-            <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#F8DD93] to-[#E0A93C] flex items-center justify-center text-[#5a0f0f] shrink-0">
-              <span className="text-[13px] font-bold leading-none">?</span>
-            </span>
-            <T t={ui.faq.eyebrow} />
-          </span>
-          <h2 className="mt-6 font-serif font-medium text-4xl sm:text-5xl lg:text-[52px] leading-[1.08] tracking-tight">
-            <span className="block text-white"><T t={ui.faq.heading1} /></span>
-            <span className="block text-gray-500"><T t={ui.faq.heading2} /></span>
-          </h2>
-          <p className="mt-5 text-gray-400 text-base leading-relaxed max-w-md">
-            <T t={ui.faq.sub} />
-          </p>
+        <div className="flex flex-col gap-10">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 items-start">
+              <span
+                className="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium"
+                style={{ backgroundImage: "linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)" }}
+              >
+                <span className="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+                  <span className="text-sm font-bold leading-none">?</span>
+                </span>
+                <T t={ui.faq.eyebrow} />
+              </span>
+              <h2 className="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent">
+                <span className="block"><T t={ui.faq.heading1} /></span>
+                <span className="block"><T t={ui.faq.heading2} /></span>
+              </h2>
+            </div>
+            <p className="text-white text-base leading-[26px] max-w-[511px]">
+              <T t={ui.faq.sub} />
+            </p>
+          </div>
           <a
             href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white text-sm font-semibold rounded-lg transition-colors no-underline shadow-lg shadow-primary/20"
+            className="inline-flex w-fit items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors no-underline"
           >
             <T t={ui.faq.contact} />
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,27 +49,29 @@ export default function Faq() {
         </div>
 
         {/* Right: accordion */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4">
           {faqItems.map((item, index) => {
             const isOpen = openIndex === index;
             return (
               <div
                 key={index}
-                className={`rounded-xl border overflow-hidden transition-colors duration-300 ${
-                  isOpen ? "border-gold/25 bg-[#161310]" : "border-white/[0.08] bg-[#121212] hover:border-white/15"
+                className={`rounded-[9px] overflow-hidden transition-colors duration-300 ${
+                  isOpen ? "bg-[#1b1b1b]" : "bg-black border border-white/[0.06]"
                 }`}
               >
                 <button
                   onClick={() => toggle(index)}
                   aria-expanded={isOpen}
-                  className="w-full flex items-center gap-4 px-5 sm:px-6 py-4 text-left bg-transparent border-none cursor-pointer"
+                  className={`w-full flex items-center gap-6 px-4 py-4 text-left bg-transparent border-none cursor-pointer ${
+                    isOpen ? "bg-black border-b border-white/[0.08]" : ""
+                  }`}
                 >
-                  <span className={`flex-1 font-semibold text-base transition-colors duration-300 ${isOpen ? "text-white" : "text-gray-200"}`}>
+                  <span className="flex-1 font-medium text-base text-white leading-5">
                     <T t={item.question} />
                   </span>
-                  <span className="shrink-0 text-gray-400 relative w-4 h-4 flex items-center justify-center">
-                    <span className="absolute w-4 h-0.5 bg-current rounded-full" />
-                    <span className={`absolute w-0.5 h-4 bg-current rounded-full transition-transform duration-300 ${isOpen ? "scale-y-0" : "scale-y-100"}`} />
+                  <span className="shrink-0 text-white relative w-6 h-6 flex items-center justify-center">
+                    <span className="absolute w-3.5 h-0.5 bg-current rounded-full" />
+                    <span className={`absolute w-0.5 h-3.5 bg-current rounded-full transition-transform duration-300 ${isOpen ? "scale-y-0" : "scale-y-100"}`} />
                   </span>
                 </button>
 
@@ -74,8 +80,8 @@ export default function Faq() {
                     isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                   }`}
                 >
-                  <div className="overflow-hidden">
-                    <p className="px-5 sm:px-6 pb-5 text-gray-400 leading-relaxed text-sm">
+                  <div className="overflow-hidden bg-black">
+                    <p className="px-4 py-4 text-zinc-300 leading-6 text-sm">
                       <T t={item.answer} />
                     </p>
                   </div>

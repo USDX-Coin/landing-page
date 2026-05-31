@@ -61,7 +61,7 @@ function LangDropdown({
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-sm font-medium text-gray-200 hover:bg-white/10 transition-colors cursor-pointer"
+        className="flex items-center gap-2 rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors cursor-pointer"
       >
         <Flag lang={current} />
         <span className="hidden sm:inline">{LANG_LABEL[current]}</span>
@@ -133,37 +133,40 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-[#0a0a0a]/85 backdrop-blur-md border-b border-white/10" : "bg-transparent"
+        scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <div className="max-w-[1280px] mx-auto px-6 flex items-center justify-between h-16">
+      {/* Top utility bar: language (desktop) */}
+      <div className="hidden lg:flex max-w-[1440px] mx-auto px-[76px] h-10 items-center justify-end border-b border-white/10">
+        <LangDropdown current={lang} onChange={changeLang} />
+      </div>
+
+      {/* Main nav */}
+      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-[76px] h-[72px] flex items-center justify-between border-b border-white/10">
         {/* Logo */}
         <a href="#hero" className="flex items-center gap-2.5 no-underline shrink-0">
-          <img src="/image/Logo.svg" alt="USDX" className="w-8 h-8" />
+          <img src="/image/Logo.svg" alt="USDX" className="w-9 h-9" />
           <span className="font-bold text-xl tracking-tight text-gold-light">USDX</span>
         </a>
 
-        {/* Desktop Menu */}
+        {/* Desktop: nav links + CTA */}
         <div className="hidden lg:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.label.en}
-              href={link.href}
-              className="text-gray-300 hover:text-white text-sm font-medium no-underline transition-colors"
-            >
-              <T t={link.label} />
-            </a>
-          ))}
-        </div>
-
-        {/* Language dropdown + CTA */}
-        <div className="hidden lg:flex items-center gap-3">
-          <LangDropdown current={lang} onChange={changeLang} />
+          <div className="flex items-center gap-6">
+            {navLinks.map((link) => (
+              <a
+                key={link.label.en}
+                href={link.href}
+                className="text-white/90 hover:text-white text-sm font-medium no-underline transition-colors"
+              >
+                <T t={link.label} />
+              </a>
+            ))}
+          </div>
           <a
             href={appUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline shadow-lg shadow-primary/20"
+            className="inline-flex items-center px-4 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors no-underline"
           >
             <T t={ui.cta} />
           </a>

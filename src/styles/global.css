@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  /* Action / accent — red (CTAs, ecosystem, glows) */
-  --color-primary: #d4202e;
-  --color-primary-dark: #b01825;
-  --color-primary-light: #f04050;
+  /* Action / accent — maroon red (CTAs, ecosystem) per Figma */
+  --color-primary: #800000;
+  --color-primary-dark: #5e0000;
+  --color-primary-light: #b81d2b;
 
   /* Brand — gold (logo, eyebrows, highlights) */
   --color-gold: #e0a93c;

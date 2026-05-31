@@ -32,7 +32,7 @@ export const meta: { title: Translated; description: Translated } = {
 export const ui = {
   cta: { id: "Dapatkan USDX", en: "Get USDX" },
   toggleMenu: { id: "Buka menu", en: "Toggle menu" },
-  poweredBy: { id: "Didukung oleh", en: "Powered by" },
+  poweredBy: { id: "Powered by", en: "Powered by" },
 
   hero: {
     badge: { id: "Stablecoin USD Teregulasi", en: "Regulated USD Stablecoin" },
@@ -96,7 +96,7 @@ export const ui = {
     privacy: { id: "Kebijakan Privasi", en: "Privacy & Policy" },
     terms: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
     compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
-    status: { id: "Semua sistem normal", en: "All systems normal" },
+    status: { id: "All system normal", en: "All system normal" },
     rights: { id: "© 2026 USDX, Inc.", en: "© 2026 USDX, Inc." },
   },
 } satisfies Record<string, unknown>;
