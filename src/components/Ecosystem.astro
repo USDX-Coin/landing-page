@@ -19,10 +19,10 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
   <img src="/image/eco-bg.jpg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover" />
   <!-- dotted world map -->
   <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="w-[74%] max-w-[840px] opacity-[0.22]" />
+    <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="w-[80%] max-w-[900px] opacity-[0.5]" />
   </div>
   <!-- edge vignette to deepen corners -->
-  <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_62%_62%_at_50%_50%,transparent_32%,rgba(12,4,5,0.55))]"></div>
+  <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_64%_64%_at_50%_50%,transparent_38%,rgba(12,4,5,0.5))]"></div>
 
   <!-- Orbital stage holds chains around the edges; content sits centered on top -->
   <div data-eco-stage class="relative mx-auto w-full aspect-[16/11] sm:aspect-[16/9] max-h-[640px]">
@@ -39,8 +39,8 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
             style={`left:${left}%; top:${top}%; transform: translate(-50%,-50%);`}
           >
             <div data-counter class="relative flex items-center justify-center">
-              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#141414] border border-white/10 shadow-lg shadow-black/40 flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:border-gold/40">
-                <img src={chain.icon} alt={chain.name} class="w-6 h-6 sm:w-7 sm:h-7" loading="lazy" />
+              <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#141414] border border-white/10 shadow-lg shadow-black/40 flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:border-gold/40">
+                <img src={chain.icon} alt={chain.name} class="w-7 h-7 sm:w-8 sm:h-8" loading="lazy" />
               </div>
               <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1 rounded-lg bg-black/80 text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
                 {chain.name}
@@ -52,9 +52,9 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
 
       <!-- Center content -->
       <div data-eco-head class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 sm:px-12">
-        <span class="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full bg-gradient-to-r from-gold-dark to-gold text-white text-sm font-semibold shadow-lg shadow-black/40">
-          <span class="w-5 h-5 rounded-full bg-black/35 flex items-center justify-center">
-            <svg class="w-3.5 h-3.5 text-gold-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <span class="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full text-white text-sm font-semibold shadow-md shadow-black/40 border border-white/10" style="background-image:linear-gradient(90deg,#EFB74F 0%,#620000 40%)">
+          <span class="w-6 h-6 rounded-full bg-gradient-to-br from-[#F8DD93] to-[#E0A93C] flex items-center justify-center text-[#5a0f0f] shrink-0">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
               <path d="M12 7.2 L6.6 15 M12 7.2 L17.4 15 M7 15.4 H17" stroke-linecap="round" />
               <circle cx="12" cy="6" r="2.3" fill="currentColor" stroke="none" />
               <circle cx="6" cy="16.4" r="2.3" fill="currentColor" stroke="none" />

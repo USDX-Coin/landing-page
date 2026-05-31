@@ -15,8 +15,13 @@ export default function Faq() {
       <div className="px-5 sm:px-8 lg:px-12 py-12 md:py-16 grid lg:grid-cols-2 gap-10 lg:gap-16">
         {/* Left: heading + CTA */}
         <div className="lg:pt-4">
-          <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold-light text-xs font-semibold tracking-wide uppercase">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold" />
+          <span
+            className="inline-flex items-center gap-2 pl-1.5 pr-4 py-1.5 rounded-full text-white text-sm font-semibold shadow-md shadow-black/30 border border-white/10"
+            style={{ backgroundImage: "linear-gradient(90deg,#EFB74F 0%,#620000 40%)" }}
+          >
+            <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#F8DD93] to-[#E0A93C] flex items-center justify-center text-[#5a0f0f] shrink-0">
+              <span className="text-[13px] font-bold leading-none">?</span>
+            </span>
             <T t={ui.faq.eyebrow} />
           </span>
           <h2 className="mt-6 font-serif font-medium text-4xl sm:text-5xl lg:text-[52px] leading-[1.08] tracking-tight">
