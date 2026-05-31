@@ -1,12 +1,26 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #1eaed5;
-  --color-primary-dark: #1899bc;
-  --color-primary-light: #e8f7fb;
-  --color-dark: #1a1a2e;
-  --color-primary-900: #0e7490;
+  /* Action / accent — red (CTAs, ecosystem, glows) */
+  --color-primary: #d4202e;
+  --color-primary-dark: #b01825;
+  --color-primary-light: #f04050;
+
+  /* Brand — gold (logo, eyebrows, highlights) */
+  --color-gold: #e0a93c;
+  --color-gold-light: #f6d98a;
+  --color-gold-dark: #a9740f;
+
+  /* Dark surfaces */
+  --color-bg: #0a0a0a;
+  --color-surface: #141414;
+  --color-surface-2: #1b1b1b;
+  --color-line: rgba(255, 255, 255, 0.08);
+  --color-dark: #0a0a0a;
+
   --font-sans: 'Inter', sans-serif;
+  --font-serif: 'Crimson Pro', Georgia, serif;
+
   --animate-marquee: marquee 30s linear infinite;
   --animate-float: float 4s ease-in-out infinite;
 }
@@ -56,7 +70,19 @@ html {
 body {
   overflow-x: hidden;
   min-width: 320px;
+  background-color: var(--color-bg);
+  color: #e7e7e7;
+  font-family: var(--font-sans);
 }
+
+/* Editorial serif display for headings */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Hide scrollbar utility (carousels) */
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
 
 /* Lenis smooth scroll */
 html.lenis,

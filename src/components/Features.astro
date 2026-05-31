@@ -4,91 +4,164 @@ import { iconPaths } from "../data/icons";
 import { chains } from "../data/chains";
 import { ui } from "../i18n";
 import T from "./T.astro";
+
+// Chain cluster positions (% within the visual panel) for the multi-chain card.
+const cluster = [
+  { top: 14, left: 16 },
+  { top: 8, left: 64 },
+  { top: 48, left: 6 },
+  { top: 58, left: 78 },
+  { top: 78, left: 34 },
+];
+const avatars = [
+  { grad: "from-amber-400 to-orange-600", top: 8, left: 60 },
+  { grad: "from-rose-400 to-red-600", top: 52, left: 14 },
+  { grad: "from-sky-400 to-indigo-600", top: 56, left: 70 },
+  { grad: "from-emerald-400 to-teal-600", top: 30, left: 38 },
+];
 ---
-<!-- Heading + horizontal scroll track (pinned & vertically centered on desktop) -->
-<section id="features" data-feat-pin class="relative bg-white pt-24 md:pt-28 pb-20 md:pb-28 lg:py-0 lg:h-screen lg:flex lg:flex-col lg:justify-center overflow-hidden">
-  <!-- Section heading (left-aligned) -->
-  <div data-feat-head class="max-w-[1200px] mx-auto w-full px-6 mb-6 lg:mb-8">
-    <div class="max-w-2xl">
-      <div class="flex items-center gap-3 mb-4">
-        <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
-        <span class="text-primary font-semibold text-sm uppercase tracking-widest"><T t={ui.features.eyebrow} /></span>
-      </div>
-      <h2 class="text-3xl sm:text-4xl lg:text-[44px] font-bold text-dark leading-[1.1] tracking-tight">
-        <T t={ui.features.heading} />
+<section id="features" class="relative bg-[#0a0a0a] pt-20 md:pt-28 pb-20 md:pb-24 overflow-hidden">
+  <!-- red radial glow behind the heading -->
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[480px] bg-primary/[0.12] blur-[130px] rounded-full pointer-events-none"></div>
+
+  <div class="relative max-w-[1200px] mx-auto px-6">
+    <!-- Heading (centered) -->
+    <div data-feat-head class="text-center max-w-2xl mx-auto">
+      <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold-light text-xs font-semibold tracking-wide uppercase">
+        <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+        <T t={ui.features.eyebrow} />
+      </span>
+      <h2 class="mt-6 font-serif font-medium text-4xl sm:text-5xl lg:text-[52px] leading-[1.08] tracking-tight">
+        <span class="block text-white"><T t={ui.features.heading1} /></span>
+        <span class="block text-gray-500"><T t={ui.features.heading2} /></span>
       </h2>
-      <p class="mt-4 text-gray-600 text-base sm:text-lg leading-relaxed">
+      <p class="mt-5 text-gray-400 text-base sm:text-lg leading-relaxed">
         <T t={ui.features.sub} />
       </p>
-      <p class="mt-3 text-sm text-gray-400 hidden lg:flex items-center gap-2">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-        <T t={ui.features.scroll} />
-      </p>
     </div>
-  </div>
 
-  <div data-track-wrap class="w-full overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none scrollbar-hide">
-    <div data-track class="flex gap-5 sm:gap-6 px-6 lg:px-12 py-6">
-      {features.map((feature, i) => (
+    <!-- 6-card grid -->
+    <div class="mt-14 grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+      {features.map((feature) => (
         <article
           data-feat-card
-          class="feature-card group relative shrink-0 w-[280px] sm:w-[340px] xl:w-[400px] 2xl:w-[460px] snap-center rounded-3xl border border-gray-100 bg-white overflow-hidden transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/10"
+          class="group relative rounded-2xl border border-white/[0.08] bg-[#121212] overflow-hidden transition-all duration-300 hover:border-white/20 hover:-translate-y-1"
         >
           <!-- Visual panel -->
-          <div class="relative h-44 sm:h-48 overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
-            <div class="absolute inset-0 opacity-[0.05]" style="background-image: radial-gradient(circle, #1eaed5 1px, transparent 1px); background-size: 18px 18px;"></div>
-            {feature.icon === "layers" ? (
+          <div class="relative h-48 overflow-hidden border-b border-white/[0.06] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent_70%)]">
+            <div class="absolute inset-0 opacity-[0.04]" style="background-image: radial-gradient(circle, #fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+            {feature.icon === "shield" && (
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="relative w-40 h-28">
-                  {chains.slice(0, 6).map((chain, ci) => (
-                    <img
-                      src={chain.icon}
-                      alt={chain.name}
-                      class="absolute w-10 h-10 rounded-full bg-white shadow-md ring-1 ring-gray-100 p-1.5"
-                      style={`top:${[8, 0, 60, 70, 30, 50][ci]}px; left:${[10, 70, 0, 95, 50, 130][ci]}px;`}
-                    />
-                  ))}
+                <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100" fill="none" stroke="rgba(224,169,60,0.25)" stroke-width="0.5">
+                  <path d="M30 58 L50 40 L70 58" />
+                </svg>
+                <div class="absolute top-7 left-1/2 -translate-x-1/2 w-12 h-12 rounded-2xl bg-gold/15 border border-gold/30 flex items-center justify-center">
+                  <svg class="w-6 h-6 text-gold-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths.shield} /></svg>
+                </div>
+                <div class="absolute bottom-9 left-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-gray-300">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths.dollar} /></svg>
+                </div>
+                <div class="absolute bottom-9 right-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-xs font-bold text-gold-light">1:1</div>
+                <div class="absolute bottom-[14%] left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-gold-dark/30 border border-gold/40 flex items-center justify-center">
+                  <img src="/image/Logo.svg" alt="" class="w-7 h-7" />
                 </div>
               </div>
-            ) : (
+            )}
+
+            {feature.icon === "zap" && (
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-20 h-20 rounded-3xl bg-white shadow-xl shadow-primary/10 flex items-center justify-center ring-1 ring-gray-100 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6">
-                  <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths[feature.icon]} />
+                <span class="absolute top-7 left-6 text-[9px] text-gray-600">Transaction</span>
+                <span class="absolute top-7 right-6 text-[9px] text-gray-600">Transaction</span>
+                <span class="absolute bottom-8 left-8 text-[9px] text-gray-600">Transaction</span>
+                <span class="absolute bottom-8 right-8 text-[9px] text-gray-600">Transaction</span>
+                <div class="relative w-24 h-24">
+                  <svg class="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="6" />
+                    <circle data-gauge cx="50" cy="50" r="44" fill="none" stroke="#d4202e" stroke-width="6" stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="70" />
                   </svg>
+                  <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <svg class="w-5 h-5 text-primary-light" fill="currentColor" viewBox="0 0 24 24"><path d={iconPaths.zap} /></svg>
+                    <span class="mt-0.5 text-base font-bold text-white">0.1s</span>
+                  </div>
                 </div>
-                <div class="absolute top-6 right-7 w-3 h-3 rounded-full bg-primary/30"></div>
-                <div class="absolute bottom-8 left-8 w-2 h-2 rounded-full bg-primary/40"></div>
-                <div class="absolute bottom-10 right-10 w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+              </div>
+            )}
+
+            {feature.icon === "dollar" && (
+              <div class="absolute inset-0 p-4 flex flex-col justify-center gap-2">
+                <div class="rounded-xl bg-[#1c1c1c] border border-white/10 px-3.5 py-2.5">
+                  <div class="text-[9px] uppercase tracking-wider text-gray-500"><T t={ui.hero.totalBalance} /></div>
+                  <div class="text-lg font-bold text-white leading-tight">240,000 <span class="text-gold-light text-sm">USDX</span></div>
+                  <div class="text-[10px] text-gray-500">≈ $345,000</div>
+                </div>
+                <div class="rounded-xl bg-[#1c1c1c] border border-white/10 px-3 py-2.5 flex items-center gap-2.5">
+                  <div class="w-8 h-8 rounded-full bg-gold-dark/30 border border-gold/40 flex items-center justify-center shrink-0">
+                    <img src="/image/Logo.svg" alt="" class="w-6 h-6" />
+                  </div>
+                  <div class="min-w-0">
+                    <div class="text-[11px] font-semibold text-white leading-tight truncate"><T t={ui.features.walletCompany} /></div>
+                    <div class="text-[9px] text-gray-500 leading-tight truncate"><T t={ui.features.walletNote} /></div>
+                  </div>
+                  <span class="ml-auto text-[11px] font-semibold text-emerald-400 whitespace-nowrap">+240 USDX</span>
+                </div>
+              </div>
+            )}
+
+            {feature.icon === "layers" && (
+              <div class="absolute inset-0">
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-gold-dark/25 border border-gold/40 flex items-center justify-center z-10">
+                  <img src="/image/Logo.svg" alt="USDX" class="w-10 h-10" />
+                </div>
+                {chains.slice(0, 5).map((chain, ci) => (
+                  <div
+                    class="absolute w-10 h-10 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center"
+                    style={`top:${cluster[ci].top}%; left:${cluster[ci].left}%;`}
+                  >
+                    <img src={chain.icon} alt={chain.name} class="w-6 h-6" loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {feature.icon === "check" && (
+              <div class="absolute inset-0 flex items-center justify-center">
+                <div class="absolute bottom-0 inset-x-0 h-16 flex items-end justify-center gap-1.5 opacity-20">
+                  {[10, 18, 14, 24, 16, 28, 12, 20].map((h) => (
+                    <span class="w-3 bg-white/40" style={`height:${h * 2}px;`}></span>
+                  ))}
+                </div>
+                <div class="relative w-16 h-16 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center">
+                  <svg class="w-8 h-8 text-gold-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" /></svg>
+                </div>
+              </div>
+            )}
+
+            {feature.icon === "globe" && (
+              <div class="absolute inset-0">
+                <div class="absolute inset-0 opacity-[0.08]" style="background-image: radial-gradient(circle, #fff 1.2px, transparent 1.2px); background-size: 13px 13px; mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 75%);"></div>
+                {avatars.map((a) => (
+                  <div
+                    class={`absolute w-11 h-11 rounded-full bg-gradient-to-br ${a.grad} ring-2 ring-[#121212] flex items-center justify-center`}
+                    style={`top:${a.top}%; left:${a.left}%;`}
+                  >
+                    <svg class="w-6 h-6 text-white/90" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-4 0-8 2-8 6v2h16v-2c0-4-4-6-8-6z" /></svg>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
           <!-- Text -->
-          <div class="p-6 sm:p-7">
-            <span class="text-xs font-semibold text-primary/60 tracking-widest">0{i + 1}</span>
-            <h3 class="mt-2 text-lg font-semibold text-dark mb-2.5">
-              <span data-l="id">
-                <span class="text-primary">{feature.title.id.split(" ")[0]}</span>{" "}
-                {feature.title.id.split(" ").slice(1).join(" ")}
-              </span>
-              <span data-l="en">
-                <span class="text-primary">{feature.title.en.split(" ")[0]}</span>{" "}
-                {feature.title.en.split(" ").slice(1).join(" ")}
-              </span>
-            </h3>
-            <p class="text-gray-600 leading-relaxed text-sm"><T t={feature.description} /></p>
+          <div class="p-6">
+            <h3 class="text-lg font-semibold text-white mb-2"><T t={feature.title} /></h3>
+            <p class="text-gray-400 leading-relaxed text-sm"><T t={feature.description} /></p>
           </div>
         </article>
       ))}
     </div>
   </div>
 </section>
-
-<style>
-  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-</style>
 
 <script>
   import { gsap } from "gsap";
@@ -97,46 +170,28 @@ import T from "./T.astro";
   gsap.registerPlugin(ScrollTrigger);
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
   if (!reduced) {
     gsap.from("[data-feat-head]", {
       y: 28, opacity: 0, duration: 0.8, ease: "power3.out",
-      scrollTrigger: { trigger: "[data-feat-head]", start: "top 80%" },
+      scrollTrigger: { trigger: "[data-feat-head]", start: "top 82%", once: true },
     });
 
-    // Horizontal pinned scroll (desktop only). Mobile uses native swipe.
-    const mm = gsap.matchMedia();
-    mm.add("(min-width: 1024px)", () => {
-      const track = document.querySelector<HTMLElement>("[data-track]");
-      const pin = document.querySelector<HTMLElement>("[data-feat-pin]");
-      if (!track || !pin) return;
-
-      const overflow = () => track.scrollWidth - window.innerWidth;
-      // Only bail if there is genuinely nothing to scroll (cards already fit).
-      if (overflow() <= 0) return;
-      const amount = () => overflow() + 48;
-
-      const tween = gsap.to(track, {
-        x: () => -amount(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: pin,
-          start: "top top",
-          // Compress the pin: cards travel their full width over a shorter
-          // vertical scroll, so the "travel room" stays small even on big screens.
-          end: () => "+=" + amount() * 0.6,
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
+    // Per-card trigger (a selector matching all 6 cards makes an ambiguous
+    // trigger). Each card reveals as it enters; `once` keeps it shown.
+    gsap.utils.toArray<HTMLElement>("[data-feat-card]").forEach((card) => {
+      gsap.from(card, {
+        y: 36, opacity: 0, duration: 0.7, ease: "power3.out",
+        scrollTrigger: { trigger: card, start: "top 88%", once: true },
       });
-
-      return () => {
-        tween.scrollTrigger?.kill();
-        tween.kill();
-        gsap.set(track, { clearProps: "transform" });
-      };
     });
+
+    // Animate the settlement gauge when it scrolls into view
+    const gauge = document.querySelector<SVGCircleElement>("[data-gauge]");
+    if (gauge) {
+      gsap.fromTo(gauge, { strokeDashoffset: 276 }, {
+        strokeDashoffset: 70, duration: 1.2, ease: "power2.out",
+        scrollTrigger: { trigger: gauge, start: "top 85%" },
+      });
+    }
   }
 </script>

@@ -12,6 +12,12 @@ export const DEFAULT_LANG: Lang = "id";
 /** A string available in every supported language. */
 export type Translated = Record<Lang, string>;
 
+/** Display label for each language (used by the navbar dropdown). */
+export const LANG_LABEL: Record<Lang, string> = {
+  id: "Indonesia",
+  en: "English",
+};
+
 export const meta: { title: Translated; description: Translated } = {
   title: {
     id: "USDX — Stablecoin USD yang Transparan & Teregulasi",
@@ -26,96 +32,71 @@ export const meta: { title: Translated; description: Translated } = {
 export const ui = {
   cta: { id: "Dapatkan USDX", en: "Get USDX" },
   toggleMenu: { id: "Buka menu", en: "Toggle menu" },
+  poweredBy: { id: "Didukung oleh", en: "Powered by" },
 
   hero: {
     badge: { id: "Stablecoin USD Teregulasi", en: "Regulated USD Stablecoin" },
-    line1: { id: "Dolar,", en: "The dollar," },
-    line2: { id: "yang dirancang ulang", en: "reimagined for" },
-    line3: { id: "untuk dunia on-chain", en: "the on-chain world" },
+    line1: { id: "Dolar yang dirancang ulang", en: "The dollar, reimagined" },
+    line2: { id: "untuk dunia on-chain", en: "for the on-chain world" },
     paragraph: {
-      id: "USDX adalah dolar digital yang didukung penuh, dapat ditukar 1:1 dengan USD — dijamin oleh kas dan obligasi US Treasury, diaudit oleh firma independen, dan tersedia di 8 blockchain.",
+      id: "USDX adalah dolar digital yang didukung penuh, dapat ditukar 1:1 dengan USD dan dijamin oleh kas dan obligasi US Treasury, diaudit oleh firma independen, dan tersedia di 8 blockchain.",
       en: "USDX is a fully-backed digital dollar, redeemable 1:1 for USD — secured by cash and US Treasuries, audited by independent firms, and live across 8 chains.",
     },
-    explore: { id: "Jelajahi fitur", en: "Explore features" },
-    stat1: { id: "Dijamin USD", en: "USD Backed" },
-    stat2: { id: "Blockchain", en: "Blockchains" },
-    stat3: { id: "Akses Global", en: "Global Access" },
-    floatAuditTitle: { id: "Diaudit Penuh", en: "Fully Audited" },
-    floatAuditSub: { id: "Cadangan terverifikasi", en: "Reserves verified" },
-    floatInstantTitle: { id: "Instan", en: "Instant" },
-    floatInstantSub: { id: "Selesai dalam hitungan detik", en: "Settled in seconds" },
-    appName: { id: "Aplikasi USDX", en: "USDX App" },
+    // shared wallet/labels (also used by the Features fee card)
     totalBalance: { id: "Total Saldo", en: "Total Balance" },
-    backedAudited: { id: "Dijamin 1:1 · Diaudit", en: "Backed 1:1 · Audited" },
-    actionSend: { id: "Kirim", en: "Send" },
     actionReceive: { id: "Terima", en: "Receive" },
     actionSwap: { id: "Tukar", en: "Swap" },
-    reserves: { id: "Cadangan", en: "Reserves" },
-    backed100: { id: "100% dijamin", en: "100% backed" },
-    cash: { id: "Kas 72%", en: "Cash 72%" },
-    tbills: { id: "Obligasi 28%", en: "T-Bills 28%" },
-    recentActivity: { id: "Aktivitas Terbaru", en: "Recent Activity" },
-    seeAll: { id: "Lihat semua", en: "See all" },
   },
 
   features: {
-    eyebrow: { id: "Fitur", en: "Features" },
-    heading: {
-      id: "Segala yang seharusnya dimiliki dolar modern",
-      en: "Everything a modern dollar should be",
-    },
+    eyebrow: { id: "Fitur Unggulan", en: "Featured" },
+    heading1: { id: "Segala yang seharusnya", en: "Everything a modern" },
+    heading2: { id: "dimiliki dolar modern", en: "dollar should be" },
     sub: {
       id: "Stabil seperti dolar, cepat seperti internet. Pelajari apa yang membuat USDX bekerja.",
       en: "Stable like the dollar, fast like the internet. Explore what makes USDX work.",
     },
-    scroll: { id: "Gulir untuk menjelajah", en: "Scroll to explore" },
+    // wallet card mock
+    walletCompany: { id: "ABC Company", en: "ABC Company" },
+    walletNote: { id: "Menerima pembayaran", en: "Receiving payment" },
+    gaugeLabel: { id: "Penyelesaian", en: "Settlement" },
   },
 
   ecosystem: {
-    badge: { id: "Multi-Chain", en: "Multi-Chain" },
-    heading: {
-      id: "Hadir di blockchain yang sudah Anda gunakan",
-      en: "Live on the chains you already use",
-    },
+    badge: { id: "Multi-chain", en: "Multi-chain" },
+    heading1: { id: "Hadir di blockchain yang", en: "Live on the chains" },
+    heading2: { id: "sudah Anda gunakan", en: "you already use" },
     sub: {
       id: "USDX berpindah secara native di 8 blockchain utama — arahkan kursor untuk menjelajah, klik untuk masuk lebih dalam.",
       en: "USDX moves natively across 8 major blockchains — hover to explore each, click to dive in.",
     },
-    partners: { id: "Mitra Tepercaya", en: "Trusted Partners" },
+    partners: { id: "Jaringan Mitra yang Terpercaya", en: "A Trusted Partner Network" },
   },
 
   faq: {
     eyebrow: { id: "FAQ", en: "FAQ" },
-    heading: { id: "Pertanyaan, terjawab", en: "Questions, answered" },
+    heading1: { id: "Pertanyaan yang paling", en: "The questions we get" },
+    heading2: { id: "Sering Diajukan", en: "asked the most" },
     sub: {
-      id: "Semua yang perlu Anda ketahui tentang bagaimana USDX tetap stabil, terjamin, dan menjadi milik Anda.",
-      en: "Everything you need to know about how USDX stays stable, backed, and yours.",
+      id: "Temukan jawaban atas pertanyaan umum seputar USDX, mulai dari cara kerja, keamanan aset, hingga proses pengiriman dan penerimaan token. Kami merangkum informasi penting untuk membantu Anda memahami USDX dengan lebih mudah.",
+      en: "Find answers to common questions about USDX — from how it works and asset security to sending and receiving tokens. We've gathered the essentials to help you understand USDX with ease.",
     },
+    contact: { id: "Hubungi Kami", en: "Contact Us" },
   },
 
   footer: {
+    headline: { id: "Masa Depan Dolar Digital", en: "The Future of Digital Dollars" },
     tagline: {
       id: "Stablecoin USD yang transparan dan teregulasi. Dijamin penuh oleh cadangan kas Dolar AS dan obligasi US Treasury.",
       en: "The transparent and regulated USD stablecoin. Fully backed by US Dollar cash reserves and US Treasury bonds.",
     },
     quickLinks: { id: "Tautan Cepat", en: "Quick Links" },
-    community: { id: "Komunitas", en: "Community" },
-    futurePrefix: { id: "Masa Depan", en: "The Future of" },
-    futureHighlight: { id: "Dolar Digital", en: "Digital Dollars" },
-    rights: { id: "© 2026 USDX. Hak cipta dilindungi.", en: "© 2026 USDX. All rights reserved." },
+    legal: { id: "Legal", en: "Legal" },
+    social: { id: "Social Media", en: "Social Media" },
+    privacy: { id: "Kebijakan Privasi", en: "Privacy & Policy" },
     terms: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
+    compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
+    status: { id: "Semua sistem normal", en: "All systems normal" },
+    rights: { id: "© 2026 USDX, Inc.", en: "© 2026 USDX, Inc." },
   },
 } satisfies Record<string, unknown>;
-
-export interface Txn {
-  name: Translated;
-  sub: Translated;
-  amt: string;
-  tone: "up" | "swap" | "down";
-}
-
-export const txns: Txn[] = [
-  { name: { id: "Diterima", en: "Received" }, sub: { id: "Dari 0x8f…2a1", en: "From 0x8f…2a1" }, amt: "+1,200.00", tone: "up" },
-  { name: { id: "Ditukar", en: "Swapped" }, sub: { id: "USDC → USDX", en: "USDC → USDX" }, amt: "+800.00", tone: "swap" },
-  { name: { id: "Dikirim", en: "Sent" }, sub: { id: "Ke 0x3c…9be", en: "To 0x3c…9be" }, amt: "−450.00", tone: "down" },
-];

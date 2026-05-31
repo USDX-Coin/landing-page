@@ -4,27 +4,51 @@ import { socials } from "../data/socials";
 import { socialIconPaths } from "../data/icons";
 import { ui } from "../i18n";
 import T from "./T.astro";
+
+const legalLinks = [
+  { label: ui.footer.privacy, href: "#" },
+  { label: ui.footer.terms, href: "#" },
+  { label: ui.footer.compliance, href: "#" },
+];
 ---
-<footer class="bg-dark text-white py-16 px-6">
-  <div class="max-w-[1200px] mx-auto">
-    <div class="grid md:grid-cols-3 gap-12 mb-12">
-      <!-- Logo & Tagline -->
-      <div>
-        <div class="flex items-center gap-2 mb-4">
+<footer class="relative bg-[#0a0a0a] border-t border-white/[0.06] pt-16 pb-8 px-6 overflow-hidden">
+  <!-- subtle red glow -->
+  <div class="absolute top-0 right-0 w-[500px] h-[300px] bg-primary/[0.06] blur-[120px] rounded-full pointer-events-none"></div>
+
+  <div class="relative max-w-[1200px] mx-auto">
+    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-12">
+      <!-- Brand -->
+      <div class="lg:col-span-5">
+        <div class="flex items-center gap-2.5 mb-6">
           <img src="/image/Logo.svg" alt="USDX" class="w-8 h-8" />
-          <span class="font-bold text-xl text-primary">USDX</span>
+          <span class="font-bold text-xl tracking-tight text-gold-light">USDX</span>
         </div>
-        <p class="text-gray-400 text-sm leading-relaxed">
+        <h3 class="font-serif font-medium text-3xl sm:text-[34px] text-white leading-tight tracking-tight max-w-sm">
+          <T t={ui.footer.headline} />
+        </h3>
+        <p class="mt-4 text-gray-400 text-sm leading-relaxed max-w-sm">
           <T t={ui.footer.tagline} />
         </p>
       </div>
 
       <!-- Quick Links -->
-      <div>
-        <h4 class="font-semibold mb-4 text-sm uppercase tracking-widest text-gray-400"><T t={ui.footer.quickLinks} /></h4>
+      <div class="lg:col-span-3">
+        <h4 class="font-semibold mb-4 text-xs uppercase tracking-widest text-gray-500"><T t={ui.footer.quickLinks} /></h4>
         <div class="flex flex-col gap-3">
           {navLinks.map((link) => (
-            <a href={link.href} class="text-gray-300 hover:text-primary text-sm no-underline transition-colors">
+            <a href={link.href} class="text-gray-300 hover:text-white text-sm no-underline transition-colors w-fit">
+              <T t={link.label} />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Legal -->
+      <div class="lg:col-span-2">
+        <h4 class="font-semibold mb-4 text-xs uppercase tracking-widest text-gray-500"><T t={ui.footer.legal} /></h4>
+        <div class="flex flex-col gap-3">
+          {legalLinks.map((link) => (
+            <a href={link.href} class="text-gray-300 hover:text-white text-sm no-underline transition-colors w-fit">
               <T t={link.label} />
             </a>
           ))}
@@ -32,18 +56,18 @@ import T from "./T.astro";
       </div>
 
       <!-- Social -->
-      <div>
-        <h4 class="font-semibold mb-4 text-sm uppercase tracking-widest text-gray-400"><T t={ui.footer.community} /></h4>
-        <div class="flex gap-3">
+      <div class="lg:col-span-2">
+        <h4 class="font-semibold mb-4 text-xs uppercase tracking-widest text-gray-500"><T t={ui.footer.social} /></h4>
+        <div class="flex flex-wrap gap-2.5">
           {socials.map((social) => (
             <a
               href={social.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="w-10 h-10 rounded-lg bg-white/10 hover:bg-primary/20 flex items-center justify-center transition-colors no-underline"
+              class="w-9 h-9 rounded-lg bg-white/[0.06] hover:bg-white/10 border border-white/10 flex items-center justify-center transition-colors no-underline"
               aria-label={social.name}
             >
-              <svg class="w-5 h-5 fill-gray-300" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 fill-gray-300" viewBox="0 0 24 24">
                 <path d={socialIconPaths[social.icon]} />
               </svg>
             </a>
@@ -52,20 +76,13 @@ import T from "./T.astro";
       </div>
     </div>
 
-    <!-- Brand tagline -->
-    <div class="mb-12">
-      <h3 class="text-xl sm:text-2xl md:text-3xl font-bold text-white leading-tight">
-        <T t={ui.footer.futurePrefix} /><br />
-        <span class="text-primary"><T t={ui.footer.futureHighlight} /></span>
-      </h3>
-    </div>
-
     <!-- Bottom bar -->
-    <div class="border-t border-white/10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <div class="mt-14 pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center gap-4">
+      <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-xs text-gray-300">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <T t={ui.footer.status} />
+      </span>
       <p class="text-gray-500 text-sm"><T t={ui.footer.rights} /></p>
-      <a href="#" class="text-gray-500 hover:text-gray-300 text-sm no-underline transition-colors">
-        <T t={ui.footer.terms} />
-      </a>
     </div>
   </div>
 </footer>

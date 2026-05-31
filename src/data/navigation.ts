@@ -21,7 +21,10 @@ export interface NavLink {
 }
 
 export const navLinks: NavLink[] = [
+  { label: { id: "Beranda", en: "Home" }, href: "#hero" },
   { label: { id: "Fitur", en: "Features" }, href: "#features" },
   { label: { id: "Ekosistem", en: "Ecosystem" }, href: "#ecosystem" },
   { label: { id: "FAQ", en: "FAQ" }, href: "#faq" },
+  { label: { id: "Artikel", en: "Articles" }, href: "#" },
+  { label: { id: "Dokumentasi", en: "Docs" }, href: "#" },
 ];

@@ -1,50 +1,30 @@
 ---
 import { chains, partners } from "../data/chains";
+import { APP_URL } from "../data/navigation";
 import { ui } from "../i18n";
 import T from "./T.astro";
 
-// Single ring: all chains evenly spaced, orbiting clockwise.
-// Positions are percentages of the (square) stage, so they scale at any size.
-const RADIUS = 0.42;
+// Single ring: all chains evenly spaced, orbiting clockwise. Positions are
+// percentages of the (square) stage so they scale at any size.
+const RADIUS = 0.46;
 const pos = (angle: number, r: number) => {
   const rad = (angle * Math.PI) / 180;
   return { left: 50 + r * 100 * Math.cos(rad), top: 50 + r * 100 * Math.sin(rad) };
 };
 const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i - 90, RADIUS) }));
 ---
-<section id="ecosystem" class="relative bg-white py-16 md:py-20 px-6 overflow-hidden">
-  <div class="max-w-[1200px] mx-auto relative">
-    <div data-eco-head class="text-center relative z-10">
-      <div class="flex justify-center mb-4">
-        <span class="inline-flex items-center px-4 py-1.5 rounded-full border border-gray-200 bg-white shadow-sm text-primary text-xs font-semibold uppercase tracking-widest">
-          <T t={ui.ecosystem.badge} />
-        </span>
-      </div>
-      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-dark leading-tight tracking-tight max-w-2xl mx-auto">
-        <T t={ui.ecosystem.heading} />
-      </h2>
-      <p class="mt-3 text-gray-600 text-sm sm:text-base max-w-lg mx-auto">
-        <T t={ui.ecosystem.sub} />
-      </p>
-    </div>
+<section id="ecosystem" class="relative bg-[#0a0a0a] py-16 md:py-20 px-4 sm:px-6 overflow-hidden">
+  <!-- Red orbital panel -->
+  <div class="relative max-w-[1200px] mx-auto rounded-[1.75rem] overflow-hidden border border-white/[0.06]">
+    <!-- red gradient background -->
+    <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,#7a1018,#3a0a0e_55%,#140405)]"></div>
+    <!-- dotted world map texture -->
+    <div class="absolute inset-0 opacity-[0.12]" style="background-image: radial-gradient(circle, #fff 1.1px, transparent 1.1px); background-size: 16px 16px; mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 35%, transparent 78%); -webkit-mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, #000 35%, transparent 78%);"></div>
 
-    <!-- Orbital stage -->
-    <div data-eco-stage class="relative mx-auto mt-2 w-full max-w-[460px] aspect-square">
-      <!-- center glow -->
-      <div data-hub-glow class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[45%] h-[45%] bg-primary/15 blur-3xl rounded-full"></div>
-      <!-- guide rings -->
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[84%] h-[84%] rounded-full border border-gray-100"></div>
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[56%] h-[56%] rounded-full border border-gray-100/70"></div>
-
-      <!-- central USDX hub -->
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-        <div data-hub-inner class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-xl shadow-primary/40 ring-4 ring-white">
-          <img src="/image/Logo.svg" alt="USDX" class="w-full h-full rounded-full" />
-        </div>
-      </div>
-
+    <!-- Orbital stage holds chains around the edges; content sits centered on top -->
+    <div data-eco-stage class="relative mx-auto w-full aspect-[16/11] sm:aspect-[16/9] max-h-[640px]">
       <!-- orbit ring -->
-      <div data-orbit data-dir="1" data-dur="60" class="absolute inset-0">
+      <div data-orbit data-dir="1" data-dur="64" class="absolute inset-[8%] sm:inset-[6%]">
         {ring.map(({ chain, left, top }) => (
           <a
             href={chain.url}
@@ -52,48 +32,65 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
             rel="noopener noreferrer"
             title={chain.name}
             data-orbit-item
-            class="group absolute z-10 no-underline"
+            class="group absolute z-20 no-underline"
             style={`left:${left}%; top:${top}%; transform: translate(-50%,-50%);`}
           >
             <div data-counter class="relative flex items-center justify-center">
-              <div class="badge w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white border border-gray-100 shadow-md shadow-gray-200/60 flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/10">
-                <img src={chain.icon} alt={chain.name} class="w-6 h-6 sm:w-8 sm:h-8" loading="lazy" />
+              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#141414] border border-white/10 shadow-lg shadow-black/40 flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:border-gold/40">
+                <img src={chain.icon} alt={chain.name} class="w-6 h-6 sm:w-7 sm:h-7" loading="lazy" />
               </div>
-              <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1 rounded-lg bg-dark text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
+              <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1 rounded-lg bg-black/80 text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
                 {chain.name}
               </span>
             </div>
           </a>
         ))}
       </div>
+
+      <!-- Center content -->
+      <div data-eco-head class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 sm:px-12">
+        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold-light text-xs font-semibold tracking-wide uppercase backdrop-blur-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-gold"></span>
+          <T t={ui.ecosystem.badge} />
+        </span>
+        <h2 class="mt-5 font-serif font-medium text-3xl sm:text-4xl lg:text-[44px] leading-[1.08] tracking-tight max-w-xl">
+          <span class="block text-white"><T t={ui.ecosystem.heading1} /></span>
+          <span class="block text-white/55"><T t={ui.ecosystem.heading2} /></span>
+        </h2>
+        <p class="mt-4 text-white/70 text-sm sm:text-base max-w-md leading-relaxed">
+          <T t={ui.ecosystem.sub} />
+        </p>
+        <a
+          href={APP_URL}
+          data-app-link
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-7 inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white text-sm font-semibold rounded-lg transition-colors no-underline shadow-lg shadow-black/30"
+        >
+          <T t={ui.cta} />
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+      </div>
     </div>
   </div>
 
   <!-- Partners -->
-  <div class="max-w-[1200px] mx-auto mt-16" data-eco-partners>
-    <div class="flex justify-center mb-7">
-      <span class="inline-flex items-center px-4 py-1.5 rounded-full border border-gray-200 bg-white shadow-sm text-primary text-xs font-semibold uppercase tracking-widest">
-        <T t={ui.ecosystem.partners} />
-      </span>
-    </div>
-
-    <div class="overflow-hidden relative">
-      <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10"></div>
-      <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10"></div>
-
-      <div class="flex animate-marquee w-max will-change-transform">
-        {[...partners, ...partners].map((partner) => (
-          <a
-            href={partner.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-3 px-6 py-4 mx-2 rounded-lg border border-gray-100 hover:border-primary/30 hover:shadow-sm transition-all no-underline min-w-[160px]"
-          >
-            <img src={partner.logo} alt={partner.name} class="w-7 h-7 object-contain flex-shrink-0" loading="lazy" />
-            <span class="text-gray-600 font-semibold text-sm whitespace-nowrap">{partner.name}</span>
-          </a>
-        ))}
-      </div>
+  <div class="max-w-[1100px] mx-auto mt-16 md:mt-20" data-eco-partners>
+    <h3 class="text-center font-serif font-medium text-3xl sm:text-4xl text-white tracking-tight">
+      <T t={ui.ecosystem.partners} />
+    </h3>
+    <div class="mt-8 flex flex-wrap justify-center gap-3 sm:gap-4 max-w-[860px] mx-auto">
+      {partners.map((partner) => (
+        <a
+          href={partner.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-2.5 px-5 py-3 rounded-xl border border-white/[0.08] bg-[#121212] hover:border-white/20 hover:bg-[#181818] transition-all no-underline"
+        >
+          <img src={partner.logo} alt={partner.name} class="w-6 h-6 object-contain flex-shrink-0" loading="lazy" />
+          <span class="text-gray-200 font-semibold text-sm whitespace-nowrap">{partner.name}</span>
+        </a>
+      ))}
     </div>
   </div>
 </section>
@@ -106,28 +103,13 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduced) {
-    gsap.from("[data-eco-head]", {
-      y: 24, opacity: 0, duration: 0.7, ease: "power3.out",
-      scrollTrigger: { trigger: "[data-eco-head]", start: "top 85%" },
+    gsap.from("[data-eco-head] > *", {
+      y: 24, opacity: 0, duration: 0.7, ease: "power3.out", stagger: 0.1,
+      scrollTrigger: { trigger: "[data-eco-head]", start: "top 80%" },
     });
     gsap.from("[data-eco-partners]", {
       y: 24, opacity: 0, duration: 0.7, ease: "power3.out",
-      scrollTrigger: { trigger: "[data-eco-partners]", start: "top 90%" },
-    });
-
-    // Scroll-driven scale: starts small + faint, grows over a long range with
-    // smoothed scrub so the zoom-in really reads.
-    gsap.fromTo(
-      "[data-eco-stage]",
-      { scale: 0.4, opacity: 0.2 },
-      {
-        scale: 1, opacity: 1, ease: "none",
-        scrollTrigger: { trigger: "[data-eco-stage]", start: "top 92%", end: "center 52%", scrub: 1.6 },
-      },
-    );
-
-    gsap.to("[data-hub-glow]", {
-      scale: 1.2, opacity: 0.7, duration: 2.6, ease: "sine.inOut", repeat: -1, yoyo: true,
+      scrollTrigger: { trigger: "[data-eco-partners]", start: "top 88%" },
     });
 
     // Continuous clockwise orbit + upright counter-rotation
