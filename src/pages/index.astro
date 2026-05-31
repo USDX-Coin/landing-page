@@ -11,9 +11,13 @@ import Footer from "../components/Footer.astro";
   <div class="min-h-screen bg-bg text-[#e7e7e7]">
     <Navbar client:load />
     <Hero />
-    <Features />
-    <Ecosystem />
-    <Faq client:visible />
-    <Footer />
+    <!-- Below the hero, every section is a floating rounded card on the black
+         page; the flex gap + padding form the black gutters between them. -->
+    <main class="flex flex-col gap-3 sm:gap-4 px-3 sm:px-4 py-3 sm:py-4">
+      <Features />
+      <Ecosystem />
+      <Faq client:visible />
+      <Footer />
+    </main>
   </div>
 </Layout>

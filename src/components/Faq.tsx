@@ -11,8 +11,8 @@ export default function Faq() {
     setOpenIndex((prev) => (prev === index ? null : index));
 
   return (
-    <section id="faq" className="py-20 md:py-28 px-6 bg-[#0a0a0a]">
-      <div className="max-w-[1200px] mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16">
+    <section id="faq" className="relative mx-auto w-full max-w-[1320px] rounded-[28px] border border-white/[0.07] bg-[#0b0b0b] overflow-hidden">
+      <div className="px-5 sm:px-8 lg:px-12 py-12 md:py-16 grid lg:grid-cols-2 gap-10 lg:gap-16">
         {/* Left: heading + CTA */}
         <div className="lg:pt-4">
           <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gold/30 bg-gold/10 text-gold-light text-xs font-semibold tracking-wide uppercase">
