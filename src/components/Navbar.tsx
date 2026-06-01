@@ -145,9 +145,8 @@ export default function Navbar() {
       {/* Main nav (single row; language lives here, not a separate top bar) */}
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-[76px] h-[72px] flex items-center justify-between border-b border-white/10">
         {/* Logo */}
-        <a href="#hero" className="flex items-center gap-2.5 no-underline shrink-0">
-          <img src="/image/Logo.svg" alt="USDX" className="w-9 h-9" />
-          <span className="font-bold text-xl tracking-tight bg-[linear-gradient(90deg,#F8DD93,#A9740F)] bg-clip-text text-transparent">USDX</span>
+        <a href="#hero" className="flex items-center no-underline shrink-0">
+          <img src="/image/logo-lockup.png" alt="USDX" className="h-8 w-auto" />
         </a>
 
         {/* Desktop: nav links + language + CTA */}
