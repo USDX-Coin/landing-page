@@ -9,7 +9,10 @@ import T from "./T.astro";
   <!-- red gradient (Figma: brighter maroon top -> dark bottom) + grid at the bottom -->
   <div class="absolute inset-0 bg-[#0f0f0f]"></div>
   <div class="absolute inset-0 bg-[linear-gradient(to_top,#220004_0%,#7a0d10_100%)]"></div>
-  <div class="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 44px 44px; mask-image: linear-gradient(to bottom, transparent, #000 55%); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);"></div>
+  <!-- perspective "floor" grid receding toward a horizon (per Figma) -->
+  <div class="absolute inset-x-0 bottom-0 h-[55%] overflow-hidden pointer-events-none" style="perspective: 340px;">
+    <div class="absolute left-1/2 bottom-0 w-[220%] -translate-x-1/2 h-[170%] origin-bottom" style="transform: rotateX(67deg); background-image: linear-gradient(rgba(255,255,255,0.14) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.14) 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to top, rgba(0,0,0,0.85), transparent 72%); -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,0.85), transparent 72%);"></div>
+  </div>
 
   <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-10">
     <!-- Heading -->

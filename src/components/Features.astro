@@ -203,6 +203,34 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
 </section>
 
 <style>
+  /* Cursor-following spotlight + border glow (premium dark-card feel) */
+  .feat-card::before,
+  .feat-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .feat-card::before {
+    z-index: 1;
+    background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(212, 32, 46, 0.1), transparent 65%);
+  }
+  .feat-card::after {
+    z-index: 2;
+    padding: 1px;
+    background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.28), transparent 60%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+  .feat-card:hover::before,
+  .feat-card:hover::after {
+    opacity: 1;
+  }
+
   /* Mobile: cards stack on top of each other on scroll (sticky pile) */
   @media (max-width: 767px) {
     .feat-card {
@@ -218,6 +246,15 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   gsap.registerPlugin(ScrollTrigger);
+
+  // Cursor-following spotlight: pipe pointer position into CSS vars per card
+  gsap.utils.toArray<HTMLElement>("[data-feat-card]").forEach((card) => {
+    card.addEventListener("pointermove", (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+      card.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+    });
+  });
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduced) {

@@ -36,11 +36,11 @@ export const ui = {
 
   hero: {
     badge: { id: "Stablecoin USD Teregulasi", en: "Regulated USD Stablecoin" },
-    line1: { id: "Dolar yang dirancang ulang", en: "The dollar, reimagined" },
-    line2: { id: "untuk dunia on-chain", en: "for the on-chain world" },
+    line1: { id: "Akses US Dolar Digital", en: "Easier Access to the" },
+    line2: { id: "Lebih Mudah", en: "Digital US Dollar" },
     paragraph: {
-      id: "USDX adalah dolar digital yang didukung penuh, dapat ditukar 1:1 dengan USD dan dijamin oleh kas dan obligasi US Treasury, diaudit oleh firma independen, dan tersedia di 8 blockchain.",
-      en: "USDX is a fully-backed digital dollar, redeemable 1:1 for USD — secured by cash and US Treasuries, audited by independent firms, and live across 8 chains.",
+      id: "USDX memberikan akses terhadap US Dolar digital yang aman kapan saja di mana saja. Didukung penuh 1:1 dengan US Dolar di kustodian Bank BNI secara transparan.",
+      en: "USDX gives you secure access to the digital US Dollar anytime, anywhere — fully backed 1:1 by the US Dollar, held transparently in custody at Bank BNI.",
     },
     // shared wallet/labels (also used by the Features fee card)
     totalBalance: { id: "Total Saldo", en: "Total Balance" },
