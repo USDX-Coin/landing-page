@@ -46,10 +46,12 @@ const avatars = [
 
     <!-- 6-card grid -->
     <div class="mt-10 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {features.map((feature) => (
+      {features.map((feature, i) => (
         <article
           data-feat-card
-          class="group relative rounded-2xl border border-white/[0.06] bg-[#141414] overflow-hidden transition-all duration-300 hover:border-white/15 hover:-translate-y-1"
+          data-card={feature.icon}
+          style={`--st:${88 + i * 14}px`}
+          class="feat-card group relative rounded-2xl border border-white/[0.06] bg-[#141414] overflow-hidden transition-all duration-300 hover:border-white/15 lg:hover:-translate-y-1"
         >
           <!-- Visual panel -->
           <div class="relative h-60 overflow-hidden border-b border-white/[0.06] bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.05),transparent_70%)]">
@@ -58,16 +60,16 @@ const avatars = [
             {feature.icon === "shield" && (
               <div class="absolute inset-0 flex items-center justify-center">
                 <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100" fill="none" stroke="rgba(224,169,60,0.25)" stroke-width="0.5">
-                  <path d="M30 58 L50 40 L70 58" />
+                  <path data-fx-line d="M30 58 L50 40 L70 58" stroke-dasharray="60" />
                 </svg>
-                <div class="absolute top-7 left-1/2 -translate-x-1/2 w-12 h-12 rounded-2xl bg-gold/15 border border-gold/30 flex items-center justify-center">
+                <div data-fx-shield class="absolute top-7 left-1/2 -translate-x-1/2 w-12 h-12 rounded-2xl bg-gold/15 border border-gold/30 flex items-center justify-center">
                   <svg class="w-6 h-6 text-gold-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths.shield} /></svg>
                 </div>
-                <div class="absolute bottom-9 left-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-gray-300">
+                <div data-fx-node class="absolute bottom-9 left-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-gray-300">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths.dollar} /></svg>
                 </div>
-                <div class="absolute bottom-9 right-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-xs font-bold text-gold-light">1:1</div>
-                <div class="absolute bottom-[14%] left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-gold-dark/30 border border-gold/40 flex items-center justify-center">
+                <div data-fx-node class="absolute bottom-9 right-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-xs font-bold text-gold-light">1:1</div>
+                <div data-fx-node class="absolute bottom-[14%] left-1/2 -translate-x-1/2 w-10 h-10 rounded-full bg-gold-dark/30 border border-gold/40 flex items-center justify-center">
                   <img src="/image/Logo.svg" alt="" class="w-7 h-7" />
                 </div>
               </div>
@@ -85,7 +87,7 @@ const avatars = [
                     <circle data-gauge cx="50" cy="50" r="44" fill="none" stroke="#d4202e" stroke-width="6" stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="70" />
                   </svg>
                   <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <svg class="w-5 h-5 text-primary-light" fill="currentColor" viewBox="0 0 24 24"><path d={iconPaths.zap} /></svg>
+                    <svg data-fx-bolt class="w-5 h-5 text-primary-light" fill="currentColor" viewBox="0 0 24 24"><path d={iconPaths.zap} /></svg>
                     <span class="mt-0.5 text-base font-bold text-white">0.1s</span>
                   </div>
                 </div>
@@ -99,7 +101,7 @@ const avatars = [
                   <div class="text-lg font-bold text-white leading-tight">240,000 <span class="text-gold-light text-sm">USDX</span></div>
                   <div class="text-[10px] text-gray-500">≈ $345,000</div>
                 </div>
-                <div class="rounded-xl bg-[#1c1c1c] border border-white/10 px-3 py-2.5 flex items-center gap-2.5">
+                <div data-fx-walletrow class="rounded-xl bg-[#1c1c1c] border border-white/10 px-3 py-2.5 flex items-center gap-2.5">
                   <div class="w-8 h-8 rounded-full bg-gold-dark/30 border border-gold/40 flex items-center justify-center shrink-0">
                     <img src="/image/Logo.svg" alt="" class="w-6 h-6" />
                   </div>
@@ -107,18 +109,19 @@ const avatars = [
                     <div class="text-[11px] font-semibold text-white leading-tight truncate"><T t={ui.features.walletCompany} /></div>
                     <div class="text-[9px] text-gray-500 leading-tight truncate"><T t={ui.features.walletNote} /></div>
                   </div>
-                  <span class="ml-auto text-[11px] font-semibold text-emerald-400 whitespace-nowrap">+240 USDX</span>
+                  <span data-fx-walletamt class="ml-auto text-[11px] font-semibold text-emerald-400 whitespace-nowrap">+240 USDX</span>
                 </div>
               </div>
             )}
 
             {feature.icon === "layers" && (
               <div class="absolute inset-0">
-                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-gold-dark/25 border border-gold/40 flex items-center justify-center z-10">
+                <div data-fx-hub class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-gold-dark/25 border border-gold/40 flex items-center justify-center z-10">
                   <img src="/image/Logo.svg" alt="USDX" class="w-10 h-10" />
                 </div>
                 {chains.slice(0, 5).map((chain, ci) => (
                   <div
+                    data-fx-chain
                     class="absolute w-10 h-10 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center"
                     style={`top:${cluster[ci].top}%; left:${cluster[ci].left}%;`}
                   >
@@ -132,10 +135,10 @@ const avatars = [
               <div class="absolute inset-0 flex items-center justify-center">
                 <div class="absolute bottom-0 inset-x-0 h-16 flex items-end justify-center gap-1.5 opacity-20">
                   {[10, 18, 14, 24, 16, 28, 12, 20].map((h) => (
-                    <span class="w-3 bg-white/40" style={`height:${h * 2}px;`}></span>
+                    <span data-fx-bar class="w-3 bg-white/40 origin-bottom" style={`height:${h * 2}px;`}></span>
                   ))}
                 </div>
-                <div class="relative w-16 h-16 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center">
+                <div data-fx-bank class="relative w-16 h-16 rounded-2xl bg-gold/10 border border-gold/30 flex items-center justify-center">
                   <svg class="w-8 h-8 text-gold-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" /></svg>
                 </div>
               </div>
@@ -146,6 +149,7 @@ const avatars = [
                 <div class="absolute inset-0 opacity-[0.08]" style="background-image: radial-gradient(circle, #fff 1.2px, transparent 1.2px); background-size: 13px 13px; mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 75%);"></div>
                 {avatars.map((a) => (
                   <div
+                    data-fx-avatar
                     class={`absolute w-11 h-11 rounded-full bg-gradient-to-br ${a.grad} ring-2 ring-[#121212] flex items-center justify-center`}
                     style={`top:${a.top}%; left:${a.left}%;`}
                   >
@@ -167,6 +171,17 @@ const avatars = [
   </div>
 </section>
 
+<style>
+  /* Mobile: cards stack on top of each other on scroll (sticky pile) */
+  @media (max-width: 767px) {
+    .feat-card {
+      position: sticky;
+      top: var(--st, 88px);
+      box-shadow: 0 -10px 34px rgba(0, 0, 0, 0.55);
+    }
+  }
+</style>
+
 <script>
   import { gsap } from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -180,14 +195,17 @@ const avatars = [
       scrollTrigger: { trigger: "[data-feat-head]", start: "top 82%", once: true },
     });
 
-    // Per-card trigger (a selector matching all 6 cards makes an ambiguous
-    // trigger). Each card reveals as it enters; `once` keeps it shown.
-    gsap.utils.toArray<HTMLElement>("[data-feat-card]").forEach((card) => {
-      gsap.from(card, {
-        y: 36, opacity: 0, duration: 0.7, ease: "power3.out",
-        scrollTrigger: { trigger: card, start: "top 88%", once: true },
+    // Reveal each card as it enters (per-card trigger, desktop only — on mobile
+    // the sticky stack is the effect and a transform reveal fights `position:sticky`).
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    if (isDesktop) {
+      gsap.utils.toArray<HTMLElement>("[data-feat-card]").forEach((card) => {
+        gsap.from(card, {
+          y: 36, opacity: 0, duration: 0.7, ease: "power3.out",
+          scrollTrigger: { trigger: card, start: "top 88%", once: true },
+        });
       });
-    });
+    }
 
     // Animate the settlement gauge when it scrolls into view
     const gauge = document.querySelector<SVGCircleElement>("[data-gauge]");
@@ -197,5 +215,42 @@ const avatars = [
         scrollTrigger: { trigger: gauge, start: "top 85%" },
       });
     }
+
+    // Distinct hover animation per card, matched to its content
+    const qa = (el: Element, sel: string) => gsap.utils.toArray<HTMLElement>(el.querySelectorAll(sel));
+    const q1 = (el: Element, sel: string) => el.querySelector(sel) as HTMLElement | null;
+
+    gsap.utils.toArray<HTMLElement>("[data-feat-card]").forEach((card) => {
+      const type = card.dataset.card;
+      card.addEventListener("mouseenter", () => {
+        switch (type) {
+          case "shield": // verify: draw the link, pulse the shield, pop the nodes
+            gsap.fromTo(q1(card, "[data-fx-line]"), { strokeDashoffset: 60 }, { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" });
+            gsap.fromTo(q1(card, "[data-fx-shield]"), { scale: 1 }, { scale: 1.12, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out" });
+            gsap.fromTo(qa(card, "[data-fx-node]"), { y: 8, opacity: 0.5 }, { y: 0, opacity: 1, duration: 0.45, stagger: 0.08, ease: "back.out(2)" });
+            break;
+          case "zap": // re-fill the speed gauge + spark the bolt + blink the labels
+            gsap.fromTo(q1(card, "[data-gauge]"), { strokeDashoffset: 276 }, { strokeDashoffset: 70, duration: 0.7, ease: "power2.out" });
+            gsap.fromTo(q1(card, "[data-fx-bolt]"), { scale: 0.5, opacity: 0.4 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(3)" });
+            gsap.fromTo(qa(card, ".text-gray-600"), { opacity: 0.3 }, { opacity: 0.85, duration: 0.3, stagger: 0.06, yoyo: true, repeat: 1 });
+            break;
+          case "dollar": // a payment lands: row slides in + amount pulses
+            gsap.fromTo(q1(card, "[data-fx-walletrow]"), { x: 26, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" });
+            gsap.fromTo(q1(card, "[data-fx-walletamt]"), { scale: 1 }, { scale: 1.2, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out" });
+            break;
+          case "layers": // chains pop in toward the hub
+            gsap.fromTo(qa(card, "[data-fx-chain]"), { scale: 0.6, opacity: 0.5 }, { scale: 1, opacity: 1, duration: 0.5, stagger: 0.07, ease: "back.out(2)" });
+            gsap.fromTo(q1(card, "[data-fx-hub]"), { scale: 1 }, { scale: 1.14, duration: 0.35, yoyo: true, repeat: 1, ease: "power2.out" });
+            break;
+          case "check": // skyline grows like a chart + the bank lifts
+            gsap.fromTo(qa(card, "[data-fx-bar]"), { scaleY: 0.2 }, { scaleY: 1, duration: 0.5, stagger: 0.05, ease: "power2.out" });
+            gsap.fromTo(q1(card, "[data-fx-bank]"), { y: 0 }, { y: -6, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out" });
+            break;
+          case "globe": // people pop onto the map worldwide
+            gsap.fromTo(qa(card, "[data-fx-avatar]"), { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, stagger: 0.09, ease: "back.out(2.5)" });
+            break;
+        }
+      });
+    });
   }
 </script>
