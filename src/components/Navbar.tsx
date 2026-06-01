@@ -147,7 +147,7 @@ export default function Navbar() {
         {/* Logo */}
         <a href="#hero" className="flex items-center gap-2.5 no-underline shrink-0">
           <img src="/image/Logo.svg" alt="USDX" className="w-9 h-9" />
-          <span className="font-bold text-xl tracking-tight text-gold-light">USDX</span>
+          <span className="font-bold text-xl tracking-tight bg-[linear-gradient(90deg,#F8DD93,#A9740F)] bg-clip-text text-transparent">USDX</span>
         </a>
 
         {/* Desktop: nav links + language + CTA */}
