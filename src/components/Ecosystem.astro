@@ -26,7 +26,7 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
   <img src="/image/eco-bg.jpg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover" />
   <!-- dotted world map -->
   <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-    <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="w-[80%] max-w-[900px] opacity-[0.5]" />
+    <img data-eco-globe src="/image/eco-globe.png" alt="" aria-hidden="true" class="w-[80%] max-w-[900px] opacity-[0.5]" />
   </div>
   <!-- edge vignette to deepen corners -->
   <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_64%_64%_at_50%_50%,transparent_38%,rgba(12,4,5,0.5))]"></div>
@@ -44,7 +44,7 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
             class="group absolute z-20 no-underline"
             style={`left:${left}%; top:${top}%; transform: translate(-50%,-50%);`}
           >
-            <div class="relative flex items-center justify-center">
+            <div data-eco-chain data-dx={((left - 50) / 50).toFixed(2)} data-dy={((top - 50) / 50).toFixed(2)} class="relative flex items-center justify-center">
               <!-- 1px white-gradient ring around a #141414 disc (Figma spec) -->
               <div class="w-[68px] h-[68px] sm:w-[86px] sm:h-[86px] rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-xl shadow-black/50 transition-transform duration-300 group-hover:scale-110">
                 <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
@@ -132,6 +132,35 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
       y: 24, opacity: 0, duration: 0.7, ease: "power3.out",
       scrollTrigger: { trigger: "[data-eco-partners]", start: "top 88%" },
     });
-    // Chains are static (no orbit) — they only react to hover via CSS.
+
+    // Globe zooms in + chains fly in from the edges, then settle into a gentle
+    // idle float; the globe softly pulses. Chains stay otherwise static.
+    const globe = document.querySelector<HTMLElement>("[data-eco-globe]");
+    const ecoChains = gsap.utils.toArray<HTMLElement>("[data-eco-chain]");
+    if (ecoChains.length) {
+      ecoChains.forEach((c) => {
+        const dx = parseFloat(c.dataset.dx || "0");
+        const dy = parseFloat(c.dataset.dy || "0");
+        gsap.set(c, { x: dx * 90, y: dy * 90, scale: 0.4, autoAlpha: 0 });
+      });
+      if (globe) gsap.set(globe, { scale: 0.6, opacity: 0 });
+
+      const startIdle = () => {
+        ecoChains.forEach((c, i) => {
+          gsap.to(c, {
+            y: "+=8", duration: 2.4 + (i % 3) * 0.5, ease: "sine.inOut",
+            yoyo: true, repeat: -1, delay: i * 0.12,
+          });
+        });
+        if (globe) gsap.to(globe, { opacity: 0.62, duration: 2.8, ease: "sine.inOut", yoyo: true, repeat: -1 });
+      };
+
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: "[data-eco-stage]", start: "top 75%", once: true },
+        onComplete: startIdle,
+      });
+      if (globe) tl.to(globe, { scale: 1, opacity: 0.5, duration: 1, ease: "power2.out" }, 0);
+      tl.to(ecoChains, { x: 0, y: 0, scale: 1, autoAlpha: 1, duration: 0.8, stagger: 0.08, ease: "back.out(1.6)" }, 0.2);
+    }
   }
 </script>

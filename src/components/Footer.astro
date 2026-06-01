@@ -15,6 +15,18 @@ const legalLinks = [
   <!-- red glow (#B60000) -->
   <div class="absolute -top-20 right-10 w-[760px] h-[260px] bg-[#b60000]/25 blur-[130px] rounded-[50%] pointer-events-none"></div>
 
+  <!-- Ghost USDX logo watermark on the right with thin lines tracing each part -->
+  <div class="absolute top-1/2 right-0 -translate-y-1/2 translate-x-[18%] w-[300px] h-[300px] sm:w-[440px] sm:h-[440px] pointer-events-none">
+    <svg viewBox="0 0 64 64" class="w-full h-full" fill="none">
+      <circle cx="32" cy="32" r="31" fill="none" stroke="rgba(224,169,60,0.06)" stroke-width="0.6" />
+      <path d="M22.3077 14H14L41.6923 50H50L22.3077 14Z" fill="rgba(224,169,60,0.035)" />
+      <path d="M41.6923 14H50L22.3077 50H14L41.6923 14Z" fill="rgba(224,169,60,0.035)" />
+      <circle data-logo-line cx="32" cy="32" r="31" fill="none" stroke="rgba(246,217,138,0.55)" stroke-width="1" vector-effect="non-scaling-stroke" pathLength="100" stroke-dasharray="6 94" />
+      <path data-logo-line d="M22.3077 14H14L41.6923 50H50L22.3077 14Z" fill="none" stroke="rgba(246,217,138,0.5)" stroke-width="1" vector-effect="non-scaling-stroke" pathLength="100" stroke-dasharray="5 95" />
+      <path data-logo-line d="M41.6923 14H50L22.3077 50H14L41.6923 14Z" fill="none" stroke="rgba(246,217,138,0.5)" stroke-width="1" vector-effect="non-scaling-stroke" pathLength="100" stroke-dasharray="5 95" />
+    </svg>
+  </div>
+
   <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col lg:flex-row gap-10 lg:gap-6">
     <!-- Brand -->
     <div class="flex-1 lg:max-w-[680px] flex flex-col gap-6">
@@ -84,3 +96,15 @@ const legalLinks = [
     </div>
   </div>
 </footer>
+
+<script>
+  import { gsap } from "gsap";
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!reduced) {
+    // Thin light travelling around each part of the ghost logo
+    document.querySelectorAll<SVGElement>("[data-logo-line]").forEach((el, i) => {
+      gsap.to(el, { strokeDashoffset: -100, duration: 5 + i * 1.6, ease: "none", repeat: -1 });
+    });
+  }
+</script>

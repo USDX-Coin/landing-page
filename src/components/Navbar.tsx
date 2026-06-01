@@ -26,10 +26,16 @@ function Flag({ lang }: { lang: Lang }) {
       </span>
     );
   }
-  // English — US flag-ish blue/red circle
+  // English — Union Jack (simplified) in a circle
   return (
-    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full overflow-hidden ring-1 ring-white/20 shrink-0 bg-[#16245c] text-[8px] font-bold text-white">
-      EN
+    <span className="inline-block w-5 h-5 rounded-full overflow-hidden ring-1 ring-white/20 shrink-0">
+      <svg viewBox="0 0 60 60" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+        <rect width="60" height="60" fill="#012169" />
+        <path d="M0,0 L60,60 M60,0 L0,60" stroke="#fff" strokeWidth="12" />
+        <path d="M0,0 L60,60 M60,0 L0,60" stroke="#C8102E" strokeWidth="5" />
+        <path d="M30,0 V60 M0,30 H60" stroke="#fff" strokeWidth="18" />
+        <path d="M30,0 V60 M0,30 H60" stroke="#C8102E" strokeWidth="10" />
+      </svg>
     </span>
   );
 }
