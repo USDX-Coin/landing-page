@@ -44,6 +44,7 @@ export const ui = {
     },
     // shared wallet/labels (also used by the Features fee card)
     totalBalance: { id: "Total Saldo", en: "Total Balance" },
+    actionSend: { id: "Kirim", en: "Send" },
     actionReceive: { id: "Terima", en: "Receive" },
     actionSwap: { id: "Tukar", en: "Swap" },
   },

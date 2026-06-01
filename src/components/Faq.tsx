@@ -31,7 +31,7 @@ export default function Faq() {
                 <span className="block"><T t={ui.faq.heading2} /></span>
               </h2>
             </div>
-            <p className="text-white text-base leading-[26px] max-w-[511px]">
+            <p className="hidden lg:block text-white text-base leading-[26px] max-w-[511px]">
               <T t={ui.faq.sub} />
             </p>
           </div>

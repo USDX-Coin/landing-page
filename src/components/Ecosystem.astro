@@ -19,6 +19,9 @@ const spots = [
   { left: 20, top: 13 }, // Base      (left, top)
 ];
 const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
+// Mobile shows a single centered row of 6 chains (per Figma), skipping
+// Ethereum + Arbitrum to match the design's selection.
+const mobileChains = [1, 2, 4, 5, 6, 7].map((i) => ring[i]);
 ---
 <!-- Card 1: red orbital panel -->
 <section id="ecosystem" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07]">
@@ -89,13 +92,13 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
         </a>
 
-        <!-- Mobile: chains as a centered row below the content -->
-        <div class="lg:hidden mt-8 flex flex-wrap justify-center gap-3 max-w-[340px]">
-          {ring.map(({ chain }) => (
+        <!-- Mobile: a single centered row of chains below the content (per Figma) -->
+        <div class="lg:hidden mt-8 flex justify-center gap-2.5">
+          {mobileChains.map(({ chain }) => (
             <a href={chain.url} target="_blank" rel="noopener noreferrer" title={chain.name} class="no-underline">
-              <div class="w-14 h-14 rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-lg shadow-black/40">
+              <div class="w-12 h-12 rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-lg shadow-black/40">
                 <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
-                  <img src={chain.icon} alt={chain.name} class="w-7 h-7" loading="lazy" />
+                  <img src={chain.icon} alt={chain.name} class="w-6 h-6" loading="lazy" />
                 </div>
               </div>
             </a>
@@ -118,7 +121,7 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
           href={partner.url}
           target="_blank"
           rel="noopener noreferrer"
-          class="flex items-center justify-center gap-3 w-full sm:w-[244px] h-20 rounded-xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] transition-all no-underline"
+          class="flex items-center justify-center gap-3 w-[calc(50%-0.5rem)] sm:w-[244px] h-20 rounded-xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] transition-all no-underline"
         >
           <img src={partner.logo} alt={partner.name} class="w-7 h-7 object-contain flex-shrink-0" loading="lazy" />
           <span class="text-white font-medium text-base whitespace-nowrap">{partner.name}</span>
