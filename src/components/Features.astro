@@ -161,22 +161,24 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
 
             {feature.icon === "check" && (
               <div class="absolute inset-0 flex items-center justify-center">
-                <!-- faint city skyline silhouette -->
+                <!-- faint city skyline silhouette (buildings with windows) -->
                 <div class="absolute bottom-0 inset-x-0 flex items-end justify-center gap-1.5">
-                  {[[16, 3], [30, 4], [22, 3], [44, 5], [26, 3], [54, 4], [20, 3], [40, 5], [24, 3], [48, 4], [18, 3], [34, 4]].map(([h, w]) => (
-                    <span data-fx-bar class="bg-white/[0.06] origin-bottom rounded-t-sm" style={`height:${h * 2}px; width:${w * 4}px;`}></span>
+                  {[[26, 90], [36, 130], [30, 70], [40, 150], [28, 100], [44, 120], [30, 60], [38, 140], [26, 84]].map(([w, h]) => (
+                    <span data-fx-bar class="origin-bottom rounded-t-sm bg-white/[0.04]" style={`width:${w}px; height:${h}px; background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px); background-size: 9px 11px;`}></span>
                   ))}
                 </div>
-                <!-- regulated institution in a ring -->
-                <div data-fx-bank class="relative w-20 h-20 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center">
-                  <svg class="w-9 h-9 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" /></svg>
+                <!-- regulated institution in a large thin ring -->
+                <div data-fx-bank class="relative w-36 h-36 rounded-full border border-white/[0.08] flex items-center justify-center bg-[radial-gradient(circle,rgba(255,255,255,0.02),transparent_70%)]">
+                  <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 21h18M3 10.5h18M3 7.5l9-5.25L21 7.5M4.5 10.5v10.5m4.5-10.5v10.5m6-10.5v10.5m4.5-10.5v10.5" />
+                  </svg>
                 </div>
               </div>
             )}
 
             {feature.icon === "globe" && (
               <div class="absolute inset-0">
-                <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-[0.13]" />
+                <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-30" />
                 {avatars.map((a) => (
                   <div
                     data-fx-avatar
