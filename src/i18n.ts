@@ -73,6 +73,17 @@ export const ui = {
     partners: { id: "Jaringan Mitra yang Terpercaya", en: "A Trusted Partner Network" },
   },
 
+  caseStudy: {
+    eyebrow: { id: "Case Study", en: "Case Study" },
+    heading1: { id: "Dolar stabil, di tangan yang", en: "A stable dollar, in the hands" },
+    heading2: { id: "membutuhkan", en: "that need it" },
+    ctaHeading: {
+      id: "Jadilah Bagian dari 2.500+ Pengguna USDX di Seluruh Dunia",
+      en: "Join 2,500+ USDX users around the world",
+    },
+    more: { id: "Case Study Lainnya", en: "More Case Studies" },
+  },
+
   faq: {
     eyebrow: { id: "FAQ", en: "FAQ" },
     heading1: { id: "Pertanyaan yang paling", en: "The questions we get" },
