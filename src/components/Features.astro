@@ -64,17 +64,21 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
             {feature.icon === "shield" && (
               <div class="absolute inset-0 flex items-center justify-center">
                 <div class="absolute inset-x-7 inset-y-6 rounded-2xl border border-white/[0.06]"></div>
-                <svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100" fill="none" stroke="rgba(224,169,60,0.32)" stroke-width="0.7" stroke-linecap="round">
-                  <path data-fx-line d="M50 32 V50 M20 50 H80 M20 50 V62 M50 50 V62 M80 50 V62" stroke-dasharray="220" />
+                <!-- connectors only to $ and the coin; 1:1 is just a marker. dots flow guard -> nodes -->
+                <svg class="absolute inset-0 w-full h-full" viewBox="0 0 418 240" preserveAspectRatio="none" fill="none">
+                  <path d="M209 70 V118 M209 118 L97 158 M209 118 L321 158" stroke="rgba(224,169,60,0.22)" stroke-width="1.5" stroke-linecap="round" />
+                  <circle data-fx-dotv cx="209" cy="70" r="4.5" fill="#F7A100" opacity="0" />
+                  <circle data-fx-dotl cx="209" cy="118" r="4" fill="#F7A100" opacity="0" />
+                  <circle data-fx-dotr cx="209" cy="118" r="4" fill="#F7A100" opacity="0" />
                 </svg>
                 <div data-fx-shield class="absolute top-5 left-1/2 -translate-x-1/2 w-12 h-12 rounded-2xl bg-gold/15 border border-gold/30 flex items-center justify-center">
                   <svg class="w-6 h-6 text-gold-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths.shield} /></svg>
                 </div>
-                <div data-fx-node class="absolute bottom-9 left-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-gray-300">
+                <div data-fx-snode class="absolute bottom-9 left-[18%] w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-gray-300">
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths.dollar} /></svg>
                 </div>
-                <div data-fx-node class="absolute bottom-9 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-xs font-bold text-gold-light">1:1</div>
-                <div data-fx-node class="absolute bottom-9 right-[18%] w-11 h-11">
+                <div class="absolute bottom-9 left-1/2 -translate-x-1/2 w-11 h-11 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center text-xs font-bold text-gold-light">1:1</div>
+                <div data-fx-snode class="absolute bottom-9 right-[18%] w-11 h-11">
                   <img src="/image/logo-coin.png" alt="" class="w-full h-full" />
                 </div>
               </div>
@@ -98,6 +102,10 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
                       />
                     ))}
                   </svg>
+                  <!-- glow dot scanning around the dial -->
+                  <div data-fx-gspin class="absolute inset-0">
+                    <span class="absolute left-1/2 top-1 -translate-x-1/2 w-2 h-2 rounded-full bg-[#ff5a4d] shadow-[0_0_10px_3px_rgba(255,80,60,0.7)]"></span>
+                  </div>
                   <div class="absolute inset-0 flex items-center justify-center">
                     <div class="w-16 h-16 rounded-full bg-[#141414] border border-white/10 flex flex-col items-center justify-center shadow-[0_0_24px_rgba(212,32,46,0.25)]">
                       <svg data-fx-bolt class="w-5 h-5 text-primary-light" fill="currentColor" viewBox="0 0 24 24"><path d={iconPaths.zap} /></svg>
@@ -167,9 +175,10 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
                     <span data-fx-bar class="origin-bottom rounded-t-sm bg-white/[0.04]" style={`width:${w}px; height:${h}px; background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px); background-size: 9px 11px;`}></span>
                   ))}
                 </div>
-                <!-- regulated institution in a large thin ring -->
+                <!-- regulated institution in a large thin ring + rotating compliance scan -->
                 <div data-fx-bank class="relative w-36 h-36 rounded-full border border-white/[0.12] flex items-center justify-center bg-[radial-gradient(circle,rgba(255,255,255,0.03),transparent_70%)]">
-                  <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <div data-fx-scan class="absolute inset-0 rounded-full" style="background: conic-gradient(from 0deg, transparent 0deg, rgba(224,169,60,0.35) 45deg, transparent 90deg); -webkit-mask: radial-gradient(transparent 60%, #000 62%); mask: radial-gradient(transparent 60%, #000 62%);"></div>
+                  <svg class="relative w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 21h18M3 10.5h18M3 7.5l9-5.25L21 7.5M4.5 10.5v10.5m4.5-10.5v10.5m6-10.5v10.5m4.5-10.5v10.5" />
                   </svg>
                 </div>
@@ -275,44 +284,52 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
       });
     }
 
-    // Per-card LOOPING animation, matched to content. Runs while hovered
-    // (desktop) or while the card is centered in the viewport (touch / mobile).
+    // Per-card AMBIENT loop, matched to content. Runs continuously (slow +
+    // subtle) while the card is in view; pauses off-screen. Hover adds the
+    // spotlight (CSS) on top. Works the same on desktop + mobile.
     const qa = (el: Element, sel: string) => gsap.utils.toArray<HTMLElement>(el.querySelectorAll(sel));
     const q1 = (el: Element, sel: string) => el.querySelector(sel) as HTMLElement | null;
-    const hoverCapable = window.matchMedia("(hover: hover)").matches;
 
     const buildLoop = (card: HTMLElement, type?: string) => {
       const tl = gsap.timeline({ repeat: -1, paused: true });
       switch (type) {
-        case "shield": { // electricity flows along the audit link; guard + nodes breathe
-          const line = q1(card, "[data-fx-line]");
-          if (line) {
-            line.setAttribute("stroke-dasharray", "5 7");
-            tl.to(line, { strokeDashoffset: -48, duration: 1.6, ease: "none" }, 0);
-          }
-          tl.to(qa(card, "[data-fx-node]"), { scale: 1.12, duration: 0.8, stagger: { each: 0.2, yoyo: true, repeat: 1 }, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0)
-            .to(q1(card, "[data-fx-shield]"), { scale: 1.1, duration: 0.8, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+        case "shield": { // a dot descends from the guard, then spreads to $ and the coin
+          const dv = q1(card, "[data-fx-dotv]");
+          const dl = q1(card, "[data-fx-dotl]");
+          const dr = q1(card, "[data-fx-dotr]");
+          tl.set(dv, { attr: { cx: 209, cy: 70 }, opacity: 0 })
+            .set([dl, dr], { attr: { cx: 209, cy: 118 }, opacity: 0 })
+            .to(dv, { opacity: 1, duration: 0.3 }, 0)
+            .to(dv, { attr: { cy: 118 }, duration: 0.9, ease: "sine.inOut" }, 0.15)
+            .to(dv, { opacity: 0, duration: 0.2 }, 1.0)
+            .to([dl, dr], { opacity: 1, duration: 0.2 }, 1.05)
+            .to(dl, { attr: { cx: 97, cy: 158 }, duration: 0.85, ease: "sine.inOut" }, 1.1)
+            .to(dr, { attr: { cx: 321, cy: 158 }, duration: 0.85, ease: "sine.inOut" }, 1.1)
+            .to(qa(card, "[data-fx-snode]"), { scale: 1.12, duration: 0.35, yoyo: true, repeat: 1, ease: "power2.out", transformOrigin: "50% 50%" }, 1.7)
+            .to([dl, dr], { opacity: 0, duration: 0.3 }, 1.85)
+            .to({}, { duration: 0.5 });
           break;
         }
-        case "zap": // a light wave sweeps the speed dial + the bolt sparks
-          tl.fromTo(qa(card, "[data-tick]"), { opacity: 0.25 }, { opacity: 1, duration: 0.6, stagger: { each: 0.02, from: "start" }, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false }, 0)
-            .to(q1(card, "[data-fx-bolt]"), { scale: 1.2, duration: 0.6, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+        case "zap": // a glow dot scans around the dial + the bolt softly sparks
+          tl.to(q1(card, "[data-fx-gspin]"), { rotation: 360, duration: 3, ease: "none", transformOrigin: "50% 50%" }, 0)
+            .to(q1(card, "[data-fx-bolt]"), { scale: 1.14, opacity: 0.8, duration: 1.5, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
           break;
-        case "dollar": // the incoming amount pulses + the actions gently lift
-          tl.to(q1(card, "[data-fx-walletamt]"), { scale: 1.18, duration: 0.5, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "100% 50%" }, 0)
-            .to(qa(card, "[data-fx-action]"), { y: -3, duration: 0.6, stagger: { each: 0.15, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0.2);
+        case "dollar": // the incoming amount gently pulses + actions breathe
+          tl.to(q1(card, "[data-fx-walletamt]"), { scale: 1.16, duration: 0.7, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "100% 50%" }, 0)
+            .to(qa(card, "[data-fx-action]"), { y: -3, duration: 0.9, stagger: { each: 0.2, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0.3)
+            .to({}, { duration: 0.6 });
           break;
-        case "layers": // energy circulates around the chain ring + hub pulses
-          tl.to(qa(card, "[data-fx-chain]"), { scale: 1.18, duration: 0.4, stagger: { each: 0.12, from: "start", yoyo: true, repeat: 1 }, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0)
-            .to(q1(card, "[data-fx-hub]"), { scale: 1.08, duration: 1, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+        case "layers": // a pulse of energy travels around the chain ring + hub glows
+          tl.to(qa(card, "[data-fx-chain]"), { scale: 1.22, duration: 0.45, stagger: { each: 0.18, from: "start", yoyo: true, repeat: 1 }, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0)
+            .to(q1(card, "[data-fx-hub]"), { scale: 1.1, duration: 1.4, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
           break;
-        case "check": // the skyline breathes like a live chart + the ring glows
-          tl.to(qa(card, "[data-fx-bar]"), { scaleY: 1.18, duration: 0.9, stagger: { each: 0.07, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0)
-            .to(q1(card, "[data-fx-bank]"), { scale: 1.05, duration: 1.1, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+        case "check": // a compliance scan sweeps the ring + the skyline breathes
+          tl.to(q1(card, "[data-fx-scan]"), { rotation: 360, duration: 4, ease: "none", transformOrigin: "50% 50%" }, 0)
+            .to(qa(card, "[data-fx-bar]"), { scaleY: 1.14, duration: 1.2, stagger: { each: 0.1, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0);
           break;
         case "globe": // people float on the map + radar pings ripple out worldwide
-          tl.to(qa(card, "[data-fx-avatar]"), { y: -5, duration: 1.4, stagger: { each: 0.25, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0)
-            .fromTo(qa(card, "[data-fx-ping]"), { scale: 0.7, opacity: 0.55 }, { scale: 1.9, opacity: 0, duration: 1.8, stagger: 0.4, ease: "power1.out", immediateRender: false }, 0);
+          tl.to(qa(card, "[data-fx-avatar]"), { y: -5, duration: 1.5, stagger: { each: 0.3, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0)
+            .fromTo(qa(card, "[data-fx-ping]"), { scale: 0.7, opacity: 0.5 }, { scale: 2, opacity: 0, duration: 2, stagger: 0.5, ease: "power1.out", immediateRender: false }, 0);
           break;
         default:
           return null;
@@ -323,20 +340,15 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
     gsap.utils.toArray<HTMLElement>("[data-feat-card]").forEach((card) => {
       const tl = buildLoop(card, card.dataset.card);
       if (!tl) return;
-      if (hoverCapable) {
-        card.addEventListener("mouseenter", () => tl.play());
-        card.addEventListener("mouseleave", () => tl.pause());
-      } else {
-        ScrollTrigger.create({
-          trigger: card,
-          start: "top 70%",
-          end: "bottom 30%",
-          onEnter: () => tl.play(),
-          onEnterBack: () => tl.play(),
-          onLeave: () => tl.pause(),
-          onLeaveBack: () => tl.pause(),
-        });
-      }
+      ScrollTrigger.create({
+        trigger: card,
+        start: "top 90%",
+        end: "bottom 10%",
+        onEnter: () => tl.play(),
+        onEnterBack: () => tl.play(),
+        onLeave: () => tl.pause(),
+        onLeaveBack: () => tl.pause(),
+      });
     });
   }
 </script>
