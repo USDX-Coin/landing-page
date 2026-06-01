@@ -6,8 +6,10 @@ import T from "./T.astro";
 ---
 <section id="case-study" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07]">
   <!-- red branded background -->
-  <img src="/image/eco-bg.jpg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover" />
-  <div class="absolute inset-0 bg-[radial-gradient(ellipse_70%_80%_at_50%_0%,rgba(0,0,0,0.25),rgba(8,3,4,0.7))] pointer-events-none"></div>
+  <!-- red gradient (Figma: brighter maroon top -> dark bottom) + grid at the bottom -->
+  <div class="absolute inset-0 bg-[#0f0f0f]"></div>
+  <div class="absolute inset-0 bg-[linear-gradient(to_top,#220004_0%,#7a0d10_100%)]"></div>
+  <div class="absolute inset-x-0 bottom-0 h-2/3 pointer-events-none" style="background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 44px 44px; mask-image: linear-gradient(to bottom, transparent, #000 55%); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 55%);"></div>
 
   <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-10">
     <!-- Heading -->

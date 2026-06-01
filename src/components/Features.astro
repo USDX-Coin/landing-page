@@ -27,8 +27,8 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
 <section id="features" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden bg-[#0f0f0f]">
   <!-- red glow behind the heading (#B60000 ellipse) -->
   <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[1100px] h-[360px] bg-[#b60000]/35 blur-[130px] rounded-[50%] pointer-events-none"></div>
-  <!-- faint grid pattern -->
-  <div class="absolute inset-0 opacity-[0.04]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 48px 48px;"></div>
+  <!-- faint grid pattern — bottom area only (per Figma) -->
+  <div class="absolute inset-x-0 bottom-0 h-2/3 opacity-[0.05]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom, transparent, #000 45%); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 45%);"></div>
 
   <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px]">
     <!-- Heading (centered) -->
@@ -168,7 +168,7 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
                   ))}
                 </div>
                 <!-- regulated institution in a large thin ring -->
-                <div data-fx-bank class="relative w-36 h-36 rounded-full border border-white/[0.08] flex items-center justify-center bg-[radial-gradient(circle,rgba(255,255,255,0.02),transparent_70%)]">
+                <div data-fx-bank class="relative w-36 h-36 rounded-full border border-white/[0.12] flex items-center justify-center bg-[radial-gradient(circle,rgba(255,255,255,0.03),transparent_70%)]">
                   <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 21h18M3 10.5h18M3 7.5l9-5.25L21 7.5M4.5 10.5v10.5m4.5-10.5v10.5m6-10.5v10.5m4.5-10.5v10.5" />
                   </svg>
@@ -178,14 +178,13 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
 
             {feature.icon === "globe" && (
               <div class="absolute inset-0">
-                <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-30" />
+                <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-contain opacity-40" />
                 {avatars.map((a) => (
-                  <div
-                    data-fx-avatar
-                    class="absolute w-12 h-12 rounded-full overflow-hidden ring-2 ring-[#141414] shadow-lg shadow-black/40"
-                    style={`top:${a.top}%; left:${a.left}%; transform: translate(-50%,-50%);`}
-                  >
-                    <img src={a.src} alt="" class="w-full h-full object-cover" loading="lazy" />
+                  <div class="absolute w-12 h-12" style={`top:${a.top}%; left:${a.left}%; transform: translate(-50%,-50%);`}>
+                    <span data-fx-ping class="absolute inset-0 rounded-full ring-2 ring-white/40 opacity-0"></span>
+                    <div data-fx-avatar class="relative w-full h-full rounded-full overflow-hidden ring-2 ring-[#141414] shadow-lg shadow-black/40">
+                      <img src={a.src} alt="" class="w-full h-full object-cover" loading="lazy" />
+                    </div>
                   </div>
                 ))}
               </div>
@@ -239,53 +238,68 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
       });
     }
 
-    // Distinct, dramatic hover animation per card, matched to its content
+    // Per-card LOOPING animation, matched to content. Runs while hovered
+    // (desktop) or while the card is centered in the viewport (touch / mobile).
     const qa = (el: Element, sel: string) => gsap.utils.toArray<HTMLElement>(el.querySelectorAll(sel));
     const q1 = (el: Element, sel: string) => el.querySelector(sel) as HTMLElement | null;
+    const hoverCapable = window.matchMedia("(hover: hover)").matches;
+
+    const buildLoop = (card: HTMLElement, type?: string) => {
+      const tl = gsap.timeline({ repeat: -1, paused: true });
+      switch (type) {
+        case "shield": { // electricity flows along the audit link; guard + nodes breathe
+          const line = q1(card, "[data-fx-line]");
+          if (line) {
+            line.setAttribute("stroke-dasharray", "5 7");
+            tl.to(line, { strokeDashoffset: -48, duration: 1.6, ease: "none" }, 0);
+          }
+          tl.to(qa(card, "[data-fx-node]"), { scale: 1.12, duration: 0.8, stagger: { each: 0.2, yoyo: true, repeat: 1 }, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0)
+            .to(q1(card, "[data-fx-shield]"), { scale: 1.1, duration: 0.8, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+          break;
+        }
+        case "zap": // a light wave sweeps the speed dial + the bolt sparks
+          tl.fromTo(qa(card, "[data-tick]"), { opacity: 0.25 }, { opacity: 1, duration: 0.6, stagger: { each: 0.02, from: "start" }, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false }, 0)
+            .to(q1(card, "[data-fx-bolt]"), { scale: 1.2, duration: 0.6, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+          break;
+        case "dollar": // the incoming amount pulses + the actions gently lift
+          tl.to(q1(card, "[data-fx-walletamt]"), { scale: 1.18, duration: 0.5, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "100% 50%" }, 0)
+            .to(qa(card, "[data-fx-action]"), { y: -3, duration: 0.6, stagger: { each: 0.15, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0.2);
+          break;
+        case "layers": // energy circulates around the chain ring + hub pulses
+          tl.to(qa(card, "[data-fx-chain]"), { scale: 1.18, duration: 0.4, stagger: { each: 0.12, from: "start", yoyo: true, repeat: 1 }, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0)
+            .to(q1(card, "[data-fx-hub]"), { scale: 1.08, duration: 1, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+          break;
+        case "check": // the skyline breathes like a live chart + the ring glows
+          tl.to(qa(card, "[data-fx-bar]"), { scaleY: 1.18, duration: 0.9, stagger: { each: 0.07, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0)
+            .to(q1(card, "[data-fx-bank]"), { scale: 1.05, duration: 1.1, yoyo: true, repeat: 1, ease: "sine.inOut", transformOrigin: "50% 50%" }, 0);
+          break;
+        case "globe": // people float on the map + radar pings ripple out worldwide
+          tl.to(qa(card, "[data-fx-avatar]"), { y: -5, duration: 1.4, stagger: { each: 0.25, yoyo: true, repeat: 1 }, ease: "sine.inOut" }, 0)
+            .fromTo(qa(card, "[data-fx-ping]"), { scale: 0.7, opacity: 0.55 }, { scale: 1.9, opacity: 0, duration: 1.8, stagger: 0.4, ease: "power1.out", immediateRender: false }, 0);
+          break;
+        default:
+          return null;
+      }
+      return tl;
+    };
 
     gsap.utils.toArray<HTMLElement>("[data-feat-card]").forEach((card) => {
-      const type = card.dataset.card;
-      let busy = false;
-      card.addEventListener("mouseenter", () => {
-        if (busy) return;
-        busy = true;
-        setTimeout(() => (busy = false), 700);
-        switch (type) {
-          case "shield": // verify: the audit link draws, shield stamps, nodes lock in
-            gsap.fromTo(q1(card, "[data-fx-line]"), { strokeDashoffset: 220 }, { strokeDashoffset: 0, duration: 0.7, ease: "power2.out" });
-            gsap.fromTo(q1(card, "[data-fx-shield]"), { scale: 1 }, { scale: 1.2, duration: 0.28, yoyo: true, repeat: 1, ease: "power2.out", transformOrigin: "50% 50%" });
-            gsap.fromTo(qa(card, "[data-fx-node]"), { scale: 0.4, opacity: 0.4 }, { scale: 1, opacity: 1, duration: 0.55, stagger: 0.1, ease: "back.out(2.6)" });
-            break;
-          case "zap": // a pulse of light sweeps the speed dial + the bolt sparks
-            gsap.fromTo(qa(card, "[data-tick]"), { opacity: 0.12 }, { opacity: 1, duration: 0.22, stagger: { each: 0.012 }, yoyo: true, repeat: 1, ease: "sine.inOut" });
-            gsap.fromTo(q1(card, "[data-fx-bolt]"), { scale: 0.5, opacity: 0.3 }, { scale: 1.15, opacity: 1, duration: 0.35, yoyo: true, repeat: 1, ease: "back.out(3)", transformOrigin: "50% 50%" });
-            gsap.fromTo(qa(card, "[data-fx-txn]"), { opacity: 0.25 }, { opacity: 0.9, duration: 0.3, stagger: 0.05, yoyo: true, repeat: 1 });
-            break;
-          case "dollar": { // a payment lands: balance counts up, row slides in, actions rise
-            const bal = q1(card, "[data-fx-balance]");
-            if (bal) {
-              const o = { v: 0 };
-              gsap.to(o, { v: 240000, duration: 0.9, ease: "power1.out", onUpdate: () => { bal.textContent = Math.round(o.v).toLocaleString("en-US"); } });
-            }
-            gsap.fromTo(q1(card, "[data-fx-walletrow]"), { x: 28, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: "power3.out" });
-            gsap.fromTo(q1(card, "[data-fx-walletamt]"), { scale: 1 }, { scale: 1.25, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out", transformOrigin: "100% 50%" });
-            gsap.fromTo(qa(card, "[data-fx-action]"), { y: 14, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, stagger: 0.1, ease: "back.out(2)" });
-            break;
-          }
-          case "layers": // the constellation snaps in and rotates into place around the hub
-            gsap.fromTo(q1(card, "[data-fx-orbit]"), { rotation: -28, scale: 0.85 }, { rotation: 0, scale: 1, duration: 1.1, ease: "power3.out", transformOrigin: "50% 50%" });
-            gsap.fromTo(qa(card, "[data-fx-chain]"), { scale: 0.3, opacity: 0.3 }, { scale: 1, opacity: 1, duration: 0.55, stagger: 0.07, ease: "back.out(2.4)" });
-            gsap.fromTo(q1(card, "[data-fx-hub]"), { scale: 1 }, { scale: 1.18, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out", transformOrigin: "50% 50%" });
-            break;
-          case "check": // the skyline rises like a chart, the institution gets stamped
-            gsap.fromTo(qa(card, "[data-fx-bar]"), { scaleY: 0.12 }, { scaleY: 1, duration: 0.55, stagger: 0.05, ease: "power2.out" });
-            gsap.fromTo(q1(card, "[data-fx-bank]"), { scale: 0.82 }, { scale: 1, duration: 0.5, ease: "back.out(2.6)", transformOrigin: "50% 50%" });
-            break;
-          case "globe": // people pop onto the map worldwide, one after another
-            gsap.fromTo(qa(card, "[data-fx-avatar]"), { scale: 0.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.55, stagger: 0.1, ease: "back.out(2.6)" });
-            break;
-        }
-      });
+      const tl = buildLoop(card, card.dataset.card);
+      if (!tl) return;
+      if (hoverCapable) {
+        card.addEventListener("mouseenter", () => tl.play());
+        card.addEventListener("mouseleave", () => tl.pause());
+      } else {
+        ScrollTrigger.create({
+          trigger: card,
+          start: "top 70%",
+          end: "bottom 30%",
+          onEnter: () => tl.play(),
+          onEnterBack: () => tl.play(),
+          onLeave: () => tl.pause(),
+          onLeaveBack: () => tl.pause(),
+        });
+      }
     });
   }
 </script>
