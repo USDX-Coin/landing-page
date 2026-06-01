@@ -13,12 +13,12 @@ export default function Faq() {
   return (
     <section id="faq" className="relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
       <div className="px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] grid lg:grid-cols-2 gap-8 lg:gap-4">
-        {/* Left: heading + CTA */}
-        <div className="flex flex-col gap-10">
+        {/* Left: heading + CTA (CTA pinned to bottom) */}
+        <div className="flex flex-col h-full">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4 items-start">
               <span
-                className="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium"
+                className="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight"
                 style={{ backgroundImage: "linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)" }}
               >
                 <span className="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
@@ -39,7 +39,7 @@ export default function Faq() {
             href={APP_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex w-fit items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors no-underline"
+            className="mt-8 lg:mt-auto inline-flex w-fit items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors no-underline"
           >
             <T t={ui.faq.contact} />
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,23 +48,16 @@ export default function Faq() {
           </a>
         </div>
 
-        {/* Right: accordion */}
-        <div className="flex flex-col gap-4">
+        {/* Right: accordion — one black panel, items split by hairline dividers */}
+        <div className="rounded-xl border border-white/10 bg-black overflow-hidden divide-y divide-white/10">
           {faqItems.map((item, index) => {
             const isOpen = openIndex === index;
             return (
-              <div
-                key={index}
-                className={`rounded-[9px] overflow-hidden transition-colors duration-300 ${
-                  isOpen ? "bg-[#1b1b1b]" : "bg-black border border-white/[0.06]"
-                }`}
-              >
+              <div key={index}>
                 <button
                   onClick={() => toggle(index)}
                   aria-expanded={isOpen}
-                  className={`w-full flex items-center gap-6 px-4 py-4 text-left bg-transparent border-none cursor-pointer ${
-                    isOpen ? "bg-black border-b border-white/[0.08]" : ""
-                  }`}
+                  className="w-full flex items-center gap-6 px-5 py-4 text-left bg-transparent border-none cursor-pointer"
                 >
                   <span className="flex-1 font-medium text-base text-white leading-5">
                     <T t={item.question} />
@@ -80,8 +73,8 @@ export default function Faq() {
                     isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                   }`}
                 >
-                  <div className="overflow-hidden bg-black">
-                    <p className="px-4 py-4 text-zinc-300 leading-6 text-sm">
+                  <div className="overflow-hidden">
+                    <p className="px-5 pb-5 text-zinc-300 leading-6 text-sm">
                       <T t={item.answer} />
                     </p>
                   </div>

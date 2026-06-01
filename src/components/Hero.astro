@@ -5,13 +5,17 @@ import T from "./T.astro";
 <section id="hero" class="relative min-h-screen flex items-end overflow-hidden bg-[#0a0a0a]">
   <!-- Background city photo (parallax). Replace /image/hero-city.jpg with the
        brand-approved shot when available. -->
-  <div data-hero-bg class="absolute inset-0 z-0 will-change-transform">
-    <img
-      src="/image/hero-city.jpg"
-      alt=""
-      aria-hidden="true"
-      class="w-full h-[115%] object-cover object-center"
-    />
+  <div data-hero-bg class="absolute inset-0 z-0 overflow-hidden will-change-transform">
+    {["/image/hero-1.jpg", "/image/hero-2.jpg", "/image/hero-3.jpg"].map((src, i) => (
+      <img
+        data-hero-slide
+        src={src}
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 w-full h-[112%] object-cover object-center"
+        style={`opacity:${i === 0 ? 1 : 0}`}
+      />
+    ))}
   </div>
 
   <!-- Darkening overlay: dark top + clear middle + dark bottom (per Figma) -->
@@ -21,7 +25,7 @@ import T from "./T.astro";
     <div class="grid lg:grid-cols-12 gap-8 lg:gap-8 items-end">
       <!-- Left: pill + headline -->
       <div class="lg:col-span-7 flex flex-col gap-4">
-        <span data-hero-el class="inline-flex w-fit items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
+        <span data-hero-el class="inline-flex w-fit items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
           <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
             <span class="text-sm font-bold leading-none">$</span>
           </span>
@@ -65,9 +69,31 @@ import T from "./T.astro";
     tl.from("[data-hero-line]", { yPercent: 115, duration: 0.9, stagger: 0.12 }, 0.15)
       .from("[data-hero-el]", { y: 22, opacity: 0, duration: 0.7, stagger: 0.15 }, 0.3);
 
+    // Smooth auto-crossfade carousel + Ken Burns zoom
+    const slides = gsap.utils.toArray<HTMLElement>("[data-hero-slide]");
+    if (slides.length > 1) {
+      const HOLD = 5;
+      const FADE = 1.4;
+      const kenBurns = (el: HTMLElement) =>
+        gsap.fromTo(el, { scale: 1.05 }, { scale: 1.16, duration: HOLD + FADE * 2, ease: "none" });
+      let cur = 0;
+      gsap.set(slides, { autoAlpha: 0 });
+      gsap.set(slides[0], { autoAlpha: 1 });
+      kenBurns(slides[0]);
+      const advance = () => {
+        const next = (cur + 1) % slides.length;
+        kenBurns(slides[next]);
+        gsap.to(slides[next], { autoAlpha: 1, duration: FADE, ease: "power2.inOut" });
+        gsap.to(slides[cur], { autoAlpha: 0, duration: FADE, ease: "power2.inOut" });
+        cur = next;
+        gsap.delayedCall(HOLD + FADE, advance);
+      };
+      gsap.delayedCall(HOLD, advance);
+    }
+
     // Background parallax on scroll
-    gsap.to("[data-hero-bg] img", {
-      yPercent: 12,
+    gsap.to("[data-hero-bg]", {
+      yPercent: 10,
       ease: "none",
       scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true },
     });

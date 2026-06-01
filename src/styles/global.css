@@ -19,6 +19,7 @@
   --color-dark: #0a0a0a;
 
   --font-sans: 'Inter', sans-serif;
+  --font-tight: 'Inter Tight', 'Inter', sans-serif;
   --font-serif: 'Crimson Pro', Georgia, serif;
 
   --animate-marquee: marquee 30s linear infinite;
@@ -78,6 +79,11 @@ body {
 /* Editorial serif display for headings */
 .font-serif {
   font-family: var(--font-serif);
+}
+
+/* Inter Tight for UI labels / badges (per Figma) */
+.font-tight {
+  font-family: var(--font-tight);
 }
 
 /* Hide scrollbar utility (carousels) */
