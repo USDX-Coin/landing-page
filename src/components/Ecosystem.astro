@@ -21,7 +21,7 @@ const spots = [
 const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
 ---
 <!-- Card 1: red orbital panel -->
-<section id="ecosystem" class="relative mx-auto w-full max-w-[1376px] rounded-2xl overflow-hidden border border-white/[0.07]">
+<section id="ecosystem" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07]">
   <!-- red curved-band background -->
   <img src="/image/eco-bg.jpg" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover" />
   <!-- dotted world map -->
@@ -31,10 +31,10 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
   <!-- edge vignette to deepen corners -->
   <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_64%_64%_at_50%_50%,transparent_38%,rgba(12,4,5,0.5))]"></div>
 
-  <!-- Orbital stage holds chains around the edges; content sits centered on top -->
-  <div data-eco-stage class="relative mx-auto w-full aspect-[16/12] sm:aspect-[1376/652]">
-      <!-- static chain badges -->
-      <div class="absolute inset-0">
+  <!-- Orbital stage: desktop = chains around the edges; mobile = content + chain row -->
+  <div data-eco-stage class="relative mx-auto w-full lg:aspect-[1376/652]">
+      <!-- static chain badges (desktop only) -->
+      <div class="hidden lg:block absolute inset-0">
         {ring.map(({ chain, left, top }) => (
           <a
             href={chain.url}
@@ -60,7 +60,7 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
       </div>
 
       <!-- Center content -->
-      <div data-eco-head class="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-8 sm:px-12">
+      <div data-eco-head class="relative lg:absolute lg:inset-0 z-10 flex flex-col items-center justify-center text-center px-6 py-12 lg:py-0 lg:px-12">
         <span class="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
           <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
@@ -89,13 +89,26 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
           <T t={ui.cta} />
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
         </a>
+
+        <!-- Mobile: chains as a centered row below the content -->
+        <div class="lg:hidden mt-8 flex flex-wrap justify-center gap-3 max-w-[340px]">
+          {ring.map(({ chain }) => (
+            <a href={chain.url} target="_blank" rel="noopener noreferrer" title={chain.name} class="no-underline">
+              <div class="w-14 h-14 rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-lg shadow-black/40">
+                <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
+                  <img src={chain.icon} alt={chain.name} class="w-7 h-7" loading="lazy" />
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- Card 2: partner network (light-to-dark spotlight) -->
-<section data-eco-partners class="relative mx-auto w-full max-w-[1376px] rounded-2xl overflow-hidden border border-white/[0.07] bg-[linear-gradient(180deg,#0f0f0f_0%,rgba(15,15,15,0)_100%)]">
+<section data-eco-partners class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07] bg-[linear-gradient(180deg,#0f0f0f_0%,rgba(15,15,15,0)_100%)]">
   <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-10 items-center">
     <h3 class="text-center font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] text-white tracking-tight">
       <T t={ui.ecosystem.partners} />

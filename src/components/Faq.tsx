@@ -11,7 +11,7 @@ export default function Faq() {
     setOpenIndex((prev) => (prev === index ? null : index));
 
   return (
-    <section id="faq" className="relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
+    <section id="faq" className="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
       <div className="px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] grid lg:grid-cols-2 gap-8 lg:gap-4">
         {/* Left: heading + CTA (CTA pinned to bottom) */}
         <div className="flex flex-col h-full">
@@ -48,12 +48,17 @@ export default function Faq() {
           </a>
         </div>
 
-        {/* Right: accordion — one black panel, items split by hairline dividers */}
-        <div className="rounded-xl border border-white/10 bg-black overflow-hidden divide-y divide-white/10">
+        {/* Right: accordion — separate rounded cards (Figma); open card is lighter */}
+        <div className="flex flex-col gap-3">
           {faqItems.map((item, index) => {
             const isOpen = openIndex === index;
             return (
-              <div key={index}>
+              <div
+                key={index}
+                className={`rounded-[10px] overflow-hidden border transition-colors duration-300 ${
+                  isOpen ? "bg-[#1b1b1b] border-white/10" : "bg-[#0c0c0c] border-white/[0.06] hover:border-white/15"
+                }`}
+              >
                 <button
                   onClick={() => toggle(index)}
                   aria-expanded={isOpen}

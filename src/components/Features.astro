@@ -24,7 +24,7 @@ const avatars = [
 // Tick marks for the settlement speed gauge.
 const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
 ---
-<section id="features" class="relative mx-auto w-full max-w-[1376px] rounded-2xl overflow-hidden bg-[#0f0f0f]">
+<section id="features" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden bg-[#0f0f0f]">
   <!-- red glow behind the heading (#B60000 ellipse) -->
   <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[1100px] h-[360px] bg-[#b60000]/35 blur-[130px] rounded-[50%] pointer-events-none"></div>
   <!-- faint grid pattern -->
@@ -161,20 +161,22 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
 
             {feature.icon === "check" && (
               <div class="absolute inset-0 flex items-center justify-center">
-                <div class="absolute bottom-0 inset-x-0 h-16 flex items-end justify-center gap-1.5 opacity-20">
-                  {[10, 18, 14, 24, 16, 28, 12, 20].map((h) => (
-                    <span data-fx-bar class="w-3 bg-white/40 origin-bottom" style={`height:${h * 2}px;`}></span>
+                <!-- faint city skyline silhouette -->
+                <div class="absolute bottom-0 inset-x-0 flex items-end justify-center gap-1.5">
+                  {[[16, 3], [30, 4], [22, 3], [44, 5], [26, 3], [54, 4], [20, 3], [40, 5], [24, 3], [48, 4], [18, 3], [34, 4]].map(([h, w]) => (
+                    <span data-fx-bar class="bg-white/[0.06] origin-bottom rounded-t-sm" style={`height:${h * 2}px; width:${w * 4}px;`}></span>
                   ))}
                 </div>
-                <div data-fx-bank class="relative w-20 h-20 rounded-full bg-gold/10 border border-gold/30 flex items-center justify-center">
-                  <svg class="w-9 h-9 text-gold-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" /></svg>
+                <!-- regulated institution in a ring -->
+                <div data-fx-bank class="relative w-20 h-20 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center">
+                  <svg class="w-9 h-9 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 21h18M5 21V10l7-5 7 5v11M9 21v-6h6v6" /></svg>
                 </div>
               </div>
             )}
 
             {feature.icon === "globe" && (
               <div class="absolute inset-0">
-                <div class="absolute inset-0 opacity-[0.08]" style="background-image: radial-gradient(circle, #fff 1.2px, transparent 1.2px); background-size: 13px 13px; mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 75%); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, #000 40%, transparent 75%);"></div>
+                <img src="/image/eco-globe.png" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover opacity-[0.13]" />
                 {avatars.map((a) => (
                   <div
                     data-fx-avatar
