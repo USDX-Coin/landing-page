@@ -1,218 +1,56 @@
 ---
-import { APP_URL } from "../data/navigation";
-import { ui, txns } from "../i18n";
+import { ui } from "../i18n";
 import T from "./T.astro";
 ---
-<section id="hero" class="relative overflow-hidden bg-white pt-28 pb-20 md:pt-32 md:pb-28 lg:min-h-screen lg:flex lg:items-center">
-  <!-- Dot grid pattern -->
-  <div class="absolute inset-0 opacity-[0.03]" style="background-image: radial-gradient(circle, #1eaed5 1px, transparent 1px); background-size: 24px 24px;"></div>
-  <!-- Gradient glows (parallax) -->
-  <div data-hero-blob class="absolute -top-32 -right-24 w-[520px] h-[520px] bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-  <div data-hero-blob class="absolute bottom-0 -left-24 w-[360px] h-[360px] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<section id="hero" class="relative min-h-screen flex items-end overflow-hidden bg-[#0a0a0a]">
+  <!-- Background city photo (parallax). Replace /image/hero-city.jpg with the
+       brand-approved shot when available. -->
+  <div data-hero-bg class="absolute inset-0 z-0 overflow-hidden will-change-transform">
+    {["/image/hero-1.jpg", "/image/hero-2.jpg", "/image/hero-3.jpg"].map((src, i) => (
+      <img
+        data-hero-slide
+        src={src}
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 w-full h-[112%] object-cover object-center"
+        style={`opacity:${i === 0 ? 1 : 0}`}
+      />
+    ))}
+  </div>
 
-  <div class="max-w-[1200px] mx-auto px-6 grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10 w-full">
-    <!-- Left: copy -->
-    <div class="text-center lg:text-left">
-      <span data-hero-el class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light text-primary text-xs font-semibold tracking-wide uppercase">
-        <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
-        <T t={ui.hero.badge} />
-      </span>
+  <!-- Darkening overlay: dark top + clear middle + dark bottom (per Figma) -->
+  <div class="absolute inset-0 bg-gradient-to-b from-[#0a0a0a] via-transparent to-[#0a0a0a] pointer-events-none"></div>
 
-      <h1 class="mt-6 text-[2rem] leading-[1.1] sm:text-5xl lg:text-[56px] font-bold lg:leading-[1.08] tracking-tight text-dark">
-        <span data-l="id">
-          <span data-hero-line class="block">{ui.hero.line1.id}</span>
-          <span data-hero-line class="block">{ui.hero.line2.id}</span>
-          <span data-hero-line class="block text-primary">{ui.hero.line3.id}</span>
+  <div class="relative z-10 w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-[76px] pt-32 pb-14 md:pb-20">
+    <div class="grid lg:grid-cols-12 gap-8 lg:gap-8 items-end">
+      <!-- Left: pill + headline -->
+      <div class="lg:col-span-7 flex flex-col gap-4">
+        <span data-hero-el class="inline-flex w-fit items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
+          <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+            <span class="text-sm font-bold leading-none">$</span>
+          </span>
+          <T t={ui.hero.badge} />
         </span>
-        <span data-l="en">
-          <span data-hero-line class="block">{ui.hero.line1.en}</span>
-          <span data-hero-line class="block">{ui.hero.line2.en}</span>
-          <span data-hero-line class="block text-primary">{ui.hero.line3.en}</span>
-        </span>
-      </h1>
-
-      <p data-hero-el class="mt-6 text-gray-600 text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-        <T t={ui.hero.paragraph} />
-      </p>
-
-      <div data-hero-el class="mt-8 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-        <a
-          href={APP_URL}
-          data-app-link
-          target="_blank"
-          rel="noopener noreferrer"
-          class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark hover:shadow-xl hover:shadow-primary/25 hover:-translate-y-0.5 transition-all duration-300 no-underline text-base"
-        >
-          <T t={ui.cta} />
-        </a>
-        <a
-          href="#features"
-          class="group inline-flex items-center gap-2 px-6 py-3.5 text-dark font-semibold hover:text-primary transition-colors duration-300 no-underline text-base"
-        >
-          <T t={ui.hero.explore} />
-          <svg class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
-        </a>
+        <h1 class="font-serif text-white font-medium tracking-tight text-[2.4rem] leading-[1.08] sm:text-5xl lg:text-[60px] lg:leading-[68px]">
+          <span data-l="id">
+            <span class="block overflow-hidden"><span data-hero-line class="block">{ui.hero.line1.id}</span></span>
+            <span class="block overflow-hidden"><span data-hero-line class="block">{ui.hero.line2.id}</span></span>
+          </span>
+          <span data-l="en">
+            <span class="block overflow-hidden"><span data-hero-line class="block">{ui.hero.line1.en}</span></span>
+            <span class="block overflow-hidden"><span data-hero-line class="block">{ui.hero.line2.en}</span></span>
+          </span>
+        </h1>
       </div>
 
-      <!-- Trust stats -->
-      <div data-hero-el class="mt-12 grid grid-cols-3 gap-4 sm:gap-6 max-w-md mx-auto lg:mx-0">
-        <div class="text-center lg:text-left">
-          <div class="text-xl sm:text-2xl font-bold text-dark">1:1</div>
-          <div class="text-xs text-gray-500 mt-1"><T t={ui.hero.stat1} /></div>
-        </div>
-        <div class="text-center lg:text-left border-x border-gray-100 px-2 sm:px-4">
-          <div class="text-xl sm:text-2xl font-bold text-dark">8</div>
-          <div class="text-xs text-gray-500 mt-1"><T t={ui.hero.stat2} /></div>
-        </div>
-        <div class="text-center lg:text-left">
-          <div class="text-xl sm:text-2xl font-bold text-dark">24/7</div>
-          <div class="text-xs text-gray-500 mt-1"><T t={ui.hero.stat3} /></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right: phone mockup -->
-    <div class="flex items-center justify-center">
-      <div data-hero-phone class="relative w-[300px] sm:w-[330px]">
-        <!-- Floating callouts (desktop gutters only — never over screen content) -->
-        <div data-hero-float class="absolute top-24 left-0 -translate-x-[72%] z-30 hidden lg:flex items-center gap-2.5 bg-white rounded-2xl shadow-xl shadow-dark/10 px-4 py-3 border border-gray-100">
-          <div class="w-9 h-9 rounded-full bg-primary-light flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-            </svg>
-          </div>
-          <div>
-            <div class="text-[11px] font-semibold text-dark leading-tight whitespace-nowrap"><T t={ui.hero.floatAuditTitle} /></div>
-            <div class="text-[10px] text-gray-400 leading-tight whitespace-nowrap"><T t={ui.hero.floatAuditSub} /></div>
-          </div>
-        </div>
-
-        <div data-hero-float class="absolute bottom-28 right-0 translate-x-[72%] z-30 hidden lg:flex items-center gap-2.5 bg-white rounded-2xl shadow-xl shadow-dark/10 px-4 py-3 border border-gray-100">
-          <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <div>
-            <div class="text-[11px] font-semibold text-dark leading-tight whitespace-nowrap"><T t={ui.hero.floatInstantTitle} /></div>
-            <div class="text-[10px] text-gray-400 leading-tight whitespace-nowrap"><T t={ui.hero.floatInstantSub} /></div>
-          </div>
-        </div>
-
-        <!-- Glow + ground shadow behind phone -->
-        <div class="absolute inset-0 -z-10 bg-primary/15 blur-3xl rounded-full scale-90"></div>
-        <div class="absolute -bottom-6 left-1/2 -translate-x-1/2 w-3/4 h-10 bg-dark/20 blur-2xl rounded-[50%]"></div>
-
-        <!-- Phone frame -->
-        <div data-phone-frame class="relative rounded-[3rem] bg-dark p-2 shadow-2xl shadow-dark/40 ring-1 ring-white/10">
-          <!-- Side buttons -->
-          <div class="absolute -left-[3px] top-28 w-[3px] h-8 bg-dark rounded-l-sm"></div>
-          <div class="absolute -left-[3px] top-40 w-[3px] h-12 bg-dark rounded-l-sm"></div>
-          <div class="absolute -right-[3px] top-36 w-[3px] h-16 bg-dark rounded-r-sm"></div>
-
-          <!-- screen -->
-          <div class="relative rounded-[2.55rem] bg-gradient-to-b from-[#f3fafc] to-white overflow-hidden h-[620px]">
-            <!-- screen gloss -->
-            <div class="absolute inset-0 z-40 pointer-events-none bg-gradient-to-br from-white/30 via-transparent to-transparent"></div>
-
-            <!-- status bar + dynamic island -->
-            <div class="relative flex items-center justify-between px-7 pt-3.5 pb-2 text-[12px] font-semibold text-dark">
-              <span>9:41</span>
-              <div class="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-7 bg-dark rounded-full"></div>
-              <div class="flex items-center gap-1.5">
-                <svg class="w-4 h-3.5 text-dark" viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="5" y="4" width="3" height="8" rx="1"/><rect x="10" y="1.5" width="3" height="10.5" rx="1" opacity="0.4"/></svg>
-                <svg class="w-4 h-3.5 text-dark" viewBox="0 0 16 12" fill="currentColor"><path d="M8 2.5c2.3 0 4.4.9 6 2.4l-1.4 1.5A6.6 6.6 0 008 4.6 6.6 6.6 0 003.4 6.4L2 4.9A8.6 8.6 0 018 2.5z" opacity="0.4"/><path d="M8 6.6c1.2 0 2.3.5 3.1 1.3L8 11 4.9 7.9A4.4 4.4 0 018 6.6z"/></svg>
-                <span class="w-6 h-3 rounded-[3px] border border-dark/40 relative flex items-center px-0.5"><span class="w-3.5 h-1.5 bg-dark rounded-[1px]"></span></span>
-              </div>
-            </div>
-
-            <!-- app header -->
-            <div class="flex items-center justify-between px-5 pt-3">
-              <div class="flex items-center gap-2">
-                <img src="/image/Logo.svg" alt="USDX" class="w-7 h-7" />
-                <span class="font-bold text-dark text-sm"><T t={ui.hero.appName} /></span>
-              </div>
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-900 ring-2 ring-white shadow-sm"></div>
-            </div>
-
-            <!-- balance card -->
-            <div class="mx-5 mt-4 rounded-3xl bg-gradient-to-br from-primary to-primary-900 p-5 text-white shadow-lg shadow-primary/30 relative overflow-hidden">
-              <div class="absolute -right-8 -top-8 w-28 h-28 bg-white/10 rounded-full"></div>
-              <div class="absolute right-6 bottom-4 w-16 h-16 bg-white/5 rounded-full"></div>
-              <div class="text-[11px] uppercase tracking-wider text-white/70"><T t={ui.hero.totalBalance} /></div>
-              <div class="mt-1 text-[28px] font-bold leading-none" data-balance>$12,840.50</div>
-              <div class="text-xs text-white/70 mt-1.5">≈ 12,840.50 USDX</div>
-              <div class="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/15 backdrop-blur text-[10px] font-medium">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" /></svg>
-                <T t={ui.hero.backedAudited} />
-              </div>
-            </div>
-
-            <!-- actions -->
-            <div class="grid grid-cols-3 gap-3 px-5 mt-5">
-              {[
-                { label: ui.hero.actionSend, d: "M5 10l7-7m0 0l7 7m-7-7v18" },
-                { label: ui.hero.actionReceive, d: "M19 14l-7 7m0 0l-7-7m7 7V3" },
-                { label: ui.hero.actionSwap, d: "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" },
-              ].map((a) => (
-                <div data-phone-row class="flex flex-col items-center gap-1.5">
-                  <div class="w-12 h-12 rounded-2xl bg-primary-light flex items-center justify-center">
-                    <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={a.d} />
-                    </svg>
-                  </div>
-                  <span class="text-[11px] font-medium text-dark"><T t={a.label} /></span>
-                </div>
-              ))}
-            </div>
-
-            <!-- reserve composition -->
-            <div data-phone-row class="mx-5 mt-5 rounded-2xl border border-gray-100 bg-white px-4 py-3">
-              <div class="flex items-center justify-between mb-2">
-                <span class="text-[11px] font-semibold text-dark"><T t={ui.hero.reserves} /></span>
-                <span class="text-[10px] font-medium text-emerald-500"><T t={ui.hero.backed100} /></span>
-              </div>
-              <div class="flex h-2 rounded-full overflow-hidden bg-gray-100">
-                <span class="bg-primary" style="width: 72%"></span>
-                <span class="bg-primary/40" style="width: 28%"></span>
-              </div>
-              <div class="flex items-center gap-4 mt-2 text-[10px] text-gray-400">
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary"></span><T t={ui.hero.cash} /></span>
-                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-primary/40"></span><T t={ui.hero.tbills} /></span>
-              </div>
-            </div>
-
-            <!-- recent activity -->
-            <div class="px-5 mt-5">
-              <div class="flex items-center justify-between mb-3">
-                <span class="text-xs font-semibold text-dark"><T t={ui.hero.recentActivity} /></span>
-                <span class="text-[10px] text-primary font-medium"><T t={ui.hero.seeAll} /></span>
-              </div>
-              <div class="space-y-2.5">
-                {txns.map((t) => (
-                  <div data-phone-row class="flex items-center justify-between">
-                    <div class="flex items-center gap-2.5">
-                      <div class={`w-9 h-9 rounded-full flex items-center justify-center ${t.tone === "up" ? "bg-emerald-50" : t.tone === "swap" ? "bg-primary-light" : "bg-gray-100"}`}>
-                        <svg class={`w-4 h-4 ${t.tone === "up" ? "text-emerald-500" : t.tone === "swap" ? "text-primary" : "text-gray-500"}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={t.tone === "up" ? "M19 14l-7 7m0 0l-7-7m7 7V3" : t.tone === "swap" ? "M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" : "M5 10l7-7m0 0l7 7m-7-7v18"} />
-                        </svg>
-                      </div>
-                      <div>
-                        <div class="text-[12px] font-semibold text-dark leading-tight"><T t={t.name} /></div>
-                        <div class="text-[10px] text-gray-400 leading-tight"><T t={t.sub} /></div>
-                      </div>
-                    </div>
-                    <span class={`text-[12px] font-semibold ${t.tone === "down" ? "text-dark" : "text-emerald-500"}`}>{t.amt}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <!-- home indicator -->
-            <div class="absolute bottom-2 left-1/2 -translate-x-1/2 w-28 h-1 bg-dark/30 rounded-full"></div>
-          </div>
+      <!-- Right: paragraph + powered by -->
+      <div class="lg:col-span-5 flex flex-col gap-6">
+        <p data-hero-el class="text-white text-base leading-[26px] max-w-[511px]">
+          <T t={ui.hero.paragraph} />
+        </p>
+        <div data-hero-el class="flex items-center gap-3">
+          <span class="text-white text-base"><T t={ui.poweredBy} /></span>
+          <img src="/image/bni.png" alt="BNI" class="h-8 w-auto" />
         </div>
       </div>
     </div>
@@ -227,48 +65,35 @@ import T from "./T.astro";
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduced) {
-    const ease = "power3.out";
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+    tl.from("[data-hero-line]", { yPercent: 115, duration: 0.9, stagger: 0.12 }, 0.15)
+      .from("[data-hero-el]", { y: 22, opacity: 0, duration: 0.7, stagger: 0.15 }, 0.3);
 
-    const tl = gsap.timeline({ defaults: { ease } });
-    tl.from("[data-hero-el]", { y: 24, opacity: 0, duration: 0.7, stagger: 0.12 }, 0.1)
-      .from("[data-hero-line]", { yPercent: 110, opacity: 0, duration: 0.8, stagger: 0.1 }, 0)
-      .from("[data-hero-phone]", { y: 60, opacity: 0, scale: 0.94, duration: 1 }, 0.25)
-      .from("[data-hero-float]", { y: 20, opacity: 0, duration: 0.6, stagger: 0.15 }, 0.8)
-      .from("[data-phone-row]", { y: 16, opacity: 0, duration: 0.5, stagger: 0.07 }, 0.6);
-
-    // Balance count-up
-    const balance = document.querySelector<HTMLElement>("[data-balance]");
-    if (balance) {
-      const counter = { val: 0 };
-      gsap.to(counter, {
-        val: 12840.5,
-        duration: 1.4,
-        delay: 0.5,
-        ease: "power2.out",
-        onUpdate: () => {
-          balance.textContent = "$" + counter.val.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        },
-      });
+    // Smooth auto-crossfade carousel + Ken Burns zoom
+    const slides = gsap.utils.toArray<HTMLElement>("[data-hero-slide]");
+    if (slides.length > 1) {
+      const HOLD = 5;
+      const FADE = 1.4;
+      const kenBurns = (el: HTMLElement) =>
+        gsap.fromTo(el, { scale: 1.05 }, { scale: 1.16, duration: HOLD + FADE * 2, ease: "none" });
+      let cur = 0;
+      gsap.set(slides, { autoAlpha: 0 });
+      gsap.set(slides[0], { autoAlpha: 1 });
+      kenBurns(slides[0]);
+      const advance = () => {
+        const next = (cur + 1) % slides.length;
+        kenBurns(slides[next]);
+        gsap.to(slides[next], { autoAlpha: 1, duration: FADE, ease: "power2.inOut" });
+        gsap.to(slides[cur], { autoAlpha: 0, duration: FADE, ease: "power2.inOut" });
+        cur = next;
+        gsap.delayedCall(HOLD + FADE, advance);
+      };
+      gsap.delayedCall(HOLD, advance);
     }
 
-    // Idle float on the phone frame
-    gsap.to("[data-phone-frame]", {
-      y: -14,
-      duration: 3,
-      delay: 1.2,
-      ease: "sine.inOut",
-      repeat: -1,
-      yoyo: true,
-    });
-
-    // Scroll parallax
-    gsap.to("[data-hero-phone]", {
-      yPercent: 16,
-      ease: "none",
-      scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true },
-    });
-    gsap.to("[data-hero-blob]", {
-      yPercent: -30,
+    // Background parallax on scroll
+    gsap.to("[data-hero-bg]", {
+      yPercent: 10,
       ease: "none",
       scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true },
     });

@@ -1,99 +1,132 @@
 ---
 import { chains, partners } from "../data/chains";
+import { APP_URL } from "../data/navigation";
 import { ui } from "../i18n";
 import T from "./T.astro";
 
-// Single ring: all chains evenly spaced, orbiting clockwise.
-// Positions are percentages of the (square) stage, so they scale at any size.
-const RADIUS = 0.42;
-const pos = (angle: number, r: number) => {
-  const rad = (angle * Math.PI) / 180;
-  return { left: 50 + r * 100 * Math.cos(rad), top: 50 + r * 100 * Math.sin(rad) };
-};
-const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i - 90, RADIUS) }));
+// Static layout (no orbit): 4 chains down each side, curving outward at the
+// vertical middle — positions as % of the stage so they scale. Index matches
+// the `chains` array order (Ethereum, BNB, Polygon, Arbitrum, Optimism,
+// Avalanche, Solana, Base).
+const spots = [
+  { left: 80, top: 13 }, // Ethereum  (right, top)
+  { left: 87, top: 32 }, // BNB       (right)
+  { left: 90, top: 54 }, // Polygon   (right)
+  { left: 89, top: 78 }, // Arbitrum  (right, bottom)
+  { left: 11, top: 78 }, // Optimism  (left, bottom)
+  { left: 10, top: 54 }, // Avalanche (left)
+  { left: 14, top: 32 }, // Solana    (left)
+  { left: 20, top: 13 }, // Base      (left, top)
+];
+const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
+// Mobile shows a single centered row of 6 chains (per Figma), skipping
+// Ethereum + Arbitrum to match the design's selection.
+const mobileChains = [1, 2, 4, 5, 6, 7].map((i) => ring[i]);
 ---
-<section id="ecosystem" class="relative bg-white py-16 md:py-20 px-6 overflow-hidden">
-  <div class="max-w-[1200px] mx-auto relative">
-    <div data-eco-head class="text-center relative z-10">
-      <div class="flex justify-center mb-4">
-        <span class="inline-flex items-center px-4 py-1.5 rounded-full border border-gray-200 bg-white shadow-sm text-primary text-xs font-semibold uppercase tracking-widest">
-          <T t={ui.ecosystem.badge} />
-        </span>
-      </div>
-      <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-dark leading-tight tracking-tight max-w-2xl mx-auto">
-        <T t={ui.ecosystem.heading} />
-      </h2>
-      <p class="mt-3 text-gray-600 text-sm sm:text-base max-w-lg mx-auto">
-        <T t={ui.ecosystem.sub} />
-      </p>
-    </div>
+<!-- Card 1: red orbital panel -->
+<section id="ecosystem" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07]">
+  <!-- brand red bg (brighter red glow toward the lower-centre, per Figma) -->
+  <div class="absolute inset-0 bg-[#1c0406]"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(120%_120%_at_50%_70%,#9a0c0c_0%,#5a0a0c_42%,#240507_78%)]"></div>
+  <!-- big dotted globe, filling the card down to the bottom -->
+  <div class="absolute inset-0 flex items-end justify-center overflow-hidden pointer-events-none">
+    <img data-eco-globe src="/image/eco-globe.png" alt="" aria-hidden="true" class="w-[120%] max-w-[1280px] translate-y-[8%] opacity-[0.85]" />
+  </div>
 
-    <!-- Orbital stage -->
-    <div data-eco-stage class="relative mx-auto mt-2 w-full max-w-[460px] aspect-square">
-      <!-- center glow -->
-      <div data-hub-glow class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[45%] h-[45%] bg-primary/15 blur-3xl rounded-full"></div>
-      <!-- guide rings -->
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[84%] h-[84%] rounded-full border border-gray-100"></div>
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[56%] h-[56%] rounded-full border border-gray-100/70"></div>
-
-      <!-- central USDX hub -->
-      <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-        <div data-hub-inner class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-full shadow-xl shadow-primary/40 ring-4 ring-white">
-          <img src="/image/Logo.svg" alt="USDX" class="w-full h-full rounded-full" />
-        </div>
-      </div>
-
-      <!-- orbit ring -->
-      <div data-orbit data-dir="1" data-dur="60" class="absolute inset-0">
+  <!-- Orbital stage: desktop = chains around the edges; mobile = content + chain row -->
+  <div data-eco-stage class="relative mx-auto w-full lg:aspect-[1376/652]">
+      <!-- static chain badges (desktop only) -->
+      <div class="hidden lg:block absolute inset-0">
         {ring.map(({ chain, left, top }) => (
           <a
             href={chain.url}
             target="_blank"
             rel="noopener noreferrer"
             title={chain.name}
-            data-orbit-item
-            class="group absolute z-10 no-underline"
+            class="group absolute z-20 no-underline"
             style={`left:${left}%; top:${top}%; transform: translate(-50%,-50%);`}
           >
-            <div data-counter class="relative flex items-center justify-center">
-              <div class="badge w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-white border border-gray-100 shadow-md shadow-gray-200/60 flex items-center justify-center transition-all duration-300 group-hover:scale-125 group-hover:border-primary/30 group-hover:shadow-lg group-hover:shadow-primary/10">
-                <img src={chain.icon} alt={chain.name} class="w-6 h-6 sm:w-8 sm:h-8" loading="lazy" />
+            <div data-eco-chain data-dx={((left - 50) / 50).toFixed(2)} data-dy={((top - 50) / 50).toFixed(2)} class="relative flex items-center justify-center">
+              <!-- 1px white-gradient ring around a #141414 disc (Figma spec) -->
+              <div class="w-[68px] h-[68px] sm:w-[86px] sm:h-[86px] rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-xl shadow-black/50 transition-transform duration-300 group-hover:scale-110">
+                <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
+                  <img src={chain.icon} alt={chain.name} class="w-9 h-9 sm:w-11 sm:h-11" loading="lazy" />
+                </div>
               </div>
-              <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1 rounded-lg bg-dark text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
+              <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-9 px-2.5 py-1 rounded-lg bg-black/80 text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 shadow-lg">
                 {chain.name}
               </span>
             </div>
           </a>
         ))}
       </div>
+
+      <!-- Center content -->
+      <div data-eco-head class="relative lg:absolute lg:inset-0 z-10 flex flex-col items-center justify-center text-center px-6 py-12 lg:py-0 lg:px-12">
+        <span class="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
+          <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+              <path d="M12 7.2 L6.6 15 M12 7.2 L17.4 15 M7 15.4 H17" stroke-linecap="round" />
+              <circle cx="12" cy="6" r="2.3" fill="currentColor" stroke="none" />
+              <circle cx="6" cy="16.4" r="2.3" fill="currentColor" stroke="none" />
+              <circle cx="18" cy="16.4" r="2.3" fill="currentColor" stroke="none" />
+            </svg>
+          </span>
+          <T t={ui.ecosystem.badge} />
+        </span>
+        <h2 class="mt-5 font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight max-w-2xl bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.55)_100%)] bg-clip-text text-transparent">
+          <span class="block"><T t={ui.ecosystem.heading1} /></span>
+          <span class="block"><T t={ui.ecosystem.heading2} /></span>
+        </h2>
+        <p class="mt-4 text-white text-base max-w-[511px] leading-[26px]">
+          <T t={ui.ecosystem.sub} />
+        </p>
+        <a
+          href={APP_URL}
+          data-app-link
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-7 inline-flex items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors no-underline"
+        >
+          <T t={ui.cta} />
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+        </a>
+
+        <!-- Mobile: a single centered row of chains below the content (per Figma) -->
+        <div class="lg:hidden mt-8 flex justify-center gap-2.5">
+          {mobileChains.map(({ chain }) => (
+            <a href={chain.url} target="_blank" rel="noopener noreferrer" title={chain.name} class="no-underline">
+              <div class="w-12 h-12 rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-lg shadow-black/40">
+                <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
+                  <img src={chain.icon} alt={chain.name} class="w-6 h-6" loading="lazy" />
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- Partners -->
-  <div class="max-w-[1200px] mx-auto mt-16" data-eco-partners>
-    <div class="flex justify-center mb-7">
-      <span class="inline-flex items-center px-4 py-1.5 rounded-full border border-gray-200 bg-white shadow-sm text-primary text-xs font-semibold uppercase tracking-widest">
-        <T t={ui.ecosystem.partners} />
-      </span>
-    </div>
-
-    <div class="overflow-hidden relative">
-      <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white to-transparent z-10"></div>
-      <div class="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-white to-transparent z-10"></div>
-
-      <div class="flex animate-marquee w-max will-change-transform">
-        {[...partners, ...partners].map((partner) => (
-          <a
-            href={partner.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="flex items-center gap-3 px-6 py-4 mx-2 rounded-lg border border-gray-100 hover:border-primary/30 hover:shadow-sm transition-all no-underline min-w-[160px]"
-          >
-            <img src={partner.logo} alt={partner.name} class="w-7 h-7 object-contain flex-shrink-0" loading="lazy" />
-            <span class="text-gray-600 font-semibold text-sm whitespace-nowrap">{partner.name}</span>
-          </a>
-        ))}
-      </div>
+<!-- Card 2: partner network (light-to-dark spotlight) -->
+<section data-eco-partners class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07] bg-[linear-gradient(180deg,#0f0f0f_0%,rgba(15,15,15,0)_100%)]">
+  <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-10 items-center">
+    <h3 class="text-center font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] text-white tracking-tight">
+      <T t={ui.ecosystem.partners} />
+    </h3>
+    <div class="flex flex-wrap justify-center gap-4 max-w-[1288px]">
+      {partners.map((partner) => (
+        <a
+          href={partner.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center gap-3 w-[calc(50%-0.5rem)] sm:w-[244px] h-20 rounded-xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] transition-all no-underline"
+        >
+          <img src={partner.logo} alt={partner.name} class="w-7 h-7 object-contain flex-shrink-0" loading="lazy" />
+          <span class="text-white font-medium text-base whitespace-nowrap">{partner.name}</span>
+        </a>
+      ))}
     </div>
   </div>
 </section>
@@ -106,45 +139,43 @@ const ring = chains.map((chain, i) => ({ chain, ...pos((360 / chains.length) * i
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   if (!reduced) {
-    gsap.from("[data-eco-head]", {
-      y: 24, opacity: 0, duration: 0.7, ease: "power3.out",
-      scrollTrigger: { trigger: "[data-eco-head]", start: "top 85%" },
+    gsap.from("[data-eco-head] > *", {
+      y: 24, opacity: 0, duration: 0.7, ease: "power3.out", stagger: 0.1,
+      scrollTrigger: { trigger: "[data-eco-head]", start: "top 80%" },
     });
     gsap.from("[data-eco-partners]", {
       y: 24, opacity: 0, duration: 0.7, ease: "power3.out",
-      scrollTrigger: { trigger: "[data-eco-partners]", start: "top 90%" },
+      scrollTrigger: { trigger: "[data-eco-partners]", start: "top 88%" },
     });
 
-    // Scroll-driven scale: starts small + faint, grows over a long range with
-    // smoothed scrub so the zoom-in really reads.
-    gsap.fromTo(
-      "[data-eco-stage]",
-      { scale: 0.4, opacity: 0.2 },
-      {
-        scale: 1, opacity: 1, ease: "none",
-        scrollTrigger: { trigger: "[data-eco-stage]", start: "top 92%", end: "center 52%", scrub: 1.6 },
-      },
-    );
-
-    gsap.to("[data-hub-glow]", {
-      scale: 1.2, opacity: 0.7, duration: 2.6, ease: "sine.inOut", repeat: -1, yoyo: true,
-    });
-
-    // Continuous clockwise orbit + upright counter-rotation
-    const orbitTweens: gsap.core.Tween[] = [];
-    gsap.utils.toArray<HTMLElement>("[data-orbit]").forEach((orbit) => {
-      const dir = Number(orbit.dataset.dir);
-      const dur = Number(orbit.dataset.dur);
-      orbitTweens.push(gsap.to(orbit, { rotation: 360 * dir, duration: dur, ease: "none", repeat: -1 }));
-      orbit.querySelectorAll<HTMLElement>("[data-counter]").forEach((c) => {
-        orbitTweens.push(gsap.to(c, { rotation: -360 * dir, duration: dur, ease: "none", repeat: -1 }));
+    // Globe zooms in + chains fly in from the edges, then settle into a gentle
+    // idle float; the globe softly pulses. Chains stay otherwise static.
+    const globe = document.querySelector<HTMLElement>("[data-eco-globe]");
+    const ecoChains = gsap.utils.toArray<HTMLElement>("[data-eco-chain]");
+    if (ecoChains.length) {
+      ecoChains.forEach((c) => {
+        const dx = parseFloat(c.dataset.dx || "0");
+        const dy = parseFloat(c.dataset.dy || "0");
+        gsap.set(c, { x: dx * 90, y: dy * 90, scale: 0.4, autoAlpha: 0 });
       });
-    });
+      if (globe) gsap.set(globe, { scale: 0.6, opacity: 0 });
 
-    // Pause the orbit while inspecting a chain (easier to hover/click)
-    document.querySelectorAll<HTMLElement>("[data-orbit-item]").forEach((item) => {
-      item.addEventListener("mouseenter", () => orbitTweens.forEach((t) => t.pause()));
-      item.addEventListener("mouseleave", () => orbitTweens.forEach((t) => t.resume()));
-    });
+      const startIdle = () => {
+        ecoChains.forEach((c, i) => {
+          gsap.to(c, {
+            y: "+=8", duration: 2.4 + (i % 3) * 0.5, ease: "sine.inOut",
+            yoyo: true, repeat: -1, delay: i * 0.12,
+          });
+        });
+        if (globe) gsap.to(globe, { opacity: 0.95, duration: 2.8, ease: "sine.inOut", yoyo: true, repeat: -1 });
+      };
+
+      const tl = gsap.timeline({
+        scrollTrigger: { trigger: "[data-eco-stage]", start: "top 75%", once: true },
+        onComplete: startIdle,
+      });
+      if (globe) tl.to(globe, { scale: 1, opacity: 0.85, duration: 1, ease: "power2.out" }, 0);
+      tl.to(ecoChains, { x: 0, y: 0, scale: 1, autoAlpha: 1, duration: 0.8, stagger: 0.08, ease: "back.out(1.6)" }, 0.2);
+    }
   }
 </script>

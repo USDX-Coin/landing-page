@@ -4,16 +4,22 @@ import Navbar from "../components/Navbar";
 import Hero from "../components/Hero.astro";
 import Features from "../components/Features.astro";
 import Ecosystem from "../components/Ecosystem.astro";
+import CaseStudy from "../components/CaseStudy.astro";
 import Faq from "../components/Faq";
 import Footer from "../components/Footer.astro";
 ---
 <Layout>
-  <div class="min-h-screen bg-white">
+  <div class="min-h-screen bg-bg text-[#e7e7e7]">
     <Navbar client:load />
     <Hero />
-    <Features />
-    <Ecosystem />
-    <Faq client:visible />
-    <Footer />
+    <!-- Below the hero, every section is a floating rounded card on the black
+         page; the flex gap + padding form the black gutters between them. -->
+    <main class="px-4 sm:px-8 py-4">
+      <Features />
+      <Ecosystem />
+      <CaseStudy />
+      <Faq client:visible />
+      <Footer />
+    </main>
   </div>
 </Layout>

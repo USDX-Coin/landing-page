@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { navLinks, APP_URL, resolveAppUrl } from "../data/navigation";
-import { ui, meta, LANGS, DEFAULT_LANG, type Lang } from "../i18n";
+import { ui, meta, LANGS, LANG_LABEL, DEFAULT_LANG, type Lang } from "../i18n";
 import { T } from "./LangText";
 
 function applyLang(next: Lang) {
@@ -16,21 +16,101 @@ function applyLang(next: Lang) {
   document.querySelector('meta[property="og:description"]')?.setAttribute("content", meta.description[next]);
 }
 
-function LangSwitch({ current, onChange }: { current: Lang; onChange: (l: Lang) => void }) {
+/** Small circular flag glyph for the language selector. */
+function Flag({ lang }: { lang: Lang }) {
+  if (lang === "id") {
+    return (
+      <span className="inline-block w-5 h-5 rounded-full overflow-hidden ring-1 ring-white/20 shrink-0">
+        <span className="block h-1/2 bg-[#e70011]" />
+        <span className="block h-1/2 bg-white" />
+      </span>
+    );
+  }
+  // English — Union Jack (simplified) in a circle
   return (
-    <div className="flex items-center rounded-lg border border-gray-200 p-0.5 text-xs font-semibold">
-      {LANGS.map((l) => (
-        <button
-          key={l}
-          onClick={() => onChange(l)}
-          aria-pressed={current === l}
-          className={`px-2 py-1 rounded-md border-none cursor-pointer transition-colors ${
-            current === l ? "bg-primary text-white" : "bg-transparent text-gray-500 hover:text-primary"
-          }`}
+    <span className="inline-block w-5 h-5 rounded-full overflow-hidden ring-1 ring-white/20 shrink-0">
+      <svg viewBox="0 0 60 60" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+        <rect width="60" height="60" fill="#012169" />
+        <path d="M0,0 L60,60 M60,0 L0,60" stroke="#fff" strokeWidth="12" />
+        <path d="M0,0 L60,60 M60,0 L0,60" stroke="#C8102E" strokeWidth="5" />
+        <path d="M30,0 V60 M0,30 H60" stroke="#fff" strokeWidth="18" />
+        <path d="M30,0 V60 M0,30 H60" stroke="#C8102E" strokeWidth="10" />
+      </svg>
+    </span>
+  );
+}
+
+function LangDropdown({
+  current,
+  onChange,
+  align = "right",
+}: {
+  current: Lang;
+  onChange: (l: Lang) => void;
+  align?: "right" | "left";
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        className="flex items-center gap-2 rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/10 transition-colors cursor-pointer"
+      >
+        <Flag lang={current} />
+        <span className="hidden sm:inline">{LANG_LABEL[current]}</span>
+        <svg
+          className={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
         >
-          {l.toUpperCase()}
-        </button>
-      ))}
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {open && (
+        <ul
+          role="listbox"
+          className={`absolute top-full mt-2 ${align === "right" ? "right-0" : "left-0"} min-w-[160px] rounded-xl border border-white/10 bg-[#161616] shadow-2xl shadow-black/50 p-1.5 z-50`}
+        >
+          {LANGS.map((l) => (
+            <li key={l}>
+              <button
+                role="option"
+                aria-selected={current === l}
+                onClick={() => {
+                  onChange(l);
+                  setOpen(false);
+                }}
+                className={`w-full flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-left transition-colors cursor-pointer ${
+                  current === l ? "bg-white/10 text-white" : "text-gray-300 hover:bg-white/5"
+                }`}
+              >
+                <Flag lang={l} />
+                <span>{LANG_LABEL[l]}</span>
+                {current === l && (
+                  <svg className="w-4 h-4 ml-auto text-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
@@ -46,6 +126,7 @@ export default function Navbar() {
     const current = document.documentElement.lang === "en" ? "en" : "id";
     setLang(current);
     const onScroll = () => setScrolled(window.scrollY > 10);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
@@ -57,63 +138,61 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 bg-white transition-shadow duration-300 ${
-        scrolled ? "shadow-sm border-b border-gray-100" : ""
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled ? "bg-[#0a0a0a]/90 backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <div className="max-w-[1200px] mx-auto px-6 flex items-center justify-between h-16">
+      {/* Main nav (single row; language lives here, not a separate top bar) */}
+      <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-[76px] h-[72px] flex items-center justify-between border-b border-white/10">
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2 no-underline">
-          <img src="/image/Logo.svg" alt="USDX" className="w-8 h-8" />
-          <span className="text-primary font-bold text-xl">USDX</span>
+        <a href="#hero" className="flex items-center no-underline shrink-0">
+          <img src="/image/logo-lockup.png" alt="USDX" className="h-8 w-auto" />
         </a>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-gray-600 hover:text-primary text-sm font-medium no-underline transition-colors"
-            >
-              <T t={link.label} />
-            </a>
-          ))}
-        </div>
-
-        {/* Language switch + CTA */}
-        <div className="hidden md:flex items-center gap-3">
-          <LangSwitch current={lang} onChange={changeLang} />
+        {/* Desktop: nav links + language + CTA */}
+        <div className="hidden lg:flex items-center gap-5">
+          <div className="flex items-center gap-6">
+            {navLinks.map((link) => (
+              <a
+                key={link.label.en}
+                href={link.href}
+                className="text-white/90 hover:text-white text-sm font-medium no-underline transition-colors"
+              >
+                <T t={link.label} />
+              </a>
+            ))}
+          </div>
+          <LangDropdown current={lang} onChange={changeLang} />
           <a
             href={appUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
+            className="inline-flex items-center px-4 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-dark transition-colors no-underline"
           >
             <T t={ui.cta} />
           </a>
         </div>
 
-        {/* Mobile: language switch + hamburger */}
-        <div className="flex items-center gap-2 md:hidden">
-          <LangSwitch current={lang} onChange={changeLang} />
+        {/* Mobile: language dropdown + hamburger */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <LangDropdown current={lang} onChange={changeLang} />
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="flex flex-col gap-1.5 p-2 bg-transparent border-none cursor-pointer"
             aria-label={ui.toggleMenu[lang]}
           >
             <span
-              className={`block w-5 h-0.5 bg-dark transition-transform duration-300 ${
+              className={`block w-5 h-0.5 bg-white transition-transform duration-300 ${
                 mobileOpen ? "rotate-45 translate-y-2" : ""
               }`}
             />
             <span
-              className={`block w-5 h-0.5 bg-dark transition-opacity duration-300 ${
+              className={`block w-5 h-0.5 bg-white transition-opacity duration-300 ${
                 mobileOpen ? "opacity-0" : ""
               }`}
             />
             <span
-              className={`block w-5 h-0.5 bg-dark transition-transform duration-300 ${
+              className={`block w-5 h-0.5 bg-white transition-transform duration-300 ${
                 mobileOpen ? "-rotate-45 -translate-y-2" : ""
               }`}
             />
@@ -123,13 +202,13 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-6 py-4 flex flex-col gap-4">
+        <div className="lg:hidden bg-[#0d0d0d]/95 backdrop-blur-md border-t border-white/10 px-6 py-4 flex flex-col gap-4">
           {navLinks.map((link) => (
             <a
-              key={link.href}
+              key={link.label.en}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className="text-gray-600 hover:text-primary text-sm font-medium no-underline"
+              className="text-gray-300 hover:text-white text-sm font-medium no-underline"
             >
               <T t={link.label} />
             </a>
@@ -138,7 +217,7 @@ export default function Navbar() {
             href={appUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center justify-center px-5 py-2 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
+            className="inline-flex items-center justify-center px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors no-underline"
           >
             <T t={ui.cta} />
           </a>
