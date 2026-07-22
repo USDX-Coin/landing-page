@@ -32,7 +32,7 @@ export const meta: { title: Translated; description: Translated } = {
 export const ui = {
   cta: { id: "Dapatkan USDX", en: "Get USDX" },
   toggleMenu: { id: "Buka menu", en: "Toggle menu" },
-  poweredBy: { id: "Powered by", en: "Powered by" },
+  supportedBy: { id: "Didukung oleh", en: "Supported by" },
 
   hero: {
     badge: { id: "Stablecoin USD Teregulasi", en: "Regulated USD Stablecoin" },

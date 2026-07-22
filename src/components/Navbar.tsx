@@ -122,6 +122,9 @@ export default function Navbar() {
   const [lang, setLang] = useState<Lang>(DEFAULT_LANG);
 
   useEffect(() => {
+    // appUrl/lang depend on browser-only state (hostname, <html lang>); they
+    // must be synced after hydration or the build-time HTML would mismatch.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setAppUrl(resolveAppUrl(window.location.hostname));
     const current = document.documentElement.lang === "en" ? "en" : "id";
     setLang(current);
