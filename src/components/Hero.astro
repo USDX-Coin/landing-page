@@ -22,7 +22,7 @@ import T from "./T.astro";
        the lower band behind the headline + paragraph so the white text stays
        legible. The upper ~40% is left fully clear. -->
   <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] from-5% via-[#0a0a0a]/70 via-28% to-transparent to-50% pointer-events-none"></div>
-  <!-- extra darkening at the bottom-right, behind the paragraph + "Powered by
+  <!-- extra darkening at the bottom-right, behind the paragraph + "Supported by
        BNI", so the right-hand text reads clearly over brighter photos -->
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_58%_55%_at_88%_92%,rgba(10,10,10,0.85),transparent_70%)] pointer-events-none"></div>
 
@@ -48,13 +48,13 @@ import T from "./T.astro";
         </h1>
       </div>
 
-      <!-- Right: paragraph + powered by -->
+      <!-- Right: paragraph + supported by -->
       <div class="lg:col-span-5 flex flex-col gap-6">
         <p data-hero-el class="text-white text-base leading-[26px] max-w-[511px]">
           <T t={ui.hero.paragraph} />
         </p>
         <div data-hero-el class="flex items-center gap-3">
-          <span class="text-white text-base"><T t={ui.poweredBy} /></span>
+          <span class="text-white text-base"><T t={ui.supportedBy} /></span>
           <img src="/image/bni.png" alt="BNI" class="h-8 w-auto" />
         </div>
       </div>
