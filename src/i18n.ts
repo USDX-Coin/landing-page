@@ -61,6 +61,7 @@ export const ui = {
     walletCompany: { id: "ABC Company", en: "ABC Company" },
     walletNote: { id: "Menerima pembayaran", en: "Receiving payment" },
     gaugeLabel: { id: "Penyelesaian", en: "Settlement" },
+    auditCta: { id: "Lihat Laporan Audit", en: "View Audit Report" },
   },
 
   ecosystem: {
@@ -108,6 +109,7 @@ export const ui = {
     privacy: { id: "Kebijakan Privasi", en: "Privacy & Policy" },
     terms: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
     compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
+    audit: { id: "Laporan Audit", en: "Audit Report" },
     status: { id: "All system normal", en: "All system normal" },
     rights: { id: "© 2026 USDX, Inc.", en: "© 2026 USDX, Inc." },
   },

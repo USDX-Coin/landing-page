@@ -2,6 +2,7 @@
 import { features } from "../data/features";
 import { iconPaths } from "../data/icons";
 import { chains } from "../data/chains";
+import { AUDIT_REPORT_URL } from "../data/audit";
 import { ui } from "../i18n";
 import T from "./T.astro";
 
@@ -236,6 +237,17 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
           <div class="p-6 flex flex-col gap-2">
             <h3 class="text-xl font-medium text-white"><T t={feature.title} /></h3>
             <p class="text-zinc-400 leading-[26px] text-base"><T t={feature.description} /></p>
+            {feature.icon === "shield" && (
+              <a
+                href={AUDIT_REPORT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="mt-1 inline-flex items-center gap-1.5 w-fit text-gold-light hover:text-white text-sm font-medium no-underline transition-colors"
+              >
+                <T t={ui.features.auditCta} />
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7m0 0H8m9 0v9" /></svg>
+              </a>
+            )}
           </div>
         </article>
       ))}
