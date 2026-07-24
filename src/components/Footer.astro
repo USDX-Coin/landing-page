@@ -2,6 +2,7 @@
 import { navLinks } from "../data/navigation";
 import { socials } from "../data/socials";
 import { socialIconPaths } from "../data/icons";
+import { AUDIT_REPORT_URL } from "../data/audit";
 import { ui } from "../i18n";
 import T from "./T.astro";
 
@@ -9,6 +10,7 @@ const legalLinks = [
   { label: ui.footer.privacy, href: "#" },
   { label: ui.footer.terms, href: "#" },
   { label: ui.footer.compliance, href: "#" },
+  { label: ui.footer.audit, href: AUDIT_REPORT_URL, external: true },
 ];
 ---
 <footer class="relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
@@ -76,7 +78,12 @@ const legalLinks = [
         <h4 class="text-white text-base font-normal"><T t={ui.footer.legal} /></h4>
         <div class="flex flex-col gap-1.5">
           {legalLinks.map((link) => (
-            <a href={link.href} class="text-white/90 hover:text-white text-base font-medium no-underline transition-colors w-fit">
+            <a
+              href={link.href}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
+              class="text-white/90 hover:text-white text-base font-medium no-underline transition-colors w-fit"
+            >
               <T t={link.label} />
             </a>
           ))}
