@@ -4,24 +4,23 @@ import { APP_URL } from "../data/navigation";
 import { ui } from "../i18n";
 import T from "./T.astro";
 
-// Static layout (no orbit): 4 chains down each side, curving outward at the
-// vertical middle — positions as % of the stage so they scale. Index matches
-// the `chains` array order (Ethereum, BNB, Polygon, Arbitrum, Optimism,
-// Avalanche, Solana, Base).
+// USDX is currently live on a single chain, so the stage features one labeled
+// chain chip under the CTA instead of the Figma multi-chain ring. The ring
+// comes back automatically once `chains` has more than one entry (Figma
+// layout: 4 badges down each side, positions as % of the stage so they scale,
+// index following the `chains` array order).
+const MULTI_CHAIN_RING = chains.length > 1;
 const spots = [
-  { left: 80, top: 13 }, // Ethereum  (right, top)
-  { left: 87, top: 32 }, // BNB       (right)
-  { left: 90, top: 54 }, // Polygon   (right)
-  { left: 89, top: 78 }, // Arbitrum  (right, bottom)
-  { left: 11, top: 78 }, // Optimism  (left, bottom)
-  { left: 10, top: 54 }, // Avalanche (left)
-  { left: 14, top: 32 }, // Solana    (left)
-  { left: 20, top: 13 }, // Base      (left, top)
+  { left: 80, top: 13 }, // right, top
+  { left: 87, top: 32 }, // right
+  { left: 90, top: 54 }, // right
+  { left: 89, top: 78 }, // right, bottom
+  { left: 11, top: 78 }, // left, bottom
+  { left: 10, top: 54 }, // left
+  { left: 14, top: 32 }, // left
+  { left: 20, top: 13 }, // left, top
 ];
-const ring = chains.map((chain, i) => ({ chain, ...spots[i] }));
-// Mobile shows a single centered row of 6 chains (per Figma), skipping
-// Ethereum + Arbitrum to match the design's selection.
-const mobileChains = [1, 2, 4, 5, 6, 7].map((i) => ring[i]);
+const ring = chains.map((chain, i) => ({ chain, ...spots[i % spots.length] }));
 ---
 <!-- Card 1: red orbital panel -->
 <section id="ecosystem" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07]">
@@ -35,8 +34,8 @@ const mobileChains = [1, 2, 4, 5, 6, 7].map((i) => ring[i]);
 
   <!-- Orbital stage: desktop = chains around the edges; mobile = content + chain row -->
   <div data-eco-stage class="relative mx-auto w-full lg:aspect-[1376/652]">
-      <!-- static chain badges (desktop only) -->
-      <div class="hidden lg:block absolute inset-0">
+      <!-- static chain badges (desktop only, multi-chain layout) -->
+      {MULTI_CHAIN_RING && <div class="hidden lg:block absolute inset-0">
         {ring.map(({ chain, left, top }) => (
           <a
             href={chain.url}
@@ -59,7 +58,7 @@ const mobileChains = [1, 2, 4, 5, 6, 7].map((i) => ring[i]);
             </div>
           </a>
         ))}
-      </div>
+      </div>}
 
       <!-- Center content -->
       <div data-eco-head class="relative lg:absolute lg:inset-0 z-10 flex flex-col items-center justify-center text-center px-6 py-12 lg:py-0 lg:px-12">
@@ -92,13 +91,19 @@ const mobileChains = [1, 2, 4, 5, 6, 7].map((i) => ring[i]);
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
         </a>
 
-        <!-- Mobile: a single centered row of chains below the content (per Figma) -->
-        <div class="lg:hidden mt-8 flex justify-center gap-2.5">
-          {mobileChains.map(({ chain }) => (
-            <a href={chain.url} target="_blank" rel="noopener noreferrer" title={chain.name} class="no-underline">
-              <div class="w-12 h-12 rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-lg shadow-black/40">
-                <div class="w-full h-full rounded-full bg-[#141414] flex items-center justify-center">
-                  <img src={chain.icon} alt={chain.name} class="w-6 h-6" loading="lazy" />
+        <!-- Centered row of labeled chain chips below the CTA. With one live
+             chain this is the featured element on every breakpoint; once the
+             desktop ring returns it stays as the mobile layout only. -->
+        <div class:list={["mt-8 flex flex-wrap justify-center gap-3", MULTI_CHAIN_RING && "lg:hidden"]}>
+          {ring.map(({ chain }) => (
+            <a href={chain.url} target="_blank" rel="noopener noreferrer" title={chain.name} class="group no-underline">
+              <div data-eco-chain data-dx="0" data-dy="0" class="rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-xl shadow-black/50 transition-transform duration-300 group-hover:scale-105">
+                <div class="flex items-center gap-3 rounded-full bg-[#141414] pl-2.5 pr-5 py-2.5">
+                  <span class="w-9 h-9 rounded-full bg-[#1c1c1c] flex items-center justify-center">
+                    <img src={chain.icon} alt={chain.name} class="w-6 h-6" loading="lazy" />
+                  </span>
+                  <span class="text-white font-medium text-base whitespace-nowrap">{chain.name}</span>
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
                 </div>
               </div>
             </a>

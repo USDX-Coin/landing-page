@@ -65,12 +65,20 @@ export const ui = {
   },
 
   ecosystem: {
-    badge: { id: "Multi-chain", en: "Multi-chain" },
-    heading1: { id: "Hadir di blockchain yang", en: "Live on the chains" },
-    heading2: { id: "sudah Anda gunakan", en: "you already use" },
+    // Multi-chain copy — restore once USDX is live on more chains:
+    // badge: { id: "Multi-chain", en: "Multi-chain" },
+    // heading1: { id: "Hadir di blockchain yang", en: "Live on the chains" },
+    // heading2: { id: "sudah Anda gunakan", en: "you already use" },
+    // sub: {
+    //   id: "USDX berpindah secara native di 8 blockchain utama — arahkan kursor untuk menjelajah, klik untuk masuk lebih dalam.",
+    //   en: "USDX moves natively across 8 major blockchains — hover to explore each, click to dive in.",
+    // },
+    badge: { id: "Ekosistem", en: "Ecosystem" },
+    heading1: { id: "Kini hadir di", en: "Now live on" },
+    heading2: { id: "jaringan Polygon", en: "Polygon" },
     sub: {
-      id: "USDX berpindah secara native di 8 blockchain utama — arahkan kursor untuk menjelajah, klik untuk masuk lebih dalam.",
-      en: "USDX moves natively across 8 major blockchains — hover to explore each, click to dive in.",
+      id: "USDX hadir secara native di jaringan Polygon dan dapat diperdagangkan melalui Uniswap — blockchain lain akan menyusul.",
+      en: "USDX lives natively on the Polygon network and trades on Uniswap — more chains are on the way.",
     },
     partners: { id: "Jaringan Mitra yang Terpercaya", en: "A Trusted Partner Network" },
   },
