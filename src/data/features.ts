@@ -34,10 +34,16 @@ export const features: Feature[] = [
     icon: "dollar",
   },
   {
-    title: { id: "Dukungan Multi-Chain", en: "Multi-Chain Support" },
+    // Multi-chain copy — restore once USDX is live on more chains:
+    // title: { id: "Dukungan Multi-Chain", en: "Multi-Chain Support" },
+    // description: {
+    //   id: "USDX tersedia di Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, dan Base.",
+    //   en: "USDX is available on Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, and Base.",
+    // },
+    title: { id: "Dibangun di Polygon", en: "Built on Polygon" },
     description: {
-      id: "USDX tersedia di Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, dan Base.",
-      en: "USDX is available on Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, and Base.",
+      id: "USDX hadir di jaringan Polygon — cepat, hemat biaya, dan siap diperluas ke lebih banyak blockchain.",
+      en: "USDX is live on the Polygon network — fast, low-cost, and ready to expand to more chains.",
     },
     icon: "layers",
   },

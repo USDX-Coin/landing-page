@@ -27,16 +27,22 @@ export const faqItems: FaqItem[] = [
   {
     question: { id: "Bagaimana cara mendapatkan USDX?", en: "How do I get USDX?" },
     answer: {
-      id: "Anda dapat memperoleh USDX melalui platform resmi USDX, atau melalui bursa dan protokol terdesentralisasi yang didukung di seluruh jaringan blockchain kami.",
-      en: "You can acquire USDX through the official USDX platform, or through supported exchanges and decentralized protocols across our supported blockchain networks.",
+      // Multi-venue copy — restore once more exchanges/protocols are live:
+      // id: "Anda dapat memperoleh USDX melalui platform resmi USDX, atau melalui bursa dan protokol terdesentralisasi yang didukung di seluruh jaringan blockchain kami.",
+      // en: "You can acquire USDX through the official USDX platform, or through supported exchanges and decentralized protocols across our supported blockchain networks.",
+      id: "Anda dapat memperoleh USDX melalui platform resmi USDX, atau melalui Uniswap di jaringan Polygon.",
+      en: "You can acquire USDX through the official USDX platform, or through Uniswap on the Polygon network.",
     },
     icon: "globe",
   },
   {
     question: { id: "Blockchain apa saja yang didukung USDX?", en: "Which blockchains does USDX support?" },
     answer: {
-      id: "USDX saat ini tersedia di delapan blockchain utama: Ethereum, BNB Smart Chain (BSC), Polygon, Arbitrum, Optimism, Avalanche, Solana, dan Base.",
-      en: "USDX is currently available on eight major blockchains: Ethereum, BNB Smart Chain (BSC), Polygon, Arbitrum, Optimism, Avalanche, Solana, and Base.",
+      // Multi-chain copy — restore once USDX is live on more chains:
+      // id: "USDX saat ini tersedia di delapan blockchain utama: Ethereum, BNB Smart Chain (BSC), Polygon, Arbitrum, Optimism, Avalanche, Solana, dan Base.",
+      // en: "USDX is currently available on eight major blockchains: Ethereum, BNB Smart Chain (BSC), Polygon, Arbitrum, Optimism, Avalanche, Solana, and Base.",
+      id: "USDX saat ini tersedia di jaringan Polygon. Dukungan untuk blockchain lain akan menyusul.",
+      en: "USDX is currently available on the Polygon network, with support for more blockchains on the way.",
     },
     icon: "layers",
   },
