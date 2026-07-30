@@ -80,6 +80,7 @@ export const ui = {
       id: "USDX hadir secara native di jaringan Polygon dan dapat diperdagangkan melalui Uniswap — blockchain lain akan menyusul.",
       en: "USDX lives natively on the Polygon network and trades on Uniswap — more chains are on the way.",
     },
+    availableOn: { id: "Tersedia di", en: "Available on" },
     partners: { id: "Jaringan Mitra yang Terpercaya", en: "A Trusted Partner Network" },
   },
 
