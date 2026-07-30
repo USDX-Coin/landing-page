@@ -91,23 +91,28 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i % spots.length] }));
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
         </a>
 
-        <!-- Centered row of labeled chain chips below the CTA. With one live
-             chain this is the featured element on every breakpoint; once the
-             desktop ring returns it stays as the mobile layout only. -->
-        <div class:list={["mt-8 flex flex-wrap justify-center gap-3", MULTI_CHAIN_RING && "lg:hidden"]}>
-          {ring.map(({ chain }) => (
-            <a href={chain.url} target="_blank" rel="noopener noreferrer" title={chain.name} class="group no-underline">
-              <div data-eco-chain data-dx="0" data-dy="0" class="rounded-full p-px bg-[linear-gradient(140deg,rgba(255,255,255,0.3),rgba(255,255,255,0.03)_45%,rgba(255,255,255,0.16))] shadow-xl shadow-black/50 transition-transform duration-300 group-hover:scale-105">
-                <div class="flex items-center gap-3 rounded-full bg-[#141414] pl-2.5 pr-5 py-2.5">
-                  <span class="w-9 h-9 rounded-full bg-[#1c1c1c] flex items-center justify-center">
-                    <img src={chain.icon} alt={chain.name} class="w-6 h-6" loading="lazy" />
-                  </span>
-                  <span class="text-white font-medium text-base whitespace-nowrap">{chain.name}</span>
-                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" aria-hidden="true"></span>
-                </div>
-              </div>
-            </a>
-          ))}
+        <!-- "Available on" logo row below the CTA (logo-cloud treatment: muted
+             white wordmarks that regain brand color on hover — no pills, no
+             status dots). Featured on every breakpoint while one chain is
+             live; once the desktop ring returns it stays as mobile-only. -->
+        <div class:list={["mt-10 flex flex-col items-center gap-4", MULTI_CHAIN_RING && "lg:hidden"]}>
+          <span class="text-[11px] font-medium uppercase tracking-[0.25em] text-white/40">
+            <T t={ui.ecosystem.availableOn} />
+          </span>
+          <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+            {ring.map(({ chain }) => (
+              <a
+                href={chain.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={chain.name}
+                class="group flex items-center gap-2.5 no-underline opacity-70 transition duration-300 hover:opacity-100"
+              >
+                <img src={chain.icon} alt="" class="w-7 h-7 brightness-0 invert transition duration-300 group-hover:filter-none" loading="lazy" />
+                <span class="text-white font-medium text-lg tracking-tight whitespace-nowrap">{chain.name}</span>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -153,34 +158,33 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i % spots.length] }));
       scrollTrigger: { trigger: "[data-eco-partners]", start: "top 88%" },
     });
 
-    // Globe zooms in + chains fly in from the edges, then settle into a gentle
-    // idle float; the globe softly pulses. Chains stay otherwise static.
+    // Globe zooms in (and softly pulses once settled); when the multi-chain
+    // ring is present its badges fly in from the edges and idle-float. The
+    // globe intro no longer depends on ring badges existing.
     const globe = document.querySelector<HTMLElement>("[data-eco-globe]");
     const ecoChains = gsap.utils.toArray<HTMLElement>("[data-eco-chain]");
-    if (ecoChains.length) {
-      ecoChains.forEach((c) => {
-        const dx = parseFloat(c.dataset.dx || "0");
-        const dy = parseFloat(c.dataset.dy || "0");
-        gsap.set(c, { x: dx * 90, y: dy * 90, scale: 0.4, autoAlpha: 0 });
-      });
-      if (globe) gsap.set(globe, { scale: 0.6, opacity: 0 });
+    ecoChains.forEach((c) => {
+      const dx = parseFloat(c.dataset.dx || "0");
+      const dy = parseFloat(c.dataset.dy || "0");
+      gsap.set(c, { x: dx * 90, y: dy * 90, scale: 0.4, autoAlpha: 0 });
+    });
+    if (globe) gsap.set(globe, { scale: 0.6, opacity: 0 });
 
-      const startIdle = () => {
-        ecoChains.forEach((c, i) => {
-          gsap.to(c, {
-            y: "+=8", duration: 2.4 + (i % 3) * 0.5, ease: "sine.inOut",
-            yoyo: true, repeat: -1, delay: i * 0.12,
-          });
+    const startIdle = () => {
+      ecoChains.forEach((c, i) => {
+        gsap.to(c, {
+          y: "+=8", duration: 2.4 + (i % 3) * 0.5, ease: "sine.inOut",
+          yoyo: true, repeat: -1, delay: i * 0.12,
         });
-        if (globe) gsap.to(globe, { opacity: 0.95, duration: 2.8, ease: "sine.inOut", yoyo: true, repeat: -1 });
-      };
-
-      const tl = gsap.timeline({
-        scrollTrigger: { trigger: "[data-eco-stage]", start: "top 75%", once: true },
-        onComplete: startIdle,
       });
-      if (globe) tl.to(globe, { scale: 1, opacity: 0.85, duration: 1, ease: "power2.out" }, 0);
-      tl.to(ecoChains, { x: 0, y: 0, scale: 1, autoAlpha: 1, duration: 0.8, stagger: 0.08, ease: "back.out(1.6)" }, 0.2);
-    }
+      if (globe) gsap.to(globe, { opacity: 0.95, duration: 2.8, ease: "sine.inOut", yoyo: true, repeat: -1 });
+    };
+
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: "[data-eco-stage]", start: "top 75%", once: true },
+      onComplete: startIdle,
+    });
+    if (globe) tl.to(globe, { scale: 1, opacity: 0.85, duration: 1, ease: "power2.out" }, 0);
+    if (ecoChains.length) tl.to(ecoChains, { x: 0, y: 0, scale: 1, autoAlpha: 1, duration: 0.8, stagger: 0.08, ease: "back.out(1.6)" }, 0.2);
   }
 </script>
