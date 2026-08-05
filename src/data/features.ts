@@ -9,7 +9,7 @@ export interface Feature {
 }
 
 // Every claim on these cards has to be traceable to the official documentation
-// (https://usdx-co.gitbook.io/whitepaper-usdx). The source page is named above
+// (https://docs.usdx.co.id). The source page is named above
 // each card. Two mistakes are not allowed back in:
 //
 //   1. "US Treasury". USDX holds NO Treasury bonds — the reserve is 100% U.S.

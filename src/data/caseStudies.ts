@@ -8,7 +8,7 @@ export interface CaseStudy {
 }
 
 // Mirrors the official Use Cases page:
-// https://usdx-co.gitbook.io/whitepaper-usdx/use-cases.md
+// https://docs.usdx.co.id/use-cases
 //
 // Every card below is one of the six use cases named there, and every
 // description is a close paraphrase of that page's own wording — no new claims.

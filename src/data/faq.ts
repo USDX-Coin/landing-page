@@ -11,7 +11,7 @@ export interface FaqItem {
 }
 
 // The official USDX FAQ, mirrored from the documentation:
-// https://usdx-co.gitbook.io/whitepaper-usdx/faq.md
+// https://docs.usdx.co.id/faq
 //
 // All eleven questions, in source order. The English column is the source text
 // verbatim (the two source paragraphs joined into one); the Indonesian column is

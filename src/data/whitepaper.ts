@@ -7,9 +7,15 @@
 // footer used to carry a separate "Whitepaper" entry): two links pointing at an
 // identical URL read as padding to an explorer reviewer.
 //
+// Served on the project's own subdomain. The GitBook custom domain now serves
+// the space at the ROOT, so there is no "/whitepaper-usdx" path segment any
+// more — sub-pages are /faq, /use-cases, /transparency, and so on. The old
+// usdx-co.gitbook.io address 307-redirects here, so nothing breaks for anyone
+// holding the previous link.
+//
 // Verified reachable (HTTP 200), as are the FAQ and Use Cases pages that the
 // site's FAQ and case-study copy are sourced from.
-export const DOCUMENTATION_URL = "https://usdx-co.gitbook.io/whitepaper-usdx";
+export const DOCUMENTATION_URL = "https://docs.usdx.co.id";
 
 /**
  * The whitepaper is the documentation site itself — there is no standalone PDF.
