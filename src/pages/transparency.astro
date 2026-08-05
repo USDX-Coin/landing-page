@@ -64,6 +64,9 @@ const cardClass =
 const sectionHeadingClass = "font-serif font-medium text-3xl sm:text-4xl tracking-tight text-white m-0";
 const rowLabelClass = "text-white/55 text-sm m-0";
 const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words";
+// Contract rows sit in a hug-the-content grid, so the value starts right after
+// its label instead of being pushed to the far edge of the card.
+const contractValueClass = "text-white text-sm font-medium m-0 break-words";
 const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-wide px-4 py-3";
 ---
 <Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
@@ -194,20 +197,29 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       */}
 
       <!-- Contract address — independent of the reserve data, and the first
-           thing an explorer reviewer looks for. -->
-      <section class={cardClass}>
+           thing an explorer reviewer looks for.
+
+           Hidden until the API hands over a real contract address. A card
+           titled "Contract Address" whose address reads "not yet available" is
+           the exact kind of unfinished placeholder that got the token-info
+           submission rejected — better to show nothing than a blank promise.
+           renderToken() reveals it. -->
+      <section data-tp-contract class={`${cardClass} hidden`}>
         <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5 max-w-[760px]">
           <h2 class={sectionHeadingClass}><T t={t.contractHeading} /></h2>
-          <dl class="grid grid-cols-2 gap-x-4 gap-y-3 m-0">
+          <!-- Columns hug their content: a stretched 2-column grid with
+               right-aligned values leaves a canyon between "Network" and
+               "Polygon" on a card this wide. -->
+          <dl class="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-3 m-0">
             <dt class={rowLabelClass}><T t={ui.token.network} /></dt>
-            <dd class={rowValueClass}><span data-tp="chain">Polygon</span></dd>
+            <dd class={contractValueClass}><span data-tp="chain">Polygon</span></dd>
 
             <dt class={rowLabelClass}><T t={ui.token.symbol} /></dt>
-            <dd class={rowValueClass}><span data-tp="symbol">USDX</span></dd>
+            <dd class={contractValueClass}><span data-tp="symbol">USDX</span></dd>
 
             <dt class={rowLabelClass}><T t={ui.token.decimals} /></dt>
-            <dd class={rowValueClass}>
-              <span data-tp="decimals"><T t={t.notAvailable} /></span>
+            <dd class={contractValueClass}>
+              <span data-tp="decimals">—</span>
             </dd>
           </dl>
           <div class="flex flex-col gap-2">
@@ -215,7 +227,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
             <code
               data-tp="address"
               class="block break-all rounded-lg bg-black/50 border border-white/10 px-3 py-2.5 text-white text-[13px] leading-5 font-mono"
-            ><T t={t.notAvailable} /></code>
+            >—</code>
           </div>
           {/* No href until the API hands over a real PolygonScan URL: an anchor
               without href is not a link, so nothing dead ships in the HTML. */}
@@ -434,14 +446,19 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
   // ── Contract card ──────────────────────────────────────────────────────────
 
   function renderToken(data: TransparencyData) {
-    if (!data.token) return;
+    // No address, no card. An address is the one field on it that a reader
+    // cannot look up for themselves, so a card without one says nothing and
+    // reads as unfinished. It stays hidden until the API supplies a real one.
+    if (!data.token?.contractAddress) return;
+
     setValue("chain", data.token.chain === "polygon" ? "Polygon" : data.token.chain);
     setValue("symbol", data.token.symbol);
     setValue(
       "decimals",
-      typeof data.token.decimals === "number" ? String(data.token.decimals) : t.notAvailable,
+      typeof data.token.decimals === "number" ? String(data.token.decimals) : "—",
     );
-    setValue("address", data.token.contractAddress || t.notAvailable);
+    setValue("address", data.token.contractAddress);
+    document.querySelector("[data-tp-contract]")?.classList.remove("hidden");
 
     // The explorer link stays hidden unless the backend hands over a real
     // PolygonScan URL (or an address to build one from).
