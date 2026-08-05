@@ -168,6 +168,9 @@ export const ui = {
     // privacy: { id: "Kebijakan Privasi", en: "Privacy & Policy" },
     // terms: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
     // compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
+    // Kept close to the chapter's own title in the documentation so a reader
+    // who follows the link lands on a page named the same thing.
+    legalDisclaimer: { id: "Ketentuan Hukum & Sanggahan", en: "Legal & Disclaimer" },
     audit: { id: "Laporan Audit", en: "Audit Report" },
     // The whitepaper is the GitBook documentation, already reachable through the
     // "Dokumentasi" nav entry. A second footer link to the identical URL would be

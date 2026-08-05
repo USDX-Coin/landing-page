@@ -3,6 +3,7 @@ import { navLinks, navHref } from "../data/navigation";
 import { socials } from "../data/socials";
 import { socialIconPaths } from "../data/icons";
 import { AUDIT_REPORT_URL } from "../data/audit";
+import { LEGAL_DISCLAIMER_URL } from "../data/whitepaper";
 import { COMPANY_ADDRESS, COMPANY_EMAIL } from "../data/company";
 import { ui } from "../i18n";
 import T from "./T.astro";
@@ -25,7 +26,15 @@ const { base = "" } = Astro.props;
 // No "Whitepaper" entry here: the whitepaper IS the GitBook documentation, which
 // the Quick Links column already links to via the "Dokumentasi" nav entry. Two
 // links to an identical URL in one footer is padding, not navigation.
-const legalLinks = [{ label: ui.footer.audit, href: AUDIT_REPORT_URL, external: true }];
+//
+// "Legal & Disclaimer" is deliberately first: a column headed "Legal" whose only
+// entry was the audit report did not match its own label. This is the documented
+// legal position (intended use, no guarantee of value, user responsibility,
+// technology risks), so the heading now describes what sits under it.
+const legalLinks = [
+  { label: ui.footer.legalDisclaimer, href: LEGAL_DISCLAIMER_URL, external: true },
+  { label: ui.footer.audit, href: AUDIT_REPORT_URL, external: true },
+];
 ---
 <footer class="relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
   <!-- red glow (#B60000) -->
