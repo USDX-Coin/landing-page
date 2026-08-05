@@ -149,7 +149,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
             <table class="w-full border-collapse min-w-[640px]">
               <thead>
                 <tr class="border-b border-white/10">
-                  <th scope="col" class={`${thClass} w-16`}><T t={t.colId} /></th>
+                  <th scope="col" class={`${thClass} w-28`}><T t={t.colId} /></th>
                   <th scope="col" class={thClass}><T t={t.colName} /></th>
                   <th scope="col" class={`${thClass} w-32`}><T t={t.colMonth} /></th>
                   <th scope="col" class={`${thClass} w-24`}><T t={t.colYear} /></th>
@@ -162,7 +162,22 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
 
           <p data-doc-id-note class="hidden text-white/45 text-xs leading-5 m-0"><T t={t.idNote} /></p>
 
-          <p data-doc-empty class="text-white/55 text-sm leading-6 m-0"><T t={t.empty} /></p>
+          {/* Three mutually exclusive states, and which one ships in the static
+              HTML matters. The table is built entirely in the browser from the
+              API response, so anything visible here by default is what a
+              crawler, a link-preview bot, or a reviewer with JavaScript off will
+              read as the page's answer.
+
+              "empty" used to be that default — it shipped VISIBLE and
+              unconditional, telling every one of those readers that no
+              attestation had ever been published, however many actually had.
+              The initial state is now "pending", which claims nothing: it only
+              says where the list comes from. renderAttestations() then reveals
+              exactly one of the table or "empty", and a failed fetch leaves
+              "pending" standing next to the status line that explains it. */}
+          <p data-doc-empty class="hidden text-white/55 text-sm leading-6 m-0"><T t={t.empty} /></p>
+
+          <p data-doc-pending class="text-white/55 text-sm leading-6 m-0"><T t={t.listPending} /></p>
         </div>
       </section>
 
@@ -370,6 +385,25 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
     return match ? match[1] : "—";
   }
 
+  /**
+   * The document's public ID: its reporting period, verbatim.
+   *
+   * This used to be a running counter (`index + 1` over the list sorted oldest
+   * first) while the note under the table promised the number never changes.
+   * The counter could not keep that promise, because it was a function of the
+   * LIST rather than of the document: an older period uploaded late renumbered
+   * every document after it, a withdrawn report pulled every later number down
+   * by one, and the backend only returns the last 24 reports, so the window
+   * sliding forward renumbered the whole column.
+   *
+   * The period is a property of the document itself, so nothing else in the list
+   * can move it. Malformed values fall back to an em dash rather than inventing
+   * an ID.
+   */
+  function documentId(period: string): string {
+    return /^\d{4}-\d{2}$/.test(period) ? period : "—";
+  }
+
   function monthNode(period: string): Node {
     // Month name follows the active site language, like every other label.
     if (!/^\d{4}-\d{2}$/.test(period)) return document.createTextNode(period || "—");
@@ -380,8 +414,13 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
     const wrap = document.querySelector<HTMLElement>("[data-doc-table-wrap]");
     const body = document.querySelector<HTMLTableSectionElement>("[data-doc-rows]");
     const empty = document.querySelector<HTMLElement>("[data-doc-empty]");
+    const pending = document.querySelector<HTMLElement>("[data-doc-pending]");
     const idNote = document.querySelector<HTMLElement>("[data-doc-id-note]");
-    if (!wrap || !body || !empty || !idNote) return;
+    if (!wrap || !body || !empty || !pending || !idNote) return;
+
+    // The API has answered, so the "loading from the API" line has done its job
+    // either way.
+    pending.classList.add("hidden");
 
     if (attestations.length === 0) {
       wrap.classList.add("hidden");
@@ -390,19 +429,18 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       return;
     }
 
-    // Number ascending by period so the oldest document is 1 and every document
-    // keeps its number forever; then display newest first. A UUID is never shown
-    // to the public.
-    const oldestFirst = [...attestations].sort((a, b) => a.period.localeCompare(b.period));
-    const numbered = oldestFirst.map((item, index) => ({ item, id: index + 1 }));
+    // Newest period first. The ID is the period itself (see documentId), so the
+    // sort only decides the reading order — it can no longer change any ID. A
+    // UUID is never shown to the public.
+    const newestFirst = [...attestations].sort((a, b) => b.period.localeCompare(a.period));
 
     body.replaceChildren(
-      ...numbered.reverse().map(({ item, id }) => {
+      ...newestFirst.map((item) => {
         const tr = document.createElement("tr");
         tr.className = "border-b border-white/[0.06] last:border-0";
 
         const idCell = cell("px-4 py-4 text-white/45 text-sm tabular-nums align-middle");
-        idCell.textContent = String(id);
+        idCell.textContent = documentId(item.period);
 
         const nameCell = cell("px-4 py-4 text-white text-sm font-medium align-middle");
         nameCell.textContent = item.title;
