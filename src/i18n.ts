@@ -64,7 +64,10 @@ export const ui = {
     walletCompany: { id: "ABC Company", en: "ABC Company" },
     walletNote: { id: "Menerima pembayaran", en: "Receiving payment" },
     gaugeLabel: { id: "Penyelesaian", en: "Settlement" },
+    // The two "Dokumen Transparansi dan Audit" links read as a pair: the audit
+    // PDF (Cyberscope) and the attestation table on /transparency.
     auditCta: { id: "Lihat Laporan Audit", en: "View Audit Report" },
+    transparencyCta: { id: "Lihat Dokumen Transparansi", en: "View Transparency Documents" },
   },
 
   ecosystem: {
@@ -180,89 +183,20 @@ export const ui = {
     explorer: { id: "Lihat di PolygonScan", en: "View on PolygonScan" },
   },
 
+  // Copy for /transparency — "Dokumen Transparansi dan Audit".
+  //
+  // The page is a document warehouse: the monthly attestation table, the
+  // contract address, and the smart-contract audit. It used to lead with reserve
+  // FIGURES (circulating supply, total reserves, collateral ratio, reserve
+  // breakdown). Those are switched OFF — not deleted — because finance has not
+  // published a reserve position yet, and a transparency page must never print a
+  // number nobody can stand behind. Everything needed to bring them back is
+  // parked in the commented "FIGURES" block below.
+  //
+  // The attestation table used to live on its own /docs page. That page is gone
+  // and its copy was merged into this block, so there is one list in one place.
   transparency: {
     navLabel: { id: "Transparansi", en: "Transparency" },
-    metaTitle: {
-      id: "Transparansi Cadangan USDX — PT Macan Asia Finance",
-      en: "USDX Reserve Transparency — PT Macan Asia Finance",
-    },
-    metaDescription: {
-      id: "Jumlah token USDX yang beredar, cadangan US Dolar di kustodian Bank BNI, rasio jaminan, dan laporan atestasi bulanan.",
-      en: "USDX circulating supply, US Dollar reserves held in custody at Bank BNI, collateral ratio, and monthly attestation reports.",
-    },
-    eyebrow: { id: "Transparansi", en: "Transparency" },
-    heading1: { id: "Token beredar", en: "Circulating supply" },
-    heading2: { id: "dan cadangan", en: "and reserves" },
-    intro: {
-      id: "Setiap USDX yang beredar didukung oleh US Dolar yang disimpan di rekening kustodian Bank BNI. Halaman ini menampilkan posisi terakhir yang diterbitkan beserta tanggalnya, sehingga setiap angka bisa ditelusuri sumbernya.",
-      en: "Every USDX in circulation is backed by US Dollars held in a custodian account at Bank BNI. This page shows the latest published position together with its date, so every figure can be traced back to a source.",
-    },
-    backHome: { id: "Kembali ke beranda", en: "Back to home" },
-
-    statusLoading: { id: "Memuat data terbaru…", en: "Loading the latest data…" },
-    statusLive: { id: "Data langsung dari API USDX.", en: "Live data from the USDX API." },
-    statusFallback: {
-      id: "Data langsung tidak dapat dimuat saat ini. Angka di bawah adalah data terakhir yang tertanam di halaman ini.",
-      en: "Live data could not be loaded right now. The figures below are the last ones embedded in this page.",
-    },
-    statusNoJs: {
-      id: "Peramban Anda tidak menjalankan JavaScript, jadi angka di bawah adalah data terakhir yang tertanam di halaman ini.",
-      en: "Your browser is not running JavaScript, so the figures below are the last ones embedded in this page.",
-    },
-
-    supplyLabel: { id: "Jumlah Token Beredar", en: "Circulating Supply" },
-    reserveLabel: { id: "Total Cadangan", en: "Total Reserves" },
-    ratioLabel: { id: "Rasio Jaminan", en: "Collateral Ratio" },
-    notAvailable: { id: "Belum tersedia", en: "Not yet available" },
-    asOf: { id: "Posisi", en: "As of" },
-    readAt: { id: "Dibaca dari rantai", en: "Read on-chain" },
-    updatedAt: { id: "Terakhir diperbarui", en: "Last updated" },
-
-    methodHeading: { id: "Cara angka ini dibaca", en: "How these figures are read" },
-    supplyDefinitionTitle: {
-      id: "Definisi jumlah token beredar",
-      en: "Definition of circulating supply",
-    },
-    supplyDefinition: {
-      id: "Jumlah token beredar adalah nilai totalSupply mentah yang dibaca langsung dari kontrak USDX di jaringan Polygon — tanpa pengurangan apa pun, termasuk token yang masih ditahan di alamat treasury. Angka yang sama dapat Anda periksa sendiri di halaman kontrak USDX di PolygonScan; kalau berbeda, yang berlaku adalah angka di rantai.",
-      en: "Circulating supply is the raw totalSupply value read directly from the USDX contract on the Polygon network — with no deductions of any kind, including tokens still held at treasury addresses. You can check the same figure yourself on the USDX contract page on PolygonScan; if the two ever differ, the on-chain figure is the one that counts.",
-    },
-    ratioDefinitionTitle: { id: "Definisi rasio jaminan", en: "Definition of collateral ratio" },
-    ratioDefinition: {
-      id: "Rasio jaminan adalah total cadangan dibagi jumlah token beredar. Cadangan berasal dari posisi yang diterbitkan PT Macan Asia Finance dan berlaku pada tanggal posisi yang tertera — bukan waktu nyata — sementara jumlah token beredar dibaca dari rantai saat halaman dibuka.",
-      en: "The collateral ratio is total reserves divided by circulating supply. Reserves come from the position published by PT Macan Asia Finance and are valid as of the stated position date — not in real time — while circulating supply is read from the chain when this page loads.",
-    },
-
-    reserveHeading: { id: "Rincian Cadangan", en: "Reserve Breakdown" },
-    reserveForm: { id: "Bentuk cadangan", en: "Reserve form" },
-    reserveFormValue: {
-      id: "US Dolar di rekening kustodian",
-      en: "US Dollars in a custodian account",
-    },
-    custodian: { id: "Kustodian", en: "Custodian" },
-    account: { id: "Rekening", en: "Account" },
-    issuer: { id: "Penerbit", en: "Issuer" },
-    note: { id: "Catatan", en: "Note" },
-
-    contractHeading: { id: "Alamat Kontrak", en: "Contract Address" },
-
-    // The attestation list itself lives on /docs now — one list, one place.
-    documentsHeading: { id: "Laporan Atestasi Bulanan", en: "Monthly Attestation Reports" },
-    documentsBody: {
-      id: "Laporan atestasi cadangan bulanan yang diterbitkan Kantor Akuntan Publik dikumpulkan di halaman dokumen, lengkap dengan periode dan tautan unduhnya.",
-      en: "The monthly reserve attestation reports issued by the Public Accounting Firm are collected on the documents page, each with its period and download link.",
-    },
-    documentsCta: { id: "Lihat Dokumen Transparansi", en: "View transparency documents" },
-
-    auditHeading: { id: "Audit Smart Contract", en: "Smart Contract Audit" },
-    auditBody: {
-      id: "Kontrak USDX telah diaudit oleh Cyberscope. Laporan lengkapnya tersedia dalam bentuk PDF.",
-      en: "The USDX contract has been audited by Cyberscope. The full report is available as a PDF.",
-    },
-  },
-
-  docs: {
-    navLabel: { id: "Dokumen", en: "Documents" },
     metaTitle: {
       id: "Dokumen Transparansi dan Audit USDX — PT Macan Asia Finance",
       en: "USDX Transparency and Audit Documents — PT Macan Asia Finance",
@@ -271,14 +205,32 @@ export const ui = {
       id: "Daftar laporan atestasi cadangan USDX bulanan yang diterbitkan Kantor Akuntan Publik, lengkap dengan periode dan berkas unduhan.",
       en: "The list of monthly USDX reserve attestation reports issued by the Public Accounting Firm, with their period and downloadable file.",
     },
-    eyebrow: { id: "Dokumen", en: "Documents" },
+    eyebrow: { id: "Transparansi", en: "Transparency" },
     heading1: { id: "Dokumen Transparansi", en: "Transparency and" },
     heading2: { id: "dan Audit", en: "Audit Documents" },
     intro: {
       id: "Cadangan USDX diverifikasi secara independen melalui atestasi bulanan yang dilakukan Kantor Akuntan Publik (KAP). Setiap laporan yang sudah terbit tercantum di bawah ini beserta periodenya dan dapat diunduh langsung.",
       en: "USDX reserves are independently verified through monthly attestations conducted by a Public Accounting Firm (KAP). Every published report is listed below with its period and can be downloaded directly.",
     },
+    backHome: { id: "Kembali ke beranda", en: "Back to home" },
 
+    statusLoading: { id: "Memuat data terbaru…", en: "Loading the latest data…" },
+    statusLive: { id: "Data langsung dari API USDX.", en: "Live data from the USDX API." },
+    // Both status lines used to end with "…the figures below are the last ones
+    // embedded in this page", which only made sense while the figures were on.
+    // Restore that wording together with the FIGURES block.
+    statusFallback: {
+      id: "Data langsung tidak dapat dimuat saat ini, jadi daftar dokumen di bawah mungkin belum lengkap.",
+      en: "Live data could not be loaded right now, so the document list below may be incomplete.",
+    },
+    statusNoJs: {
+      id: "Peramban Anda tidak menjalankan JavaScript, jadi daftar dokumen belum dapat ditampilkan.",
+      en: "Your browser is not running JavaScript, so the document list cannot be shown yet.",
+    },
+
+    notAvailable: { id: "Belum tersedia", en: "Not yet available" },
+
+    // ── Attestation table (moved here from the old /docs page) ──────────────
     colId: { id: "ID", en: "ID" },
     colName: { id: "Nama", en: "Name" },
     colMonth: { id: "Bulan", en: "Month" },
@@ -294,6 +246,79 @@ export const ui = {
       id: "Belum ada dokumen yang diterbitkan. Laporan atestasi bulanan akan muncul di tabel ini begitu diterbitkan.",
       en: "No document has been published yet. Monthly attestation reports will appear in this table as soon as they are published.",
     },
-    transparencyCta: { id: "Lihat angka transparansi", en: "View transparency figures" },
+
+    contractHeading: { id: "Alamat Kontrak", en: "Contract Address" },
+
+    auditHeading: { id: "Audit Smart Contract", en: "Smart Contract Audit" },
+    auditBody: {
+      id: "Kontrak USDX telah diaudit oleh Cyberscope. Laporan lengkapnya tersedia dalam bentuk PDF.",
+      en: "The USDX contract has been audited by Cyberscope. The full report is available as a PDF.",
+    },
+
+    // ── FIGURES — OFF until finance publishes a reserve position ─────────────
+    //
+    // Turning them back on, in this order:
+    //   1. uncomment every key in this block;
+    //   2. uncomment the three matching markup sections in
+    //      src/pages/transparency.astro ("Headline figures", "Reserve breakdown"
+    //      and "How the figures are read") and the figure lines in that page's
+    //      render() — each one is marked with the same "FIGURES" label;
+    //   3. put the published position into TRANSPARENCY_FALLBACK in
+    //      src/data/transparency.ts so the numbers survive a failed fetch;
+    //   4. restore the "figures below" wording in statusFallback / statusNoJs
+    //      above, and point metaTitle / metaDescription / heading1 / heading2 /
+    //      intro back at the reserve framing (kept below, commented).
+    //
+    // The fetch layer in src/data/transparency.ts and its tests were left fully
+    // intact — the attestation table uses the same request, and the figure
+    // fields on the response are simply not rendered right now.
+    //
+    // metaTitle: {
+    //   id: "Transparansi Cadangan USDX — PT Macan Asia Finance",
+    //   en: "USDX Reserve Transparency — PT Macan Asia Finance",
+    // },
+    // metaDescription: {
+    //   id: "Jumlah token USDX yang beredar, cadangan US Dolar di kustodian Bank BNI, rasio jaminan, dan laporan atestasi bulanan.",
+    //   en: "USDX circulating supply, US Dollar reserves held in custody at Bank BNI, collateral ratio, and monthly attestation reports.",
+    // },
+    // heading1: { id: "Token beredar", en: "Circulating supply" },
+    // heading2: { id: "dan cadangan", en: "and reserves" },
+    // intro: {
+    //   id: "Setiap USDX yang beredar didukung oleh US Dolar yang disimpan di rekening kustodian Bank BNI. Halaman ini menampilkan posisi terakhir yang diterbitkan beserta tanggalnya, sehingga setiap angka bisa ditelusuri sumbernya.",
+    //   en: "Every USDX in circulation is backed by US Dollars held in a custodian account at Bank BNI. This page shows the latest published position together with its date, so every figure can be traced back to a source.",
+    // },
+    //
+    // supplyLabel: { id: "Jumlah Token Beredar", en: "Circulating Supply" },
+    // reserveLabel: { id: "Total Cadangan", en: "Total Reserves" },
+    // ratioLabel: { id: "Rasio Jaminan", en: "Collateral Ratio" },
+    // asOf: { id: "Posisi", en: "As of" },
+    // readAt: { id: "Dibaca dari rantai", en: "Read on-chain" },
+    // updatedAt: { id: "Terakhir diperbarui", en: "Last updated" },
+    //
+    // methodHeading: { id: "Cara angka ini dibaca", en: "How these figures are read" },
+    // supplyDefinitionTitle: {
+    //   id: "Definisi jumlah token beredar",
+    //   en: "Definition of circulating supply",
+    // },
+    // supplyDefinition: {
+    //   id: "Jumlah token beredar adalah nilai totalSupply mentah yang dibaca langsung dari kontrak USDX di jaringan Polygon — tanpa pengurangan apa pun, termasuk token yang masih ditahan di alamat treasury. Angka yang sama dapat Anda periksa sendiri di halaman kontrak USDX di PolygonScan; kalau berbeda, yang berlaku adalah angka di rantai.",
+    //   en: "Circulating supply is the raw totalSupply value read directly from the USDX contract on the Polygon network — with no deductions of any kind, including tokens still held at treasury addresses. You can check the same figure yourself on the USDX contract page on PolygonScan; if the two ever differ, the on-chain figure is the one that counts.",
+    // },
+    // ratioDefinitionTitle: { id: "Definisi rasio jaminan", en: "Definition of collateral ratio" },
+    // ratioDefinition: {
+    //   id: "Rasio jaminan adalah total cadangan dibagi jumlah token beredar. Cadangan berasal dari posisi yang diterbitkan PT Macan Asia Finance dan berlaku pada tanggal posisi yang tertera — bukan waktu nyata — sementara jumlah token beredar dibaca dari rantai saat halaman dibuka.",
+    //   en: "The collateral ratio is total reserves divided by circulating supply. Reserves come from the position published by PT Macan Asia Finance and are valid as of the stated position date — not in real time — while circulating supply is read from the chain when this page loads.",
+    // },
+    //
+    // reserveHeading: { id: "Rincian Cadangan", en: "Reserve Breakdown" },
+    // reserveForm: { id: "Bentuk cadangan", en: "Reserve form" },
+    // reserveFormValue: {
+    //   id: "US Dolar di rekening kustodian",
+    //   en: "US Dollars in a custodian account",
+    // },
+    // custodian: { id: "Kustodian", en: "Custodian" },
+    // account: { id: "Rekening", en: "Account" },
+    // issuer: { id: "Penerbit", en: "Issuer" },
+    // note: { id: "Catatan", en: "Note" },
   },
 } satisfies Record<string, unknown>;

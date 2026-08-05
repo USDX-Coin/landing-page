@@ -1,58 +1,70 @@
 ---
-// Public transparency page: circulating supply vs reserves, contract address,
-// attestation reports and the smart-contract audit.
+// "Dokumen Transparansi dan Audit" — the monthly reserve attestation table, the
+// contract address, and the smart-contract audit.
 //
-// The site is a static Netlify build, so the live numbers are fetched in the
-// browser from GET {API_BASE}/api/v1/public/transparency. Everything that does
-// not depend on that request — the definitions, the custodian, the issuer, the
-// audit link — is rendered straight into the HTML, and the fallback figures in
-// data/transparency.ts fill the numbers. A transparency page that only says
-// "failed to load" is worse than one showing a dated figure.
+// The table is NOT a hand-maintained list in this repo. It is fed by the public
+// endpoint GET {API_BASE}/api/v1/public/transparency, so the flow is: the
+// auditor hands over a document -> the team uploads it in back office -> it
+// shows up here on the next page load. Nothing to commit. Empty is the normal
+// state right now, and it renders as an explanation rather than a bare table.
+//
+// FIGURES OFF: this page used to lead with circulating supply, total reserves,
+// the collateral ratio and a reserve breakdown. Finance has not published a
+// reserve position yet, so those sections are commented out rather than
+// deleted — a transparency page must never print a number nobody can stand
+// behind. Every switched-off block below is marked "FIGURES", and the
+// step-by-step way back on is written at the FIGURES block in src/i18n.ts.
+// The data layer (src/data/transparency.ts) and its tests are untouched.
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer.astro";
 import T from "../components/T.astro";
-import { ui, type Translated } from "../i18n";
+import { ui } from "../i18n";
 import { AUDIT_REPORT_URL } from "../data/audit";
-import { COMPANY_LEGAL_NAME } from "../data/company";
-import {
-  TRANSPARENCY_FALLBACK,
-  formatAmount,
-  formatDate,
-  formatDateTime,
-  formatRatio,
-} from "../data/transparency";
+
+// FIGURES: the fallback position and the number formatters come back with the
+// commented sections below.
+// import { COMPANY_LEGAL_NAME } from "../data/company";
+// import { type Translated } from "../i18n";
+// import {
+//   TRANSPARENCY_FALLBACK,
+//   formatAmount,
+//   formatDate,
+//   formatDateTime,
+//   formatRatio,
+// } from "../data/transparency";
 
 const t = ui.transparency;
-const fallback = TRANSPARENCY_FALLBACK;
 
-// Pre-format the fallback in both languages so the static markup carries real
-// content even with JavaScript off. Null everywhere means "not yet available",
-// which is rendered as words — never as a zero.
-const bilingual = (fn: (value: string, lang: "id" | "en") => string, value?: string | null): Translated | null => {
-  if (!value) return null;
-  const id = fn(value, "id");
-  const en = fn(value, "en");
-  return id && en ? { id, en } : null;
-};
-
-const supplyAmount = bilingual(formatAmount, fallback.circulatingSupply?.amount);
-const supplyReadAt = bilingual(formatDateTime, fallback.circulatingSupply?.readAt);
-const reserveAmount = bilingual(formatAmount, fallback.reserve?.amount);
-const reserveAsOf = bilingual(formatDate, fallback.reserve?.asOf);
-const ratio = bilingual(formatRatio, fallback.collateralRatio);
-
-const supplyUnit = fallback.circulatingSupply?.unit ?? "USDX";
-const reserveCurrency = fallback.reserve?.currency ?? "USD";
-const custodian = fallback.reserve?.custodian ?? "Bank BNI";
-const account = fallback.reserve?.accountLabel ?? "";
-const reserveNote = fallback.reserve?.note ?? "";
+// FIGURES: pre-format the fallback in both languages so the static markup
+// carries real content even with JavaScript off. Null everywhere means "not yet
+// available", which is rendered as words — never as a zero.
+// const fallback = TRANSPARENCY_FALLBACK;
+// const bilingual = (fn: (value: string, lang: "id" | "en") => string, value?: string | null): Translated | null => {
+//   if (!value) return null;
+//   const id = fn(value, "id");
+//   const en = fn(value, "en");
+//   return id && en ? { id, en } : null;
+// };
+//
+// const supplyAmount = bilingual(formatAmount, fallback.circulatingSupply?.amount);
+// const supplyReadAt = bilingual(formatDateTime, fallback.circulatingSupply?.readAt);
+// const reserveAmount = bilingual(formatAmount, fallback.reserve?.amount);
+// const reserveAsOf = bilingual(formatDate, fallback.reserve?.asOf);
+// const ratio = bilingual(formatRatio, fallback.collateralRatio);
+//
+// const supplyUnit = fallback.circulatingSupply?.unit ?? "USDX";
+// const reserveCurrency = fallback.reserve?.currency ?? "USD";
+// const custodian = fallback.reserve?.custodian ?? "Bank BNI";
+// const account = fallback.reserve?.accountLabel ?? "";
+// const reserveNote = fallback.reserve?.note ?? "";
 
 const cardClass =
   "relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden";
 const sectionHeadingClass = "font-serif font-medium text-3xl sm:text-4xl tracking-tight text-white m-0";
 const rowLabelClass = "text-white/55 text-sm m-0";
 const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words";
+const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-wide px-4 py-3";
 ---
 <Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
   <div class="min-h-screen bg-bg text-[#e7e7e7]">
@@ -69,7 +81,7 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
           >
             <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M6 21V9m6 12V5m6 16v-8" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z" />
               </svg>
             </span>
             <T t={t.eyebrow} />
@@ -86,7 +98,10 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
         </div>
       </section>
 
-      <!-- Headline figures -->
+      {/* FIGURES — headline figures (circulating supply, total reserves,
+          collateral ratio). Switched off until finance publishes a reserve
+          position; see the FIGURES block in src/i18n.ts.
+
       <section class="mx-auto w-full max-w-[1376px] grid gap-4 md:grid-cols-3">
         <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
           <span class="text-white/55 text-sm"><T t={t.supplyLabel} /></span>
@@ -120,8 +135,38 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
           </p>
         </div>
       </section>
+      */}
 
-      <!-- Reserve breakdown + contract -->
+      <!-- Attestation documents -->
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5">
+          {/* Hidden until there is at least one row — an empty table with
+              headers and nothing under them looks broken. */}
+          <div data-doc-table-wrap class="hidden overflow-x-auto -mx-2 px-2">
+            <table class="w-full border-collapse min-w-[640px]">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th scope="col" class={`${thClass} w-16`}><T t={t.colId} /></th>
+                  <th scope="col" class={thClass}><T t={t.colName} /></th>
+                  <th scope="col" class={`${thClass} w-32`}><T t={t.colMonth} /></th>
+                  <th scope="col" class={`${thClass} w-24`}><T t={t.colYear} /></th>
+                  <th scope="col" class={`${thClass} w-32 text-right`}><T t={t.colAction} /></th>
+                </tr>
+              </thead>
+              <tbody data-doc-rows></tbody>
+            </table>
+          </div>
+
+          <p data-doc-id-note class="hidden text-white/45 text-xs leading-5 m-0"><T t={t.idNote} /></p>
+
+          <p data-doc-empty class="text-white/55 text-sm leading-6 m-0"><T t={t.empty} /></p>
+        </div>
+      </section>
+
+      {/* FIGURES — reserve breakdown (form, custodian, account, issuer). The
+          contract card next to it does NOT depend on reserve data, so it stays
+          on its own below.
+
       <section class="mx-auto w-full max-w-[1376px] grid gap-4 lg:grid-cols-2">
         <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
           <h2 class={sectionHeadingClass}><T t={t.reserveHeading} /></h2>
@@ -145,8 +190,13 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
             <span data-tp="note">{reserveNote}</span>
           </p>
         </div>
+      </section>
+      */}
 
-        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
+      <!-- Contract address — independent of the reserve data, and the first
+           thing an explorer reviewer looks for. -->
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5 max-w-[760px]">
           <h2 class={sectionHeadingClass}><T t={t.contractHeading} /></h2>
           <dl class="grid grid-cols-2 gap-x-4 gap-y-3 m-0">
             <dt class={rowLabelClass}><T t={ui.token.network} /></dt>
@@ -183,7 +233,9 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
         </div>
       </section>
 
-      <!-- How the figures are read -->
+      {/* FIGURES — "how these figures are read" (supply + collateral ratio
+          definitions). Nothing to explain while no figure is on screen.
+
       <section class={cardClass}>
         <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
           <h2 class={sectionHeadingClass}><T t={t.methodHeading} /></h2>
@@ -199,24 +251,7 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
           </div>
         </div>
       </section>
-
-      {/* The attestation list itself lives on /docs — one list, one place. This
-          block only points at it. */}
-      <section class={cardClass}>
-        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-4 items-start">
-          <h2 class={sectionHeadingClass}><T t={t.documentsHeading} /></h2>
-          <p class="text-white/70 text-sm leading-6 m-0 max-w-[640px]"><T t={t.documentsBody} /></p>
-          <a
-            href="/docs"
-            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
-          >
-            <T t={t.documentsCta} />
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
-        </div>
-      </section>
+      */}
 
       <!-- Smart contract audit -->
       <section class={cardClass}>
@@ -246,13 +281,12 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
   import { ui, type Lang, type Translated } from "../i18n";
   import {
     resolveApiBaseUrl,
+    resolveAttestationFileUrl,
     TRANSPARENCY_PATH,
-    formatAmount,
-    formatDate,
-    formatDateTime,
-    formatRatio,
+    formatPeriod,
     type TransparencyEnvelope,
     type TransparencyData,
+    type TransparencyAttestation,
   } from "../data/transparency";
 
   const t = ui.transparency;
@@ -280,20 +314,15 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
     return span;
   }
 
-  /** Formatted in both languages, or the "not yet available" wording. */
-  function bilingual(
-    format: (value: string, lang: Lang) => string,
-    value: string | null | undefined,
-  ): Translated {
-    if (!value) return t.notAvailable;
-    const id = format(value, "id");
-    const en = format(value, "en");
-    return id && en ? { id, en } : t.notAvailable;
+  function bilingualNode(value: Translated): DocumentFragment {
+    const fragment = document.createDocumentFragment();
+    fragment.append(langSpan("id", value.id), langSpan("en", value.en));
+    return fragment;
   }
 
   function setStatus(message: Translated) {
     const el = document.querySelector<HTMLElement>("[data-tp-status]");
-    if (el) el.replaceChildren(langSpan("id", message.id), langSpan("en", message.en));
+    if (el) el.replaceChildren(bilingualNode(message));
   }
 
   /**
@@ -315,7 +344,136 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
     }
   }
 
-  function render(data: TransparencyData) {
+  // ── Attestation table ──────────────────────────────────────────────────────
+
+  function cell(className: string): HTMLTableCellElement {
+    const td = document.createElement("td");
+    td.className = className;
+    return td;
+  }
+
+  /** "2026-07" -> "2026". Falls back to an em dash when the period is malformed. */
+  function yearOf(period: string): string {
+    const match = /^(\d{4})-\d{2}$/.exec(period);
+    return match ? match[1] : "—";
+  }
+
+  function monthNode(period: string): Node {
+    // Month name follows the active site language, like every other label.
+    if (!/^\d{4}-\d{2}$/.test(period)) return document.createTextNode(period || "—");
+    return bilingualNode({ id: formatPeriod(period, "id"), en: formatPeriod(period, "en") });
+  }
+
+  function renderAttestations(attestations: TransparencyAttestation[], apiBaseUrl: string) {
+    const wrap = document.querySelector<HTMLElement>("[data-doc-table-wrap]");
+    const body = document.querySelector<HTMLTableSectionElement>("[data-doc-rows]");
+    const empty = document.querySelector<HTMLElement>("[data-doc-empty]");
+    const idNote = document.querySelector<HTMLElement>("[data-doc-id-note]");
+    if (!wrap || !body || !empty || !idNote) return;
+
+    if (attestations.length === 0) {
+      wrap.classList.add("hidden");
+      idNote.classList.add("hidden");
+      empty.classList.remove("hidden");
+      return;
+    }
+
+    // Number ascending by period so the oldest document is 1 and every document
+    // keeps its number forever; then display newest first. A UUID is never shown
+    // to the public.
+    const oldestFirst = [...attestations].sort((a, b) => a.period.localeCompare(b.period));
+    const numbered = oldestFirst.map((item, index) => ({ item, id: index + 1 }));
+
+    body.replaceChildren(
+      ...numbered.reverse().map(({ item, id }) => {
+        const tr = document.createElement("tr");
+        tr.className = "border-b border-white/[0.06] last:border-0";
+
+        const idCell = cell("px-4 py-4 text-white/45 text-sm tabular-nums align-middle");
+        idCell.textContent = String(id);
+
+        const nameCell = cell("px-4 py-4 text-white text-sm font-medium align-middle");
+        nameCell.textContent = item.title;
+
+        const monthCell = cell("px-4 py-4 text-white/70 text-sm align-middle");
+        monthCell.append(monthNode(item.period));
+
+        const yearCell = cell("px-4 py-4 text-white/70 text-sm tabular-nums align-middle");
+        yearCell.textContent = yearOf(item.period);
+
+        const actionCell = cell("px-4 py-4 text-right align-middle");
+        const href = resolveAttestationFileUrl(item.fileUrl, apiBaseUrl);
+        if (href) {
+          const link = document.createElement("a");
+          link.href = href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className =
+            "inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium no-underline transition-colors";
+          link.append(bilingualNode(t.download));
+          actionCell.append(link);
+        } else {
+          // No usable file link: say so rather than render a button that goes
+          // nowhere.
+          const dash = document.createElement("span");
+          dash.className = "text-white/35 text-sm";
+          dash.textContent = "—";
+          actionCell.append(dash);
+        }
+
+        tr.append(idCell, nameCell, monthCell, yearCell, actionCell);
+        return tr;
+      }),
+    );
+
+    wrap.classList.remove("hidden");
+    idNote.classList.remove("hidden");
+    empty.classList.add("hidden");
+  }
+
+  // ── Contract card ──────────────────────────────────────────────────────────
+
+  function renderToken(data: TransparencyData) {
+    if (!data.token) return;
+    setValue("chain", data.token.chain === "polygon" ? "Polygon" : data.token.chain);
+    setValue("symbol", data.token.symbol);
+    setValue(
+      "decimals",
+      typeof data.token.decimals === "number" ? String(data.token.decimals) : t.notAvailable,
+    );
+    setValue("address", data.token.contractAddress || t.notAvailable);
+
+    // The explorer link stays hidden unless the backend hands over a real
+    // PolygonScan URL (or an address to build one from).
+    const explorer =
+      safePolygonscanUrl(data.token.explorerUrl) ??
+      (data.token.contractAddress
+        ? `https://polygonscan.com/token/${encodeURIComponent(data.token.contractAddress)}`
+        : null);
+    const link = document.querySelector<HTMLAnchorElement>("[data-tp-explorer]");
+    if (link && explorer) {
+      link.href = explorer;
+      link.classList.remove("hidden");
+      link.classList.add("inline-flex");
+    }
+  }
+
+  /* FIGURES — the number slots this page used to fill from the same response.
+     The fields are still on TransparencyData; they are simply not rendered
+     while the reserve position is unpublished. Bring this back together with
+     the commented markup above.
+
+  function bilingual(
+    format: (value: string, lang: Lang) => string,
+    value: string | null | undefined,
+  ): Translated {
+    if (!value) return t.notAvailable;
+    const id = format(value, "id");
+    const en = format(value, "en");
+    return id && en ? { id, en } : t.notAvailable;
+  }
+
+  function renderFigures(data: TransparencyData) {
     setValue("supply", bilingual(formatAmount, data.circulatingSupply?.amount));
     setValue("supply-unit", data.circulatingSupply?.unit ?? "USDX");
     setValue("supply-read-at", bilingual(formatDateTime, data.circulatingSupply?.readAt));
@@ -337,36 +495,13 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
     } else {
       noteRow?.classList.add("hidden");
     }
-
-    if (data.token) {
-      setValue("chain", data.token.chain === "polygon" ? "Polygon" : data.token.chain);
-      setValue("symbol", data.token.symbol);
-      setValue(
-        "decimals",
-        typeof data.token.decimals === "number" ? String(data.token.decimals) : t.notAvailable,
-      );
-      setValue("address", data.token.contractAddress || t.notAvailable);
-
-      // The explorer link stays hidden unless the backend hands over a real
-      // PolygonScan URL (or an address to build one from).
-      const explorer =
-        safePolygonscanUrl(data.token.explorerUrl) ??
-        (data.token.contractAddress
-          ? `https://polygonscan.com/token/${encodeURIComponent(data.token.contractAddress)}`
-          : null);
-      const link = document.querySelector<HTMLAnchorElement>("[data-tp-explorer]");
-      if (link && explorer) {
-        link.href = explorer;
-        link.classList.remove("hidden");
-        link.classList.add("inline-flex");
-      }
-    }
   }
+  */
 
   async function load() {
-    const endpoint = `${resolveApiBaseUrl(window.location.hostname)}${TRANSPARENCY_PATH}`;
+    const apiBaseUrl = resolveApiBaseUrl(window.location.hostname);
     try {
-      const response = await fetch(endpoint, {
+      const response = await fetch(`${apiBaseUrl}${TRANSPARENCY_PATH}`, {
         headers: { Accept: "application/json" },
         // Public, unauthenticated endpoint — no cookies should ride along.
         credentials: "omit",
@@ -374,10 +509,11 @@ const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = (await response.json()) as TransparencyEnvelope;
       if (!body?.data) throw new Error("empty payload");
-      render(body.data);
+      renderAttestations(body.data.attestations ?? [], apiBaseUrl);
+      renderToken(body.data);
       setStatus(t.statusLive);
     } catch {
-      // Leave the figures baked into the HTML in place and say so plainly.
+      // Leave whatever is baked into the HTML in place and say so plainly.
       setStatus(t.statusFallback);
     }
   }

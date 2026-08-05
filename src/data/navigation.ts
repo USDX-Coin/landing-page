@@ -27,12 +27,15 @@ export const navLinks: NavLink[] = [
   { label: { id: "Beranda", en: "Home" }, href: "#hero" },
   { label: { id: "Fitur", en: "Features" }, href: "#features" },
   { label: { id: "Ekosistem", en: "Ecosystem" }, href: "#ecosystem" },
+  // One transparency entry, one destination. The old "Dokumen" entry pointed at
+  // a separate /docs page that held the attestation table; that table now lives
+  // on /transparency itself, so the second entry was removed with the page.
   { label: ui.transparency.navLabel, href: "/transparency" },
-  { label: ui.docs.navLabel, href: "/docs" },
   { label: { id: "FAQ", en: "FAQ" }, href: "#faq" },
-  // "Dokumentasi" is back on: it now points at the official GitBook, which is
-  // also the whitepaper (see data/whitepaper.ts). This is the site's ONLY link
-  // to that destination — no duplicate "Whitepaper" entry in the footer.
+  // "Dokumentasi" is the official GitBook, which is also the whitepaper (see
+  // data/whitepaper.ts). It keeps the "Dokumentasi" label: the GitBook is a
+  // 12-page handbook, wider than a whitepaper, and nothing clashes with it now
+  // that the "Dokumen" entry is gone. This is the site's ONLY link there.
   { label: { id: "Dokumentasi", en: "Docs" }, href: DOCUMENTATION_URL, external: true },
   // "Artikel" stays removed — there is no articles page, and a nav link to "#"
   // reads as an unfinished placeholder to explorer reviewers.
