@@ -37,8 +37,12 @@ import T from "./T.astro";
             <img src={cs.image} alt={cs.title.en} class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
             <!-- top scrim + category tag -->
             <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+            {/* `{cs.tag.id}` here printed the Indonesian tag in both languages,
+                so the English page read "Penyelesaian Lintas Negara" above an
+                English title. `tag` is Translated like every other string on the
+                site and renders through <T>. */}
             <span class="absolute top-4 left-4 inline-flex items-center px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 text-white text-sm font-medium font-tight">
-              {cs.tag.id}
+              <T t={cs.tag} />
             </span>
             <!-- bottom scrim + text -->
             <div class="absolute inset-x-0 bottom-0 p-6 pt-16 bg-gradient-to-t from-black via-black/80 to-transparent flex flex-col gap-2">
