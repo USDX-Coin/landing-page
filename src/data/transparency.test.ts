@@ -26,14 +26,9 @@ describe("resolveAttestationFileUrl", () => {
     );
   });
 
-  it("keeps an absolute fileUrl and ignores the API base", () => {
+  it("keeps an absolute fileUrl that is on the API host", () => {
     const absolute = "https://api.usdx.co.id/api/v1/public/transparency/attestations/abc/file";
-    assert.equal(resolveAttestationFileUrl(absolute, "https://api-dev.usdx.co.id"), absolute);
-  });
-
-  it("keeps an absolute fileUrl pointing at object storage", () => {
-    const stored = "https://storage.example.com/usdx/atestasi-2026-07.pdf";
-    assert.equal(resolveAttestationFileUrl(stored, API), stored);
+    assert.equal(resolveAttestationFileUrl(absolute, API), absolute);
   });
 
   it("does not double up slashes when the API base has a trailing slash", () => {
@@ -46,6 +41,62 @@ describe("resolveAttestationFileUrl", () => {
   it("rejects non-http(s) schemes so nothing hostile reaches an href", () => {
     assert.equal(resolveAttestationFileUrl("javascript:alert(1)", API), null);
     assert.equal(resolveAttestationFileUrl("data:text/html,<script>", API), null);
+  });
+
+  // ── Origin lock ────────────────────────────────────────────────────────────
+  // The backend always builds fileUrl against its own redirect route, so any
+  // other origin means the value was tampered with somewhere upstream — a back
+  // office account gone bad being the realistic case. A USDX-branded "Download"
+  // button on the transparency page is exactly the wrapper a forged attestation
+  // wants, so a foreign origin loses its link rather than being rendered.
+
+  it("rejects an absolute fileUrl on a foreign host", () => {
+    assert.equal(
+      resolveAttestationFileUrl("https://storage.example.com/usdx/atestasi-2026-07.pdf", API),
+      null,
+    );
+    assert.equal(
+      resolveAttestationFileUrl("https://evil.example.com/laporan-atestasi-usdx.pdf", API),
+      null,
+    );
+  });
+
+  it("rejects a host that merely looks like the API host", () => {
+    // Suffix and prefix lookalikes: a bare `endsWith`/`startsWith` check would
+    // wave both of these through.
+    assert.equal(resolveAttestationFileUrl("https://api.usdx.co.id.evil.test/f.pdf", API), null);
+    assert.equal(resolveAttestationFileUrl("https://evil-api.usdx.co.id.co/f.pdf", API), null);
+    assert.equal(resolveAttestationFileUrl("https://notapi.usdx.co.id/f.pdf", API), null);
+  });
+
+  it("rejects the API host on a different port", () => {
+    assert.equal(resolveAttestationFileUrl("https://api.usdx.co.id:8443/f.pdf", API), null);
+  });
+
+  it("rejects a downgrade to http on the API host", () => {
+    assert.equal(resolveAttestationFileUrl("http://api.usdx.co.id/f.pdf", API), null);
+  });
+
+  it("rejects the production API host while the page is talking to dev, and vice versa", () => {
+    const DEV = "https://api-dev.usdx.co.id";
+    assert.equal(resolveAttestationFileUrl(`${API}/f.pdf`, DEV), null);
+    assert.equal(resolveAttestationFileUrl(`${DEV}/f.pdf`, API), null);
+  });
+
+  it("accepts an absolute fileUrl on whichever API base the page is using", () => {
+    const DEV = "https://api-dev.usdx.co.id";
+    assert.equal(resolveAttestationFileUrl(`${DEV}/f.pdf`, DEV), `${DEV}/f.pdf`);
+  });
+
+  it("rejects a protocol-relative url, which escapes the API host without looking like it", () => {
+    assert.equal(resolveAttestationFileUrl("//evil.example.com/f.pdf", API), null);
+  });
+
+  it("still accepts a relative value with no leading slash", () => {
+    assert.equal(
+      resolveAttestationFileUrl("attestations/abc/file", "https://api.usdx.co.id/api/v1/public/"),
+      "https://api.usdx.co.id/api/v1/public/attestations/abc/file",
+    );
   });
 
   it("rejects empty, blank and missing values", () => {

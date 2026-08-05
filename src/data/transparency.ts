@@ -103,13 +103,31 @@ export interface TransparencyEnvelope {
  * path against the page origin would point every Download button at
  * `https://usdx.co.id/api/v1/...` — a page that does not exist, with no visible
  * error. Relative values therefore resolve against the API base the page is
- * actually talking to; absolute values are used as-is and the base is ignored.
+ * actually talking to.
  *
  * Never assume the server env is set correctly — the site has to be right in
  * both cases.
  *
- * Anything that is not http(s) (a `javascript:` url, say) returns null so a
- * broken or hostile value can never reach an href.
+ * ORIGIN LOCK. Both shapes the backend can emit point at the API's own redirect
+ * route, so a resolved url that lands anywhere else means something is wrong,
+ * and the something is not benign: the "Download" button on this page carries
+ * USDX branding on a page titled Transparency and Audit Documents, which is
+ * exactly the surface used to hand out forged "attestation reports". A back
+ * office account that has been taken over, or a compromised upstream, would
+ * only need to store an off-site fileUrl to borrow that credibility. So the
+ * resolved url must share the origin of the API base this page is talking to —
+ * same scheme, host and port — and everything else returns null. Callers render
+ * the row without a link for null, so a rejected value costs one document its
+ * download button and never misleads anyone.
+ *
+ * Comparing origins (rather than hostnames) also refuses an http:// value
+ * against an https:// API — a downgrade is as much a red flag as a foreign
+ * host. Non-http(s) schemes (a `javascript:` url, say) fail the same check,
+ * since their origin is never the API's.
+ *
+ * If attestation files are ever legitimately served from object storage on
+ * another host, this is the function that has to learn about it — with an
+ * explicit allowlist of that host, not by dropping the check.
  */
 export function resolveAttestationFileUrl(
   fileUrl: string | null | undefined,
@@ -117,13 +135,21 @@ export function resolveAttestationFileUrl(
 ): string | null {
   const raw = fileUrl?.trim();
   if (!raw) return null;
+  let base: URL;
+  try {
+    base = new URL(apiBaseUrl);
+  } catch {
+    return null;
+  }
   let url: URL;
   try {
-    url = new URL(raw, apiBaseUrl);
+    url = new URL(raw, base);
   } catch {
     return null;
   }
   if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+  // `origin` is "null" for opaque schemes, so this rejects them too.
+  if (url.origin !== base.origin) return null;
   return url.href;
 }
 
