@@ -5,6 +5,8 @@ import Hero from "../components/Hero.astro";
 import Features from "../components/Features.astro";
 import Ecosystem from "../components/Ecosystem.astro";
 import CaseStudy from "../components/CaseStudy.astro";
+import TokenInfo from "../components/TokenInfo.astro";
+import Team from "../components/Team.astro";
 import Faq from "../components/Faq";
 import Footer from "../components/Footer.astro";
 ---
@@ -17,7 +19,13 @@ import Footer from "../components/Footer.astro";
     <main class="px-4 sm:px-8 py-4">
       <Features />
       <Ecosystem />
+      {/* TokenInfo and Team render nothing until their data exists (confirmed
+          mainnet contract address / real team profiles) — see data/token.ts and
+          data/team.ts. Empty cards and invented names are exactly what got the
+          token-info submission rejected. */}
+      <TokenInfo />
       <CaseStudy />
+      <Team />
       <Faq client:visible />
       <Footer />
     </main>

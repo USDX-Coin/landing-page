@@ -1,0 +1,386 @@
+---
+// Public transparency page: circulating supply vs reserves, contract address,
+// attestation reports and the smart-contract audit.
+//
+// The site is a static Netlify build, so the live numbers are fetched in the
+// browser from GET {API_BASE}/api/v1/public/transparency. Everything that does
+// not depend on that request — the definitions, the custodian, the issuer, the
+// audit link — is rendered straight into the HTML, and the fallback figures in
+// data/transparency.ts fill the numbers. A transparency page that only says
+// "failed to load" is worse than one showing a dated figure.
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import { ui, type Translated } from "../i18n";
+import { AUDIT_REPORT_URL } from "../data/audit";
+import { COMPANY_LEGAL_NAME } from "../data/company";
+import {
+  TRANSPARENCY_FALLBACK,
+  formatAmount,
+  formatDate,
+  formatDateTime,
+  formatRatio,
+} from "../data/transparency";
+
+const t = ui.transparency;
+const fallback = TRANSPARENCY_FALLBACK;
+
+// Pre-format the fallback in both languages so the static markup carries real
+// content even with JavaScript off. Null everywhere means "not yet available",
+// which is rendered as words — never as a zero.
+const bilingual = (fn: (value: string, lang: "id" | "en") => string, value?: string | null): Translated | null => {
+  if (!value) return null;
+  const id = fn(value, "id");
+  const en = fn(value, "en");
+  return id && en ? { id, en } : null;
+};
+
+const supplyAmount = bilingual(formatAmount, fallback.circulatingSupply?.amount);
+const supplyReadAt = bilingual(formatDateTime, fallback.circulatingSupply?.readAt);
+const reserveAmount = bilingual(formatAmount, fallback.reserve?.amount);
+const reserveAsOf = bilingual(formatDate, fallback.reserve?.asOf);
+const ratio = bilingual(formatRatio, fallback.collateralRatio);
+
+const supplyUnit = fallback.circulatingSupply?.unit ?? "USDX";
+const reserveCurrency = fallback.reserve?.currency ?? "USD";
+const custodian = fallback.reserve?.custodian ?? "Bank BNI";
+const account = fallback.reserve?.accountLabel ?? "";
+const reserveNote = fallback.reserve?.note ?? "";
+
+const cardClass =
+  "relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden";
+const sectionHeadingClass = "font-serif font-medium text-3xl sm:text-4xl tracking-tight text-white m-0";
+const rowLabelClass = "text-white/55 text-sm m-0";
+const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words";
+---
+<Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
+  <div class="min-h-screen bg-bg text-[#e7e7e7]">
+    <Navbar client:load base="/" />
+
+    <main class="px-4 sm:px-8 pt-[104px] pb-4 flex flex-col gap-4">
+      <!-- Header -->
+      <section class={cardClass}>
+        <div class="absolute -top-20 right-10 w-[560px] h-[240px] bg-[#b60000]/20 blur-[130px] rounded-[50%] pointer-events-none"></div>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-6 max-w-[760px]">
+          <span
+            class="inline-flex w-fit items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight"
+            style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)"
+          >
+            <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M6 21V9m6 12V5m6 16v-8" />
+              </svg>
+            </span>
+            <T t={t.eyebrow} />
+          </span>
+          <h1 class="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent m-0">
+            <span class="block"><T t={t.heading1} /></span>
+            <span class="block"><T t={t.heading2} /></span>
+          </h1>
+          <p class="text-white/80 text-base leading-[26px] m-0"><T t={t.intro} /></p>
+          <p class="text-white/50 text-sm leading-5 m-0" data-tp-status><T t={t.statusLoading} /></p>
+          <noscript>
+            <p class="text-white/50 text-sm leading-5 m-0"><T t={t.statusNoJs} /></p>
+          </noscript>
+        </div>
+      </section>
+
+      <!-- Headline figures -->
+      <section class="mx-auto w-full max-w-[1376px] grid gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
+          <span class="text-white/55 text-sm"><T t={t.supplyLabel} /></span>
+          <p class="text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
+            <span data-tp="supply">{supplyAmount ? <T t={supplyAmount} /> : <T t={t.notAvailable} />}</span>
+            <span class="text-white/50 text-xl ml-2" data-tp="supply-unit">{supplyUnit}</span>
+          </p>
+          <p class="text-white/45 text-xs leading-5 m-0">
+            <T t={t.readAt} />: <span data-tp="supply-read-at">{supplyReadAt ? <T t={supplyReadAt} /> : <T t={t.notAvailable} />}</span>
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
+          <span class="text-white/55 text-sm"><T t={t.reserveLabel} /></span>
+          <p class="text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
+            <span data-tp="reserve">{reserveAmount ? <T t={reserveAmount} /> : <T t={t.notAvailable} />}</span>
+            <span class="text-white/50 text-xl ml-2" data-tp="reserve-currency">{reserveCurrency}</span>
+          </p>
+          <p class="text-white/45 text-xs leading-5 m-0">
+            <T t={t.asOf} />: <span data-tp="reserve-as-of">{reserveAsOf ? <T t={reserveAsOf} /> : <T t={t.notAvailable} />}</span>
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
+          <span class="text-white/55 text-sm"><T t={t.ratioLabel} /></span>
+          <p class="text-gold font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
+            <span data-tp="ratio">{ratio ? <T t={ratio} /> : <T t={t.notAvailable} />}</span>
+          </p>
+          <p class="text-white/45 text-xs leading-5 m-0">
+            <T t={t.updatedAt} />: <span data-tp="updated-at">{reserveAsOf ? <T t={reserveAsOf} /> : <T t={t.notAvailable} />}</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- Reserve breakdown + contract -->
+      <section class="mx-auto w-full max-w-[1376px] grid gap-4 lg:grid-cols-2">
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
+          <h2 class={sectionHeadingClass}><T t={t.reserveHeading} /></h2>
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-3 m-0">
+            <dt class={rowLabelClass}><T t={t.reserveForm} /></dt>
+            <dd class={rowValueClass}><T t={t.reserveFormValue} /></dd>
+
+            <dt class={rowLabelClass}><T t={t.custodian} /></dt>
+            <dd class={rowValueClass}><span data-tp="custodian">{custodian}</span></dd>
+
+            <dt class={rowLabelClass}><T t={t.account} /></dt>
+            <dd class={rowValueClass}>
+              <span data-tp="account">{account ? account : <T t={t.notAvailable} />}</span>
+            </dd>
+
+            <dt class={rowLabelClass}><T t={t.issuer} /></dt>
+            <dd class={rowValueClass}>{COMPANY_LEGAL_NAME}</dd>
+          </dl>
+          <p class={`text-white/60 text-sm leading-6 m-0 ${reserveNote ? "" : "hidden"}`} data-tp-note-row>
+            <span class="text-white/45"><T t={t.note} />: </span>
+            <span data-tp="note">{reserveNote}</span>
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
+          <h2 class={sectionHeadingClass}><T t={t.contractHeading} /></h2>
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-3 m-0">
+            <dt class={rowLabelClass}><T t={ui.token.network} /></dt>
+            <dd class={rowValueClass}><span data-tp="chain">Polygon</span></dd>
+
+            <dt class={rowLabelClass}><T t={ui.token.symbol} /></dt>
+            <dd class={rowValueClass}><span data-tp="symbol">USDX</span></dd>
+
+            <dt class={rowLabelClass}><T t={ui.token.decimals} /></dt>
+            <dd class={rowValueClass}>
+              <span data-tp="decimals"><T t={t.notAvailable} /></span>
+            </dd>
+          </dl>
+          <div class="flex flex-col gap-2">
+            <span class={rowLabelClass}><T t={ui.token.contractAddress} /></span>
+            <code
+              data-tp="address"
+              class="block break-all rounded-lg bg-black/50 border border-white/10 px-3 py-2.5 text-white text-[13px] leading-5 font-mono"
+            ><T t={t.notAvailable} /></code>
+          </div>
+          {/* No href until the API hands over a real PolygonScan URL: an anchor
+              without href is not a link, so nothing dead ships in the HTML. */}
+          <a
+            data-tp-explorer
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hidden w-fit items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={ui.token.explorer} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5h5v5M19 5l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- How the figures are read -->
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
+          <h2 class={sectionHeadingClass}><T t={t.methodHeading} /></h2>
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="flex flex-col gap-2">
+              <h3 class="text-white text-base font-medium m-0"><T t={t.supplyDefinitionTitle} /></h3>
+              <p class="text-white/70 text-sm leading-6 m-0"><T t={t.supplyDefinition} /></p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-white text-base font-medium m-0"><T t={t.ratioDefinitionTitle} /></h3>
+              <p class="text-white/70 text-sm leading-6 m-0"><T t={t.ratioDefinition} /></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* The attestation list itself lives on /docs — one list, one place. This
+          block only points at it. */}
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-4 items-start">
+          <h2 class={sectionHeadingClass}><T t={t.documentsHeading} /></h2>
+          <p class="text-white/70 text-sm leading-6 m-0 max-w-[640px]"><T t={t.documentsBody} /></p>
+          <a
+            href="/docs"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={t.documentsCta} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- Smart contract audit -->
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-4 items-start">
+          <h2 class={sectionHeadingClass}><T t={t.auditHeading} /></h2>
+          <p class="text-white/70 text-sm leading-6 m-0 max-w-[640px]"><T t={t.auditBody} /></p>
+          <a
+            href={AUDIT_REPORT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={ui.footer.audit} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <Footer base="/" />
+    </main>
+  </div>
+</Layout>
+
+<script>
+  import { ui, type Lang, type Translated } from "../i18n";
+  import {
+    resolveApiBaseUrl,
+    TRANSPARENCY_PATH,
+    formatAmount,
+    formatDate,
+    formatDateTime,
+    formatRatio,
+    type TransparencyEnvelope,
+    type TransparencyData,
+  } from "../data/transparency";
+
+  const t = ui.transparency;
+
+  /**
+   * Write a value into every `[data-tp="<key>"]` slot. Translated values render
+   * as the site's two `[data-l]` spans so the language switcher keeps working.
+   * Always built with textContent — the API is trusted, but never trusted enough
+   * to be injected as HTML.
+   */
+  function setValue(key: string, value: string | Translated) {
+    document.querySelectorAll<HTMLElement>(`[data-tp="${key}"]`).forEach((el) => {
+      if (typeof value === "string") {
+        el.textContent = value;
+        return;
+      }
+      el.replaceChildren(langSpan("id", value.id), langSpan("en", value.en));
+    });
+  }
+
+  function langSpan(lang: Lang, text: string): HTMLSpanElement {
+    const span = document.createElement("span");
+    span.dataset.l = lang;
+    span.textContent = text;
+    return span;
+  }
+
+  /** Formatted in both languages, or the "not yet available" wording. */
+  function bilingual(
+    format: (value: string, lang: Lang) => string,
+    value: string | null | undefined,
+  ): Translated {
+    if (!value) return t.notAvailable;
+    const id = format(value, "id");
+    const en = format(value, "en");
+    return id && en ? { id, en } : t.notAvailable;
+  }
+
+  function setStatus(message: Translated) {
+    const el = document.querySelector<HTMLElement>("[data-tp-status]");
+    if (el) el.replaceChildren(langSpan("id", message.id), langSpan("en", message.en));
+  }
+
+  /**
+   * The explorer link only ever accepts an absolute PolygonScan URL. Unlike the
+   * attestation file links (see resolveAttestationFileUrl), a relative value
+   * here would be meaningless, so there is no base to resolve against.
+   */
+  function safePolygonscanUrl(raw: string | undefined): string | null {
+    if (!raw) return null;
+    try {
+      const url = new URL(raw);
+      if (url.protocol !== "https:") return null;
+      if (url.hostname !== "polygonscan.com" && !url.hostname.endsWith(".polygonscan.com")) {
+        return null;
+      }
+      return url.href;
+    } catch {
+      return null;
+    }
+  }
+
+  function render(data: TransparencyData) {
+    setValue("supply", bilingual(formatAmount, data.circulatingSupply?.amount));
+    setValue("supply-unit", data.circulatingSupply?.unit ?? "USDX");
+    setValue("supply-read-at", bilingual(formatDateTime, data.circulatingSupply?.readAt));
+
+    setValue("reserve", bilingual(formatAmount, data.reserve?.amount));
+    setValue("reserve-currency", data.reserve?.currency ?? "USD");
+    setValue("reserve-as-of", bilingual(formatDate, data.reserve?.asOf));
+    setValue("ratio", bilingual(formatRatio, data.collateralRatio));
+    setValue("updated-at", bilingual(formatDateTime, data.updatedAt));
+
+    // A missing reserve snapshot must read as "not yet available", never as 0.
+    setValue("custodian", data.reserve?.custodian ?? "Bank BNI");
+    setValue("account", data.reserve?.accountLabel ? data.reserve.accountLabel : t.notAvailable);
+
+    const noteRow = document.querySelector<HTMLElement>("[data-tp-note-row]");
+    if (data.reserve?.note) {
+      setValue("note", data.reserve.note);
+      noteRow?.classList.remove("hidden");
+    } else {
+      noteRow?.classList.add("hidden");
+    }
+
+    if (data.token) {
+      setValue("chain", data.token.chain === "polygon" ? "Polygon" : data.token.chain);
+      setValue("symbol", data.token.symbol);
+      setValue(
+        "decimals",
+        typeof data.token.decimals === "number" ? String(data.token.decimals) : t.notAvailable,
+      );
+      setValue("address", data.token.contractAddress || t.notAvailable);
+
+      // The explorer link stays hidden unless the backend hands over a real
+      // PolygonScan URL (or an address to build one from).
+      const explorer =
+        safePolygonscanUrl(data.token.explorerUrl) ??
+        (data.token.contractAddress
+          ? `https://polygonscan.com/token/${encodeURIComponent(data.token.contractAddress)}`
+          : null);
+      const link = document.querySelector<HTMLAnchorElement>("[data-tp-explorer]");
+      if (link && explorer) {
+        link.href = explorer;
+        link.classList.remove("hidden");
+        link.classList.add("inline-flex");
+      }
+    }
+  }
+
+  async function load() {
+    const endpoint = `${resolveApiBaseUrl(window.location.hostname)}${TRANSPARENCY_PATH}`;
+    try {
+      const response = await fetch(endpoint, {
+        headers: { Accept: "application/json" },
+        // Public, unauthenticated endpoint — no cookies should ride along.
+        credentials: "omit",
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const body = (await response.json()) as TransparencyEnvelope;
+      if (!body?.data) throw new Error("empty payload");
+      render(body.data);
+      setStatus(t.statusLive);
+    } catch {
+      // Leave the figures baked into the HTML in place and say so plainly.
+      setStatus(t.statusFallback);
+    }
+  }
+
+  void load();
+</script>

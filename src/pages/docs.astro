@@ -1,0 +1,230 @@
+---
+// Transparency and audit documents — the monthly reserve attestation reports.
+//
+// The table is NOT a hand-maintained list in this repo. It is fed by the same
+// public endpoint /transparency uses (`attestations`), so the flow is:
+// Wildan hands over a document -> the team uploads it in back office -> it shows
+// up here on the next page load. Nothing to commit.
+//
+// Empty is the normal state right now, and it renders as an explanation rather
+// than a bare empty table.
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import { ui } from "../i18n";
+
+const t = ui.docs;
+
+const cardClass =
+  "relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden";
+const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-wide px-4 py-3";
+---
+<Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
+  <div class="min-h-screen bg-bg text-[#e7e7e7]">
+    <Navbar client:load base="/" />
+
+    <main class="px-4 sm:px-8 pt-[104px] pb-4 flex flex-col gap-4">
+      <!-- Header -->
+      <section class={cardClass}>
+        <div class="absolute -top-20 right-10 w-[560px] h-[240px] bg-[#b60000]/20 blur-[130px] rounded-[50%] pointer-events-none"></div>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-6 max-w-[760px]">
+          <span
+            class="inline-flex w-fit items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight"
+            style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)"
+          >
+            <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z" />
+              </svg>
+            </span>
+            <T t={t.eyebrow} />
+          </span>
+          <h1 class="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent m-0">
+            <span class="block"><T t={t.heading1} /></span>
+            <span class="block"><T t={t.heading2} /></span>
+          </h1>
+          <p class="text-white/80 text-base leading-[26px] m-0"><T t={t.intro} /></p>
+          <p class="text-white/50 text-sm leading-5 m-0" data-doc-status><T t={ui.transparency.statusLoading} /></p>
+          <noscript>
+            <p class="text-white/50 text-sm leading-5 m-0"><T t={ui.transparency.statusNoJs} /></p>
+          </noscript>
+        </div>
+      </section>
+
+      <!-- Documents table -->
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5">
+          {/* Hidden until there is at least one row — an empty table with
+              headers and nothing under them looks broken. */}
+          <div data-doc-table-wrap class="hidden overflow-x-auto -mx-2 px-2">
+            <table class="w-full border-collapse min-w-[640px]">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th scope="col" class={`${thClass} w-16`}><T t={t.colId} /></th>
+                  <th scope="col" class={thClass}><T t={t.colName} /></th>
+                  <th scope="col" class={`${thClass} w-32`}><T t={t.colMonth} /></th>
+                  <th scope="col" class={`${thClass} w-24`}><T t={t.colYear} /></th>
+                  <th scope="col" class={`${thClass} w-32 text-right`}><T t={t.colAction} /></th>
+                </tr>
+              </thead>
+              <tbody data-doc-rows></tbody>
+            </table>
+          </div>
+
+          <p data-doc-id-note class="hidden text-white/45 text-xs leading-5 m-0"><T t={t.idNote} /></p>
+
+          <p data-doc-empty class="text-white/55 text-sm leading-6 m-0"><T t={t.empty} /></p>
+
+          <a
+            href="/transparency"
+            class="inline-flex w-fit items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={t.transparencyCta} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <Footer base="/" />
+    </main>
+  </div>
+</Layout>
+
+<script>
+  import { ui, type Lang, type Translated } from "../i18n";
+  import {
+    resolveApiBaseUrl,
+    resolveAttestationFileUrl,
+    TRANSPARENCY_PATH,
+    formatPeriod,
+    type TransparencyEnvelope,
+    type TransparencyAttestation,
+  } from "../data/transparency";
+
+  const t = ui.docs;
+
+  function langSpan(lang: Lang, text: string): HTMLSpanElement {
+    const span = document.createElement("span");
+    span.dataset.l = lang;
+    span.textContent = text;
+    return span;
+  }
+
+  function bilingualNode(value: Translated): DocumentFragment {
+    const fragment = document.createDocumentFragment();
+    fragment.append(langSpan("id", value.id), langSpan("en", value.en));
+    return fragment;
+  }
+
+  function setStatus(message: Translated) {
+    const el = document.querySelector<HTMLElement>("[data-doc-status]");
+    if (el) el.replaceChildren(bilingualNode(message));
+  }
+
+  function cell(className: string): HTMLTableCellElement {
+    const td = document.createElement("td");
+    td.className = className;
+    return td;
+  }
+
+  /** "2026-07" -> "2026". Falls back to an em dash when the period is malformed. */
+  function yearOf(period: string): string {
+    const match = /^(\d{4})-\d{2}$/.exec(period);
+    return match ? match[1] : "—";
+  }
+
+  function monthNode(period: string): Node {
+    // Month name follows the active site language, like every other label.
+    if (!/^\d{4}-\d{2}$/.test(period)) return document.createTextNode(period || "—");
+    return bilingualNode({ id: formatPeriod(period, "id"), en: formatPeriod(period, "en") });
+  }
+
+  function render(attestations: TransparencyAttestation[], apiBaseUrl: string) {
+    const wrap = document.querySelector<HTMLElement>("[data-doc-table-wrap]");
+    const body = document.querySelector<HTMLTableSectionElement>("[data-doc-rows]");
+    const empty = document.querySelector<HTMLElement>("[data-doc-empty]");
+    const idNote = document.querySelector<HTMLElement>("[data-doc-id-note]");
+    if (!wrap || !body || !empty || !idNote) return;
+
+    if (attestations.length === 0) {
+      wrap.classList.add("hidden");
+      idNote.classList.add("hidden");
+      empty.classList.remove("hidden");
+      return;
+    }
+
+    // Number ascending by period so the oldest document is 1 and every document
+    // keeps its number forever; then display newest first. A UUID is never shown
+    // to the public.
+    const oldestFirst = [...attestations].sort((a, b) => a.period.localeCompare(b.period));
+    const numbered = oldestFirst.map((item, index) => ({ item, id: index + 1 }));
+
+    body.replaceChildren(
+      ...numbered.reverse().map(({ item, id }) => {
+        const tr = document.createElement("tr");
+        tr.className = "border-b border-white/[0.06] last:border-0";
+
+        const idCell = cell("px-4 py-4 text-white/45 text-sm tabular-nums align-middle");
+        idCell.textContent = String(id);
+
+        const nameCell = cell("px-4 py-4 text-white text-sm font-medium align-middle");
+        nameCell.textContent = item.title;
+
+        const monthCell = cell("px-4 py-4 text-white/70 text-sm align-middle");
+        monthCell.append(monthNode(item.period));
+
+        const yearCell = cell("px-4 py-4 text-white/70 text-sm tabular-nums align-middle");
+        yearCell.textContent = yearOf(item.period);
+
+        const actionCell = cell("px-4 py-4 text-right align-middle");
+        const href = resolveAttestationFileUrl(item.fileUrl, apiBaseUrl);
+        if (href) {
+          const link = document.createElement("a");
+          link.href = href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className =
+            "inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium no-underline transition-colors";
+          link.append(bilingualNode(t.download));
+          actionCell.append(link);
+        } else {
+          // No usable file link: say so rather than render a button that goes
+          // nowhere.
+          const dash = document.createElement("span");
+          dash.className = "text-white/35 text-sm";
+          dash.textContent = "—";
+          actionCell.append(dash);
+        }
+
+        tr.append(idCell, nameCell, monthCell, yearCell, actionCell);
+        return tr;
+      }),
+    );
+
+    wrap.classList.remove("hidden");
+    idNote.classList.remove("hidden");
+    empty.classList.add("hidden");
+  }
+
+  async function load() {
+    const apiBaseUrl = resolveApiBaseUrl(window.location.hostname);
+    try {
+      const response = await fetch(`${apiBaseUrl}${TRANSPARENCY_PATH}`, {
+        headers: { Accept: "application/json" },
+        credentials: "omit",
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const body = (await response.json()) as TransparencyEnvelope;
+      if (!body?.data) throw new Error("empty payload");
+      render(body.data.attestations ?? [], apiBaseUrl);
+      setStatus(ui.transparency.statusLive);
+    } catch {
+      setStatus(ui.transparency.statusFallback);
+    }
+  }
+
+  void load();
+</script>

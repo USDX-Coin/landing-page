@@ -13,18 +13,37 @@ export function resolveAppUrl(hostname: string): string {
   return APP_URL_BY_HOST[host] ?? APP_URL;
 }
 
-import type { Translated } from "../i18n";
+import { ui, type Translated } from "../i18n";
+import { DOCUMENTATION_URL } from "./whitepaper";
 
 export interface NavLink {
   label: Translated;
   href: string;
+  /** Opens in a new tab (files, off-site destinations). */
+  external?: boolean;
 }
 
 export const navLinks: NavLink[] = [
   { label: { id: "Beranda", en: "Home" }, href: "#hero" },
   { label: { id: "Fitur", en: "Features" }, href: "#features" },
   { label: { id: "Ekosistem", en: "Ecosystem" }, href: "#ecosystem" },
+  { label: ui.transparency.navLabel, href: "/transparency" },
+  { label: ui.docs.navLabel, href: "/docs" },
   { label: { id: "FAQ", en: "FAQ" }, href: "#faq" },
-  { label: { id: "Artikel", en: "Articles" }, href: "#" },
-  { label: { id: "Dokumentasi", en: "Docs" }, href: "#" },
+  // "Dokumentasi" is back on: it now points at the official GitBook, which is
+  // also the whitepaper (see data/whitepaper.ts). This is the site's ONLY link
+  // to that destination — no duplicate "Whitepaper" entry in the footer.
+  { label: { id: "Dokumentasi", en: "Docs" }, href: DOCUMENTATION_URL, external: true },
+  // "Artikel" stays removed — there is no articles page, and a nav link to "#"
+  // reads as an unfinished placeholder to explorer reviewers.
+  // { label: { id: "Artikel", en: "Articles" }, href: "" },
 ];
+
+/**
+ * Nav entries that start with "#" are anchors into the landing page. On any
+ * other page they have to be prefixed ("/#features") or they would point at
+ * sections that do not exist there — i.e. dead links.
+ */
+export function navHref(href: string, base = ""): string {
+  return href.startsWith("#") ? `${base}${href}` : href;
+}

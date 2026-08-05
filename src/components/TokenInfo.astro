@@ -1,0 +1,126 @@
+---
+// Token information: symbol, name, decimals, network, full contract address with
+// a copy button and a PolygonScan link.
+//
+// The whole section is withheld while the mainnet contract address is
+// unconfirmed. Publishing the wrong address on the official site is what
+// scammers exploit, so "not shown" beats "shown and wrong". See data/token.ts.
+import { tokenInfo, polygonscanTokenUrl } from "../data/token";
+import { ui } from "../i18n";
+import T from "./T.astro";
+
+const address = tokenInfo.contractAddress;
+const explorerUrl = address ? polygonscanTokenUrl(address) : "";
+
+const rows = [
+  { label: ui.token.name, value: tokenInfo.name },
+  { label: ui.token.symbol, value: tokenInfo.symbol },
+  { label: ui.token.decimals, value: String(tokenInfo.decimals) },
+  { label: ui.token.network, value: tokenInfo.network },
+];
+---
+{address && (
+  <section id="token" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
+    <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] grid lg:grid-cols-2 gap-8 lg:gap-10">
+      <div class="flex flex-col gap-4 items-start">
+        <span
+          class="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight"
+          style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)"
+        >
+          <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v18M8 7h5.5a2.5 2.5 0 0 1 0 5H8h6.5a2.5 2.5 0 0 1 0 5H8" />
+            </svg>
+          </span>
+          <T t={ui.token.eyebrow} />
+        </span>
+        <h2 class="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent">
+          <span class="block"><T t={ui.token.heading1} /></span>
+          <span class="block"><T t={ui.token.heading2} /></span>
+        </h2>
+        <p class="text-white/80 text-base leading-[26px] max-w-[511px]"><T t={ui.token.sub} /></p>
+      </div>
+
+      <div class="rounded-2xl border border-white/[0.07] bg-[#0c0c0c] p-5 sm:p-6 flex flex-col gap-4">
+        <dl class="grid grid-cols-2 gap-x-4 gap-y-3 m-0">
+          {rows.map((row) => (
+            <>
+              <dt class="text-white/60 text-sm"><T t={row.label} /></dt>
+              <dd class="text-white text-sm font-medium text-right m-0">{row.value}</dd>
+            </>
+          ))}
+        </dl>
+
+        <div class="h-px bg-white/10"></div>
+
+        <div class="flex flex-col gap-2">
+          <span class="text-white/60 text-sm"><T t={ui.token.contractAddress} /></span>
+          <code
+            data-token-address
+            class="block break-all rounded-lg bg-black/50 border border-white/10 px-3 py-2.5 text-white text-[13px] leading-5 font-mono"
+          >{address}</code>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            data-token-copy
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium transition-colors border-none cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-2M10 3h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" />
+            </svg>
+            <span data-token-copy-label><T t={ui.token.copy} /></span>
+          </button>
+          <a
+            href={explorerUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={ui.token.explorer} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5h5v5M19 5l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+            </svg>
+          </a>
+        </div>
+        <p role="status" aria-live="polite" data-token-copied class="hidden text-gold text-sm m-0">
+          <T t={ui.token.copied} />
+        </p>
+      </div>
+    </div>
+  </section>
+)}
+
+<script>
+  import { ui } from "../i18n";
+
+  const button = document.querySelector<HTMLButtonElement>("[data-token-copy]");
+  const addressEl = document.querySelector<HTMLElement>("[data-token-address]");
+  const confirmation = document.querySelector<HTMLElement>("[data-token-copied]");
+
+  if (button && addressEl) {
+    let hideTimer: ReturnType<typeof setTimeout> | undefined;
+
+    button.addEventListener("click", async () => {
+      const address = addressEl.textContent?.trim() ?? "";
+      if (!address) return;
+      try {
+        await navigator.clipboard.writeText(address);
+      } catch {
+        // Clipboard API blocked (insecure context, denied permission). Select
+        // the address instead so the visitor can copy it by hand.
+        const range = document.createRange();
+        range.selectNodeContents(addressEl);
+        const selection = window.getSelection();
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+        return;
+      }
+      confirmation?.classList.remove("hidden");
+      button.setAttribute("aria-label", ui.token.copied[document.documentElement.lang === "en" ? "en" : "id"]);
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => confirmation?.classList.add("hidden"), 2500);
+    });
+  }
+</script>

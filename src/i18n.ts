@@ -23,9 +23,12 @@ export const meta: { title: Translated; description: Translated } = {
     id: "USDX — Stablecoin USD yang Transparan & Teregulasi",
     en: "USDX — The Transparent & Regulated USD Stablecoin",
   },
+  // Backing copy states one thing only: US Dollars held in custody at Bank BNI.
+  // The old "US Treasury bonds" line was generic stablecoin copy and does not
+  // describe USDX's actual reserves — it must not come back.
   description: {
-    id: "USDX adalah dolar digital yang didukung penuh, dapat ditukar 1:1 dengan USD. Dijamin oleh obligasi US Treasury dan cadangan kas.",
-    en: "USDX is a fully-backed digital dollar, redeemable 1:1 for USD. Secured by US Treasury bonds and cash reserves.",
+    id: "USDX adalah dolar digital yang didukung penuh, dapat ditukar 1:1 dengan US Dolar yang disimpan di kustodian Bank BNI. Diterbitkan oleh PT Macan Asia Finance.",
+    en: "USDX is a fully-backed digital dollar, redeemable 1:1 for US Dollars held in custody at Bank BNI. Issued by PT Macan Asia Finance.",
   },
 };
 
@@ -85,12 +88,23 @@ export const ui = {
   },
 
   caseStudy: {
-    eyebrow: { id: "Case Study", en: "Case Study" },
-    heading1: { id: "Dolar stabil, di tangan yang", en: "A stable dollar, in the hands" },
-    heading2: { id: "membutuhkan", en: "that need it" },
+    // Reframed from "Case Study" to the official Use Cases framing so the
+    // section matches the documentation it is now sourced from.
+    eyebrow: { id: "Kegunaan", en: "Use Cases" },
+    heading1: { id: "Dibangun untuk aset digital", en: "Built for digital asset" },
+    heading2: { id: "dan lintas negara", en: "and cross-border use" },
+    // No user-count claim here until there is a number we can actually back up.
     ctaHeading: {
-      id: "Jadilah Bagian dari 2.500+ Pengguna USDX di Seluruh Dunia",
-      en: "Join 2,500+ USDX users around the world",
+      id: "Mulai Gunakan USDX Hari Ini",
+      en: "Start using USDX today",
+    },
+    // Verbatim from the closing "Important Notice" of the official Use Cases
+    // page. It sits under the cards so the use cases can never be read as an
+    // offer of domestic Indonesian payments.
+    noticeTitle: { id: "Pemberitahuan Penting", en: "Important Notice" },
+    notice: {
+      id: "USDX ditujukan untuk kegunaan aset digital dan lintas negara. USDX tidak dimaksudkan untuk berfungsi sebagai instrumen pembayaran domestik di Indonesia dan tidak dirancang untuk menggantikan Rupiah. Seluruh penggunaan USDX harus mematuhi hukum, peraturan, dan ketentuan platform yang berlaku.",
+      en: "USDX is intended for digital asset and cross-border use cases. USDX is not intended to function as a domestic payment instrument in Indonesia and is not designed to replace the Indonesian Rupiah. All use of USDX should comply with applicable laws, regulations, and platform requirements.",
     },
     more: { id: "Case Study Lainnya", en: "More Case Studies" },
   },
@@ -109,17 +123,177 @@ export const ui = {
   footer: {
     headline: { id: "Masa Depan Dolar Digital", en: "The Future of Digital Dollars" },
     tagline: {
-      id: "Stablecoin USD yang transparan dan teregulasi. Dijamin penuh oleh cadangan kas Dolar AS dan obligasi US Treasury.",
-      en: "The transparent and regulated USD stablecoin. Fully backed by US Dollar cash reserves and US Treasury bonds.",
+      id: "Stablecoin USD yang diterbitkan PT Macan Asia Finance. Didukung penuh 1:1 dengan US Dolar di kustodian Bank BNI.",
+      en: "The USD stablecoin issued by PT Macan Asia Finance. Fully backed 1:1 by the US Dollar, held in custody at Bank BNI.",
     },
     quickLinks: { id: "Tautan Cepat", en: "Quick Links" },
     legal: { id: "Legal", en: "Legal" },
     social: { id: "Social Media", en: "Social Media" },
-    privacy: { id: "Kebijakan Privasi", en: "Privacy & Policy" },
-    terms: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
-    compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
+    // The three legal pages have no copy yet, so their links were pulled out of
+    // the footer rather than left pointing at "#". Restore these labels together
+    // with the pages themselves (see the commented block in Footer.astro).
+    // privacy: { id: "Kebijakan Privasi", en: "Privacy & Policy" },
+    // terms: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
+    // compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
     audit: { id: "Laporan Audit", en: "Audit Report" },
-    status: { id: "All system normal", en: "All system normal" },
-    rights: { id: "© 2026 USDX, Inc.", en: "© 2026 USDX, Inc." },
+    // The whitepaper is the GitBook documentation, already reachable through the
+    // "Dokumentasi" nav entry. A second footer link to the identical URL would be
+    // padding, so this label is unused — restore it only if a standalone
+    // whitepaper document ever ships at its own address.
+    // whitepaper: { id: "Whitepaper", en: "Whitepaper" },
+    // "All system normal" was a static string, not a real status signal — the
+    // same category of placeholder that got the token-info submission rejected.
+    // Restore only if it is wired to something that can actually go red.
+    // status: { id: "All system normal", en: "All system normal" },
+    contact: { id: "Kontak", en: "Contact" },
+    office: { id: "Kantor", en: "Office" },
+    email: { id: "Email", en: "Email" },
+    rights: { id: "© 2026 PT Macan Asia Finance", en: "© 2026 PT Macan Asia Finance" },
+  },
+
+  team: {
+    eyebrow: { id: "Tim", en: "Team" },
+    heading1: { id: "Orang di balik", en: "The people behind" },
+    heading2: { id: "USDX", en: "USDX" },
+    sub: {
+      id: "Tim yang menjalankan penerbitan dan operasional USDX di PT Macan Asia Finance.",
+      en: "The team running USDX issuance and operations at PT Macan Asia Finance.",
+    },
+    linkedin: { id: "Profil LinkedIn", en: "LinkedIn profile" },
+  },
+
+  token: {
+    eyebrow: { id: "Informasi Token", en: "Token Information" },
+    heading1: { id: "Detail kontrak", en: "USDX contract" },
+    heading2: { id: "USDX", en: "details" },
+    sub: {
+      id: "Periksa alamat kontrak di bawah sebelum bertransaksi. USDX hanya diterbitkan pada alamat ini di jaringan Polygon.",
+      en: "Check the contract address below before transacting. USDX is only issued at this address on the Polygon network.",
+    },
+    name: { id: "Nama token", en: "Token name" },
+    symbol: { id: "Simbol", en: "Symbol" },
+    decimals: { id: "Desimal", en: "Decimals" },
+    network: { id: "Jaringan", en: "Network" },
+    contractAddress: { id: "Alamat kontrak", en: "Contract address" },
+    copy: { id: "Salin alamat", en: "Copy address" },
+    copied: { id: "Alamat tersalin", en: "Address copied" },
+    explorer: { id: "Lihat di PolygonScan", en: "View on PolygonScan" },
+  },
+
+  transparency: {
+    navLabel: { id: "Transparansi", en: "Transparency" },
+    metaTitle: {
+      id: "Transparansi Cadangan USDX — PT Macan Asia Finance",
+      en: "USDX Reserve Transparency — PT Macan Asia Finance",
+    },
+    metaDescription: {
+      id: "Jumlah token USDX yang beredar, cadangan US Dolar di kustodian Bank BNI, rasio jaminan, dan laporan atestasi bulanan.",
+      en: "USDX circulating supply, US Dollar reserves held in custody at Bank BNI, collateral ratio, and monthly attestation reports.",
+    },
+    eyebrow: { id: "Transparansi", en: "Transparency" },
+    heading1: { id: "Token beredar", en: "Circulating supply" },
+    heading2: { id: "dan cadangan", en: "and reserves" },
+    intro: {
+      id: "Setiap USDX yang beredar didukung oleh US Dolar yang disimpan di rekening kustodian Bank BNI. Halaman ini menampilkan posisi terakhir yang diterbitkan beserta tanggalnya, sehingga setiap angka bisa ditelusuri sumbernya.",
+      en: "Every USDX in circulation is backed by US Dollars held in a custodian account at Bank BNI. This page shows the latest published position together with its date, so every figure can be traced back to a source.",
+    },
+    backHome: { id: "Kembali ke beranda", en: "Back to home" },
+
+    statusLoading: { id: "Memuat data terbaru…", en: "Loading the latest data…" },
+    statusLive: { id: "Data langsung dari API USDX.", en: "Live data from the USDX API." },
+    statusFallback: {
+      id: "Data langsung tidak dapat dimuat saat ini. Angka di bawah adalah data terakhir yang tertanam di halaman ini.",
+      en: "Live data could not be loaded right now. The figures below are the last ones embedded in this page.",
+    },
+    statusNoJs: {
+      id: "Peramban Anda tidak menjalankan JavaScript, jadi angka di bawah adalah data terakhir yang tertanam di halaman ini.",
+      en: "Your browser is not running JavaScript, so the figures below are the last ones embedded in this page.",
+    },
+
+    supplyLabel: { id: "Jumlah Token Beredar", en: "Circulating Supply" },
+    reserveLabel: { id: "Total Cadangan", en: "Total Reserves" },
+    ratioLabel: { id: "Rasio Jaminan", en: "Collateral Ratio" },
+    notAvailable: { id: "Belum tersedia", en: "Not yet available" },
+    asOf: { id: "Posisi", en: "As of" },
+    readAt: { id: "Dibaca dari rantai", en: "Read on-chain" },
+    updatedAt: { id: "Terakhir diperbarui", en: "Last updated" },
+
+    methodHeading: { id: "Cara angka ini dibaca", en: "How these figures are read" },
+    supplyDefinitionTitle: {
+      id: "Definisi jumlah token beredar",
+      en: "Definition of circulating supply",
+    },
+    supplyDefinition: {
+      id: "Jumlah token beredar adalah nilai totalSupply mentah yang dibaca langsung dari kontrak USDX di jaringan Polygon — tanpa pengurangan apa pun, termasuk token yang masih ditahan di alamat treasury. Angka yang sama dapat Anda periksa sendiri di halaman kontrak USDX di PolygonScan; kalau berbeda, yang berlaku adalah angka di rantai.",
+      en: "Circulating supply is the raw totalSupply value read directly from the USDX contract on the Polygon network — with no deductions of any kind, including tokens still held at treasury addresses. You can check the same figure yourself on the USDX contract page on PolygonScan; if the two ever differ, the on-chain figure is the one that counts.",
+    },
+    ratioDefinitionTitle: { id: "Definisi rasio jaminan", en: "Definition of collateral ratio" },
+    ratioDefinition: {
+      id: "Rasio jaminan adalah total cadangan dibagi jumlah token beredar. Cadangan berasal dari posisi yang diterbitkan PT Macan Asia Finance dan berlaku pada tanggal posisi yang tertera — bukan waktu nyata — sementara jumlah token beredar dibaca dari rantai saat halaman dibuka.",
+      en: "The collateral ratio is total reserves divided by circulating supply. Reserves come from the position published by PT Macan Asia Finance and are valid as of the stated position date — not in real time — while circulating supply is read from the chain when this page loads.",
+    },
+
+    reserveHeading: { id: "Rincian Cadangan", en: "Reserve Breakdown" },
+    reserveForm: { id: "Bentuk cadangan", en: "Reserve form" },
+    reserveFormValue: {
+      id: "US Dolar di rekening kustodian",
+      en: "US Dollars in a custodian account",
+    },
+    custodian: { id: "Kustodian", en: "Custodian" },
+    account: { id: "Rekening", en: "Account" },
+    issuer: { id: "Penerbit", en: "Issuer" },
+    note: { id: "Catatan", en: "Note" },
+
+    contractHeading: { id: "Alamat Kontrak", en: "Contract Address" },
+
+    // The attestation list itself lives on /docs now — one list, one place.
+    documentsHeading: { id: "Laporan Atestasi Bulanan", en: "Monthly Attestation Reports" },
+    documentsBody: {
+      id: "Laporan atestasi cadangan bulanan yang diterbitkan Kantor Akuntan Publik dikumpulkan di halaman dokumen, lengkap dengan periode dan tautan unduhnya.",
+      en: "The monthly reserve attestation reports issued by the Public Accounting Firm are collected on the documents page, each with its period and download link.",
+    },
+    documentsCta: { id: "Lihat Dokumen Transparansi", en: "View transparency documents" },
+
+    auditHeading: { id: "Audit Smart Contract", en: "Smart Contract Audit" },
+    auditBody: {
+      id: "Kontrak USDX telah diaudit oleh Cyberscope. Laporan lengkapnya tersedia dalam bentuk PDF.",
+      en: "The USDX contract has been audited by Cyberscope. The full report is available as a PDF.",
+    },
+  },
+
+  docs: {
+    navLabel: { id: "Dokumen", en: "Documents" },
+    metaTitle: {
+      id: "Dokumen Transparansi dan Audit USDX — PT Macan Asia Finance",
+      en: "USDX Transparency and Audit Documents — PT Macan Asia Finance",
+    },
+    metaDescription: {
+      id: "Daftar laporan atestasi cadangan USDX bulanan yang diterbitkan Kantor Akuntan Publik, lengkap dengan periode dan berkas unduhan.",
+      en: "The list of monthly USDX reserve attestation reports issued by the Public Accounting Firm, with their period and downloadable file.",
+    },
+    eyebrow: { id: "Dokumen", en: "Documents" },
+    heading1: { id: "Dokumen Transparansi", en: "Transparency and" },
+    heading2: { id: "dan Audit", en: "Audit Documents" },
+    intro: {
+      id: "Cadangan USDX diverifikasi secara independen melalui atestasi bulanan yang dilakukan Kantor Akuntan Publik (KAP). Setiap laporan yang sudah terbit tercantum di bawah ini beserta periodenya dan dapat diunduh langsung.",
+      en: "USDX reserves are independently verified through monthly attestations conducted by a Public Accounting Firm (KAP). Every published report is listed below with its period and can be downloaded directly.",
+    },
+
+    colId: { id: "ID", en: "ID" },
+    colName: { id: "Nama", en: "Name" },
+    colMonth: { id: "Bulan", en: "Month" },
+    colYear: { id: "Tahun", en: "Year" },
+    colAction: { id: "Aksi", en: "Action" },
+    download: { id: "Unduh", en: "Download" },
+
+    idNote: {
+      id: "Nomor urut bersifat tetap: dokumen paling lama bernomor 1, sehingga nomor sebuah dokumen tidak berubah ketika laporan baru terbit. Daftar ditampilkan dari yang terbaru.",
+      en: "Numbering is stable: the oldest document is number 1, so a document keeps its number when newer reports are published. The list itself is shown newest first.",
+    },
+    empty: {
+      id: "Belum ada dokumen yang diterbitkan. Laporan atestasi bulanan akan muncul di tabel ini begitu diterbitkan.",
+      en: "No document has been published yet. Monthly attestation reports will appear in this table as soon as they are published.",
+    },
+    transparencyCta: { id: "Lihat angka transparansi", en: "View transparency figures" },
   },
 } satisfies Record<string, unknown>;

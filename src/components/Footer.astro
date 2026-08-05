@@ -1,17 +1,31 @@
 ---
-import { navLinks } from "../data/navigation";
+import { navLinks, navHref } from "../data/navigation";
 import { socials } from "../data/socials";
 import { socialIconPaths } from "../data/icons";
 import { AUDIT_REPORT_URL } from "../data/audit";
+import { COMPANY_ADDRESS, COMPANY_EMAIL } from "../data/company";
 import { ui } from "../i18n";
 import T from "./T.astro";
 
-const legalLinks = [
-  { label: ui.footer.privacy, href: "#" },
-  { label: ui.footer.terms, href: "#" },
-  { label: ui.footer.compliance, href: "#" },
-  { label: ui.footer.audit, href: AUDIT_REPORT_URL, external: true },
-];
+interface Props {
+  /** Prefix for landing-page anchors when the footer is used off the root page. */
+  base?: string;
+}
+
+const { base = "" } = Astro.props;
+
+// Only links that resolve to something real. "Kebijakan Privasi", "Syarat &
+// Ketentuan" and "Kepatuhan Data" used to sit here pointing at "#" — dead links
+// are one of the reasons PolygonScan rejected the token-info submission, so they
+// are pulled until the pages exist. Put them back like this once they do:
+//   { label: ui.footer.privacy, href: "/privacy" },
+//   { label: ui.footer.terms, href: "/terms" },
+//   { label: ui.footer.compliance, href: "/data-compliance" },
+// (and uncomment the matching labels in i18n.ts).
+// No "Whitepaper" entry here: the whitepaper IS the GitBook documentation, which
+// the Quick Links column already links to via the "Dokumentasi" nav entry. Two
+// links to an identical URL in one footer is padding, not navigation.
+const legalLinks = [{ label: ui.footer.audit, href: AUDIT_REPORT_URL, external: true }];
 ---
 <footer class="relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
   <!-- red glow (#B60000) -->
@@ -40,7 +54,7 @@ const legalLinks = [
   <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col lg:flex-row gap-10 lg:gap-6">
     <!-- Brand -->
     <div class="flex-1 lg:max-w-[680px] flex flex-col gap-6">
-      <a href="#hero" class="flex items-center no-underline w-fit">
+      <a href={navHref("#hero", base)} class="flex items-center no-underline w-fit">
         <img src="/image/logo-lockup.png" alt="USDX" class="h-9 w-auto" />
       </a>
       <div class="flex flex-col gap-5">
@@ -51,11 +65,31 @@ const legalLinks = [
           <T t={ui.footer.tagline} />
         </p>
       </div>
+      {(COMPANY_ADDRESS || COMPANY_EMAIL) && (
+        <div class="flex flex-col gap-2 text-base">
+          <h4 class="text-white font-normal m-0"><T t={ui.footer.contact} /></h4>
+          {COMPANY_ADDRESS && (
+            <p class="text-white/80 leading-[26px] max-w-[420px] m-0">
+              <span class="text-white/50"><T t={ui.footer.office} />: </span>
+              <T t={COMPANY_ADDRESS} />
+            </p>
+          )}
+          {COMPANY_EMAIL && (
+            <p class="text-white/80 leading-[26px] m-0">
+              <span class="text-white/50"><T t={ui.footer.email} />: </span>
+              <a href={`mailto:${COMPANY_EMAIL}`} class="text-white hover:text-gold no-underline transition-colors">
+                {COMPANY_EMAIL}
+              </a>
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* The "All system normal" pill that used to sit here was a hard-coded
+          string, not a real status signal — the same placeholder category that
+          got the token-info submission rejected. Bring it back only when it is
+          wired to something that can actually report a problem. */}
       <div class="flex flex-wrap items-center gap-4">
-        <span class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-white/10 text-white text-base">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#0bb97c]"></span>
-          <T t={ui.footer.status} />
-        </span>
         <p class="text-white text-base"><T t={ui.footer.rights} /></p>
       </div>
     </div>
@@ -65,7 +99,12 @@ const legalLinks = [
       <h4 class="text-white text-base font-normal"><T t={ui.footer.quickLinks} /></h4>
       <div class="flex flex-col gap-1.5">
         {navLinks.map((link) => (
-          <a href={link.href} class="text-white/90 hover:text-white text-base font-medium no-underline transition-colors w-fit">
+          <a
+            href={navHref(link.href, base)}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
+            class="text-white/90 hover:text-white text-base font-medium no-underline transition-colors w-fit"
+          >
             <T t={link.label} />
           </a>
         ))}
