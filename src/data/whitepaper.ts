@@ -22,3 +22,11 @@ export const DOCUMENTATION_URL = "https://docs.usdx.co.id";
  * Kept as a named export so the intent stays greppable if one ever ships.
  */
 export const WHITEPAPER_URL: string = DOCUMENTATION_URL;
+
+/**
+ * "Legal & Disclaimer" chapter of the documentation — intended use, no
+ * guarantee of value, user responsibility, technology risks. This is what the
+ * footer's Legal column points at until dedicated privacy/terms pages exist.
+ * Verified reachable (HTTP 200).
+ */
+export const LEGAL_DISCLAIMER_URL = `${DOCUMENTATION_URL}/legal-and-disclaimer`;

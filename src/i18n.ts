@@ -160,14 +160,23 @@ export const ui = {
       en: "The U.S. dollar stablecoin issued by PT Macan Asia Finance. Backed by 100% U.S. dollar cash reserves held at Bank Negara Indonesia (BNI).",
     },
     quickLinks: { id: "Tautan Cepat", en: "Quick Links" },
-    legal: { id: "Legal", en: "Legal" },
-    social: { id: "Social Media", en: "Social Media" },
+    // No heading for the legal links any more, so no label to get wrong. Three
+    // were tried: "Legal" did not cover the audit report beside it and read like
+    // something to click; "Dokumen" echoed the "Dokumentasi" nav entry, which
+    // goes somewhere else entirely; "Informasi" described nothing. The links now
+    // sit in the bottom bar next to the copyright, which is where the convention
+    // puts them and where readers look for them by habit.
+    // legal: { id: "Legal", en: "Legal" },
+    social: { id: "Media Sosial", en: "Social Media" },
     // The three legal pages have no copy yet, so their links were pulled out of
     // the footer rather than left pointing at "#". Restore these labels together
     // with the pages themselves (see the commented block in Footer.astro).
     // privacy: { id: "Kebijakan Privasi", en: "Privacy & Policy" },
     // terms: { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
     // compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
+    // Kept close to the chapter's own title in the documentation so a reader
+    // who follows the link lands on a page named the same thing.
+    legalDisclaimer: { id: "Ketentuan Hukum & Sanggahan", en: "Legal & Disclaimer" },
     audit: { id: "Laporan Audit", en: "Audit Report" },
     // The whitepaper is the GitBook documentation, already reachable through the
     // "Dokumentasi" nav entry. A second footer link to the identical URL would be
