@@ -2,7 +2,19 @@
 
 ## Overview
 
-Single-page responsive landing page for **USDX**, a USD-pegged stablecoin positioned as "The Transparent & Regulated USD Stablecoin". Brand color: `#1eaed5`.
+Single-page responsive landing page for **USDX**, a U.S. dollar stablecoin issued by **PT Macan Asia Finance**, positioned — in the words of its own documentation — as "a trusted U.S. dollar stablecoin for digital asset settlement, cross-border transactions, and institutional liquidity". Brand color: `#1eaed5`.
+
+The site previously called USDX "The Transparent & Regulated USD Stablecoin". It is **not** described as regulated or licensed anywhere in the official documentation, and an unbacked regulatory claim is a standard block-explorer rejection, so that positioning is gone and must not return without a licence number to cite.
+
+### Claims discipline
+
+The single source of truth for every factual statement on this site is the official documentation at <https://usdx-co.gitbook.io/whitepaper-usdx> (12 pages; see its `llms.txt`). Nothing may be stated on the site that is not stated there. In particular:
+
+- **Backing.** 100% U.S. dollar **cash** reserves held at Bank Negara Indonesia (BNI). There are no US Treasury bonds — "Treasury" appears in the documentation only as the name of the "Treasury Management" use case.
+- **Two different checks, two different rhythms.** Reserves are verified by **monthly attestations** from a Public Accounting Firm (KAP). The **smart contract** has had **one** independent security audit (Cyberscope, initial audit 25 May 2026). Merging the two into "audited regularly" is how the old backing copy became false.
+- **Not a domestic payment instrument.** The FAQ answers "Can USDX be used for payments in Indonesia?" with a flat "No.", and the Use Cases page closes with the same notice. No section may read as an offer of domestic Indonesian payments.
+- **Not open to everyone.** Minting and redemption are available only to Authorized Customers who have completed KYC and KYB. Copy must not promise access to "anyone".
+- **No invented numbers, people or addresses.** `team.ts`, `token.ts` and `company.ts` are deliberately empty in places; their sections render nothing rather than a placeholder.
 
 ## Tech Stack
 

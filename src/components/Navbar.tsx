@@ -1,19 +1,25 @@
 import { useState, useEffect, useRef } from "react";
-import { navLinks, APP_URL, resolveAppUrl } from "../data/navigation";
+import { navLinks, navHref, APP_URL, resolveAppUrl } from "../data/navigation";
 import { ui, meta, LANGS, LANG_LABEL, DEFAULT_LANG, type Lang } from "../i18n";
 import { T } from "./LangText";
 
 function applyLang(next: Lang) {
-  document.documentElement.lang = next;
+  const root = document.documentElement;
+  root.lang = next;
   try {
     localStorage.setItem("lang", next);
   } catch {
     /* ignore storage failures (private mode) */
   }
-  document.title = meta.title[next];
-  document.querySelector('meta[name="description"]')?.setAttribute("content", meta.description[next]);
-  document.querySelector('meta[property="og:title"]')?.setAttribute("content", meta.title[next]);
-  document.querySelector('meta[property="og:description"]')?.setAttribute("content", meta.description[next]);
+  // Layout.astro stamps the current page's title/description for both languages
+  // on <html>, so pages other than the landing page keep their own meta when the
+  // language flips. Fall back to the landing meta if the attributes are missing.
+  const title = root.dataset[next === "en" ? "titleEn" : "titleId"] ?? meta.title[next];
+  const description = root.dataset[next === "en" ? "descEn" : "descId"] ?? meta.description[next];
+  document.title = title;
+  document.querySelector('meta[name="description"]')?.setAttribute("content", description);
+  document.querySelector('meta[property="og:title"]')?.setAttribute("content", title);
+  document.querySelector('meta[property="og:description"]')?.setAttribute("content", description);
 }
 
 /** Small circular flag glyph for the language selector. */
@@ -115,7 +121,13 @@ function LangDropdown({
   );
 }
 
-export default function Navbar() {
+/**
+ * `base` prefixes the landing-page anchors ("#features") so the navbar also
+ * works on standalone pages like /transparency, where those sections do not
+ * exist. Left empty on the landing page itself to keep the smooth-scroll
+ * handler in Layout.astro (which matches `a[href^="#"]`) working.
+ */
+export default function Navbar({ base = "" }: { base?: string }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [appUrl, setAppUrl] = useState(APP_URL);
@@ -148,7 +160,7 @@ export default function Navbar() {
       {/* Main nav (single row; language lives here, not a separate top bar) */}
       <div className="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-[76px] h-[72px] flex items-center justify-between border-b border-white/10">
         {/* Logo */}
-        <a href="#hero" className="flex items-center no-underline shrink-0">
+        <a href={navHref("#hero", base)} className="flex items-center no-underline shrink-0">
           <img src="/image/logo-lockup.png" alt="USDX" className="h-8 w-auto" />
         </a>
 
@@ -158,7 +170,9 @@ export default function Navbar() {
             {navLinks.map((link) => (
               <a
                 key={link.label.en}
-                href={link.href}
+                href={navHref(link.href, base)}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
                 className="text-white/90 hover:text-white text-sm font-medium no-underline transition-colors"
               >
                 <T t={link.label} />
@@ -209,7 +223,9 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <a
               key={link.label.en}
-              href={link.href}
+              href={navHref(link.href, base)}
+              target={link.external ? "_blank" : undefined}
+              rel={link.external ? "noopener noreferrer" : undefined}
               onClick={() => setMobileOpen(false)}
               className="text-gray-300 hover:text-white text-sm font-medium no-underline"
             >

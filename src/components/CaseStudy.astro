@@ -37,8 +37,12 @@ import T from "./T.astro";
             <img src={cs.image} alt={cs.title.en} class="absolute inset-0 w-full h-full object-cover" loading="lazy" />
             <!-- top scrim + category tag -->
             <div class="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent pointer-events-none"></div>
+            {/* `{cs.tag.id}` here printed the Indonesian tag in both languages,
+                so the English page read "Penyelesaian Lintas Negara" above an
+                English title. `tag` is Translated like every other string on the
+                site and renders through <T>. */}
             <span class="absolute top-4 left-4 inline-flex items-center px-4 py-1.5 rounded-full bg-black/60 backdrop-blur-sm border border-white/10 text-white text-sm font-medium font-tight">
-              {cs.tag.id}
+              <T t={cs.tag} />
             </span>
             <!-- bottom scrim + text -->
             <div class="absolute inset-x-0 bottom-0 p-6 pt-16 bg-gradient-to-t from-black via-black/80 to-transparent flex flex-col gap-2">
@@ -50,6 +54,14 @@ import T from "./T.astro";
       </div>
     </div>
 
+    {/* Closing "Important Notice" from the official Use Cases page. It sits with
+        the cards on purpose: the use cases above must never be read as an offer
+        of domestic Indonesian payments. */}
+    <div class="rounded-xl border border-white/15 bg-black/25 px-5 py-4 flex flex-col gap-1.5">
+      <h3 class="text-white text-sm font-semibold m-0"><T t={ui.caseStudy.noticeTitle} /></h3>
+      <p class="text-white/75 text-sm leading-6 m-0 max-w-[900px]"><T t={ui.caseStudy.notice} /></p>
+    </div>
+
     <!-- divider -->
     <div class="h-px bg-white/15"></div>
 
@@ -59,9 +71,8 @@ import T from "./T.astro";
         <T t={ui.caseStudy.ctaHeading} />
       </h3>
       <div class="flex items-center gap-4 shrink-0">
-        <a href="#" class="inline-flex items-center px-4 py-2.5 rounded-lg bg-[#0f0f0f] border border-white/15 text-white text-sm font-medium hover:bg-[#161616] transition-colors no-underline">
-          <T t={ui.caseStudy.more} />
-        </a>
+        <!-- "More case studies" button removed until an articles page exists —
+             it pointed at "#", which explorer reviewers flag as a placeholder. -->
         <a href={APP_URL} data-app-link target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium transition-colors no-underline">
           <T t={ui.cta} />
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>

@@ -8,12 +8,26 @@ export interface Feature {
   icon: FeatureIcon;
 }
 
+// Every claim on these cards has to be traceable to the official documentation
+// (https://docs.usdx.co.id). The source page is named above
+// each card. Two mistakes are not allowed back in:
+//
+//   1. "US Treasury". USDX holds NO Treasury bonds — the reserve is 100% U.S.
+//      dollar CASH at Bank Negara Indonesia (BNI). "Treasury" appears in the
+//      documentation only as the name of the "Treasury Management" use case.
+//   2. Mixing up the two independent checks. They are different things at
+//      different rhythms, and merging them is what made the old copy false:
+//        - RESERVES: verified by MONTHLY attestations from a Public Accounting
+//          Firm (KAP).
+//        - SMART CONTRACT: ONE independent security audit (Cyberscope, initial
+//          audit 25 May 2026). Not "audited regularly".
 export const features: Feature[] = [
   {
-    title: { id: "Dijamin Penuh & Diaudit", en: "Fully Backed & Audited" },
+    // Source: faq.md — "How is USDX backed?" and "Is USDX audited?".
+    title: { id: "Dijamin Penuh & Diverifikasi", en: "Fully Backed & Verified" },
     description: {
-      id: "Dijamin 1:1 oleh kas USD dan US Treasury, serta diaudit secara berkala oleh auditor independen.",
-      en: "Backed 1:1 by USD cash and US Treasuries, and audited regularly by independent auditors.",
+      id: "Dijamin 100% oleh cadangan kas Dolar AS di Bank Negara Indonesia (BNI). Cadangan diverifikasi lewat atestasi bulanan Kantor Akuntan Publik, dan smart contract-nya telah melalui audit keamanan independen.",
+      en: "Backed by 100% U.S. dollar cash reserves held at Bank Negara Indonesia (BNI). The reserves are verified through monthly attestations by a Public Accounting Firm, and the smart contract has undergone an independent security audit.",
     },
     icon: "shield",
   },
@@ -48,18 +62,35 @@ export const features: Feature[] = [
     icon: "layers",
   },
   {
-    title: { id: "Patuh Regulasi", en: "Regulatory Compliant" },
+    // Replaces the old "Patuh Regulasi" / "Regulatory Compliant" card. The word
+    // "regulated" (and "licensed", "OJK", "Bappebti") appears NOWHERE in the
+    // twelve pages of the documentation — the furthest it goes is "developed
+    // with careful consideration of Indonesia's regulatory landscape", and it
+    // puts compliance on the user three separate times. A regulatory-status
+    // claim with no licence number behind it is the standard explorer rejection,
+    // so this card states the two things that ARE documented instead: who issues
+    // USDX, and who may mint or redeem it.
+    // Source: faq.md — "Who issues USDX?" and "Who can mint and redeem USDX?".
+    title: { id: "Penerbit Berbadan Hukum Indonesia", en: "Issued by an Indonesian Entity" },
     description: {
-      id: "USDX mematuhi standar regulasi untuk menghadirkan aset digital yang aman dan legal.",
-      en: "USDX meets regulatory standards to deliver a secure, legally sound digital asset.",
+      id: "USDX diterbitkan oleh PT Macan Asia Finance. Penerbitan (minting) dan penukaran (redemption) hanya tersedia bagi Authorized Customer yang telah menyelesaikan KYC dan KYB.",
+      en: "USDX is issued by PT Macan Asia Finance. Minting and redemption are available only to Authorized Customers that have completed applicable KYC and KYB procedures.",
     },
     icon: "check",
   },
   {
-    title: { id: "Akses Global 24/7", en: "24/7 Global Access" },
+    // The old card said USDX "can be sent and received by anyone, anytime,
+    // anywhere". That contradicted the FAQ on this very page twice over: minting
+    // and redemption are limited to Authorized Customers, and USDX is expressly
+    // not a domestic Indonesian payment instrument. The reach that IS documented
+    // is cross-border, between jurisdictions, over blockchain networks.
+    // Source: use-cases.md (Cross-Border Settlement, International Remittance
+    // and its closing Important Notice) + faq.md — "Can USDX be used for
+    // payments in Indonesia?".
+    title: { id: "Jangkauan Lintas Negara", en: "Cross-Border Reach" },
     description: {
-      id: "USDX dapat dikirim dan diterima oleh siapa saja, kapan saja, di mana saja.",
-      en: "USDX can be sent and received by anyone, anytime, anywhere.",
+      id: "USDX memindahkan nilai berdenominasi Dolar AS antar yurisdiksi melalui jaringan blockchain. Ditujukan untuk kegunaan aset digital dan lintas negara, bukan pembayaran domestik di Indonesia.",
+      en: "USDX moves U.S. dollar-denominated value between jurisdictions over blockchain networks. It is intended for digital asset and cross-border use cases, not for domestic payments in Indonesia.",
     },
     icon: "globe",
   },

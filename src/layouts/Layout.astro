@@ -1,24 +1,47 @@
 ---
 import "../styles/global.css";
+import { meta, DEFAULT_LANG, type Translated } from "../i18n";
+import { absoluteUrl, OG_IMAGE_PATH, OG_IMAGE_WIDTH, OG_IMAGE_HEIGHT } from "../data/site";
 
 interface Props {
-  title?: string;
-  description?: string;
+  /** Per-page title/description in both languages. Defaults to the landing meta. */
+  pageMeta?: { title: Translated; description: Translated };
 }
 
-const {
-  title = "USDX — Stablecoin USD yang Transparan & Teregulasi",
-  description = "USDX adalah dolar digital yang didukung penuh, dapat ditukar 1:1 dengan USD. Dijamin oleh obligasi US Treasury dan cadangan kas.",
-} = Astro.props;
+const { pageMeta = meta } = Astro.props;
+
+// The document renders in the default language; the language switcher swaps the
+// title/description at runtime from the data-* attributes below.
+const title = pageMeta.title[DEFAULT_LANG];
+const description = pageMeta.description[DEFAULT_LANG];
+const pageUrl = absoluteUrl(Astro.url.pathname);
+const ogImage = absoluteUrl(OG_IMAGE_PATH);
 ---
-<html lang="id">
+<html
+  lang="id"
+  data-title-id={pageMeta.title.id}
+  data-title-en={pageMeta.title.en}
+  data-desc-id={pageMeta.description.id}
+  data-desc-en={pageMeta.description.en}
+>
   <head>
     <script is:inline>
       // Apply the saved language before paint to avoid a flash of the default.
       (function () {
         try {
           var saved = localStorage.getItem("lang");
-          if (saved === "en" || saved === "id") document.documentElement.lang = saved;
+          if (saved !== "en" && saved !== "id") return;
+          var root = document.documentElement;
+          root.lang = saved;
+          // Keep title/description in step with the restored language — they are
+          // rendered in the default language at build time.
+          var title = root.getAttribute("data-title-" + saved);
+          var desc = root.getAttribute("data-desc-" + saved);
+          if (title) document.title = title;
+          if (desc) {
+            var el = document.querySelector('meta[name="description"]');
+            if (el) el.setAttribute("content", desc);
+          }
         } catch (e) {}
       })();
     </script>
@@ -26,9 +49,18 @@ const {
     <link rel="icon" type="image/png" href="/image/logo-coin.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <link rel="canonical" href={pageUrl} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="USDX" />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content={OG_IMAGE_WIDTH} />
+    <meta property="og:image:height" content={OG_IMAGE_HEIGHT} />
+    <meta property="og:image:alt" content="USDX" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet" />

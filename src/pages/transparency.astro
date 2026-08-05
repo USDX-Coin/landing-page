@@ -1,0 +1,577 @@
+---
+// "Dokumen Transparansi dan Audit" — the monthly reserve attestation table, the
+// contract address, and the smart-contract audit.
+//
+// The table is NOT a hand-maintained list in this repo. It is fed by the public
+// endpoint GET {API_BASE}/api/v1/public/transparency, so the flow is: the
+// auditor hands over a document -> the team uploads it in back office -> it
+// shows up here on the next page load. Nothing to commit. Empty is the normal
+// state right now, and it renders as an explanation rather than a bare table.
+//
+// FIGURES OFF: this page used to lead with circulating supply, total reserves,
+// the collateral ratio and a reserve breakdown. Finance has not published a
+// reserve position yet, so those sections are commented out rather than
+// deleted — a transparency page must never print a number nobody can stand
+// behind. Every switched-off block below is marked "FIGURES", and the
+// step-by-step way back on is written at the FIGURES block in src/i18n.ts.
+// The data layer (src/data/transparency.ts) and its tests are untouched.
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer.astro";
+import T from "../components/T.astro";
+import { ui } from "../i18n";
+import { AUDIT_REPORT_URL } from "../data/audit";
+
+// FIGURES: the fallback position and the number formatters come back with the
+// commented sections below.
+// import { COMPANY_LEGAL_NAME } from "../data/company";
+// import { type Translated } from "../i18n";
+// import {
+//   TRANSPARENCY_FALLBACK,
+//   formatAmount,
+//   formatDate,
+//   formatDateTime,
+//   formatRatio,
+// } from "../data/transparency";
+
+const t = ui.transparency;
+
+// FIGURES: pre-format the fallback in both languages so the static markup
+// carries real content even with JavaScript off. Null everywhere means "not yet
+// available", which is rendered as words — never as a zero.
+// const fallback = TRANSPARENCY_FALLBACK;
+// const bilingual = (fn: (value: string, lang: "id" | "en") => string, value?: string | null): Translated | null => {
+//   if (!value) return null;
+//   const id = fn(value, "id");
+//   const en = fn(value, "en");
+//   return id && en ? { id, en } : null;
+// };
+//
+// const supplyAmount = bilingual(formatAmount, fallback.circulatingSupply?.amount);
+// const supplyReadAt = bilingual(formatDateTime, fallback.circulatingSupply?.readAt);
+// const reserveAmount = bilingual(formatAmount, fallback.reserve?.amount);
+// const reserveAsOf = bilingual(formatDate, fallback.reserve?.asOf);
+// const ratio = bilingual(formatRatio, fallback.collateralRatio);
+//
+// const supplyUnit = fallback.circulatingSupply?.unit ?? "USDX";
+// const reserveCurrency = fallback.reserve?.currency ?? "USD";
+// const custodian = fallback.reserve?.custodian ?? "Bank BNI";
+// const account = fallback.reserve?.accountLabel ?? "";
+// const reserveNote = fallback.reserve?.note ?? "";
+
+const cardClass =
+  "relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden";
+const sectionHeadingClass = "font-serif font-medium text-3xl sm:text-4xl tracking-tight text-white m-0";
+const rowLabelClass = "text-white/55 text-sm m-0";
+const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words";
+// Contract rows sit in a hug-the-content grid, so the value starts right after
+// its label instead of being pushed to the far edge of the card.
+const contractValueClass = "text-white text-sm font-medium m-0 break-words";
+const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-wide px-4 py-3";
+---
+<Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
+  <div class="min-h-screen bg-bg text-[#e7e7e7]">
+    <Navbar client:load base="/" />
+
+    <main class="px-4 sm:px-8 pt-[104px] pb-4 flex flex-col gap-4">
+      <!-- Header -->
+      <section class={cardClass}>
+        <div class="absolute -top-20 right-10 w-[560px] h-[240px] bg-[#b60000]/20 blur-[130px] rounded-[50%] pointer-events-none"></div>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-6 max-w-[760px]">
+          <span
+            class="inline-flex w-fit items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight"
+            style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)"
+          >
+            <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-white shrink-0">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z" />
+              </svg>
+            </span>
+            <T t={t.eyebrow} />
+          </span>
+          <h1 class="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent m-0">
+            <span class="block"><T t={t.heading1} /></span>
+            <span class="block"><T t={t.heading2} /></span>
+          </h1>
+          <p class="text-white/80 text-base leading-[26px] m-0"><T t={t.intro} /></p>
+          <p class="text-white/50 text-sm leading-5 m-0" data-tp-status><T t={t.statusLoading} /></p>
+          <noscript>
+            <p class="text-white/50 text-sm leading-5 m-0"><T t={t.statusNoJs} /></p>
+          </noscript>
+        </div>
+      </section>
+
+      {/* FIGURES — headline figures (circulating supply, total reserves,
+          collateral ratio). Switched off until finance publishes a reserve
+          position; see the FIGURES block in src/i18n.ts.
+
+      <section class="mx-auto w-full max-w-[1376px] grid gap-4 md:grid-cols-3">
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
+          <span class="text-white/55 text-sm"><T t={t.supplyLabel} /></span>
+          <p class="text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
+            <span data-tp="supply">{supplyAmount ? <T t={supplyAmount} /> : <T t={t.notAvailable} />}</span>
+            <span class="text-white/50 text-xl ml-2" data-tp="supply-unit">{supplyUnit}</span>
+          </p>
+          <p class="text-white/45 text-xs leading-5 m-0">
+            <T t={t.readAt} />: <span data-tp="supply-read-at">{supplyReadAt ? <T t={supplyReadAt} /> : <T t={t.notAvailable} />}</span>
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
+          <span class="text-white/55 text-sm"><T t={t.reserveLabel} /></span>
+          <p class="text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
+            <span data-tp="reserve">{reserveAmount ? <T t={reserveAmount} /> : <T t={t.notAvailable} />}</span>
+            <span class="text-white/50 text-xl ml-2" data-tp="reserve-currency">{reserveCurrency}</span>
+          </p>
+          <p class="text-white/45 text-xs leading-5 m-0">
+            <T t={t.asOf} />: <span data-tp="reserve-as-of">{reserveAsOf ? <T t={reserveAsOf} /> : <T t={t.notAvailable} />}</span>
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
+          <span class="text-white/55 text-sm"><T t={t.ratioLabel} /></span>
+          <p class="text-gold font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
+            <span data-tp="ratio">{ratio ? <T t={ratio} /> : <T t={t.notAvailable} />}</span>
+          </p>
+          <p class="text-white/45 text-xs leading-5 m-0">
+            <T t={t.updatedAt} />: <span data-tp="updated-at">{reserveAsOf ? <T t={reserveAsOf} /> : <T t={t.notAvailable} />}</span>
+          </p>
+        </div>
+      </section>
+      */}
+
+      <!-- Attestation documents -->
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5">
+          {/* Hidden until there is at least one row — an empty table with
+              headers and nothing under them looks broken. */}
+          <div data-doc-table-wrap class="hidden overflow-x-auto -mx-2 px-2">
+            <table class="w-full border-collapse min-w-[640px]">
+              <thead>
+                <tr class="border-b border-white/10">
+                  <th scope="col" class={`${thClass} w-28`}><T t={t.colId} /></th>
+                  <th scope="col" class={thClass}><T t={t.colName} /></th>
+                  <th scope="col" class={`${thClass} w-32`}><T t={t.colMonth} /></th>
+                  <th scope="col" class={`${thClass} w-24`}><T t={t.colYear} /></th>
+                  <th scope="col" class={`${thClass} w-32 text-right`}><T t={t.colAction} /></th>
+                </tr>
+              </thead>
+              <tbody data-doc-rows></tbody>
+            </table>
+          </div>
+
+          <p data-doc-id-note class="hidden text-white/45 text-xs leading-5 m-0"><T t={t.idNote} /></p>
+
+          {/* Three mutually exclusive states, and which one ships in the static
+              HTML matters. The table is built entirely in the browser from the
+              API response, so anything visible here by default is what a
+              crawler, a link-preview bot, or a reviewer with JavaScript off will
+              read as the page's answer.
+
+              "empty" used to be that default — it shipped VISIBLE and
+              unconditional, telling every one of those readers that no
+              attestation had ever been published, however many actually had.
+              The initial state is now "pending", which claims nothing: it only
+              says where the list comes from. renderAttestations() then reveals
+              exactly one of the table or "empty", and a failed fetch leaves
+              "pending" standing next to the status line that explains it. */}
+          <p data-doc-empty class="hidden text-white/55 text-sm leading-6 m-0"><T t={t.empty} /></p>
+
+          <p data-doc-pending class="text-white/55 text-sm leading-6 m-0"><T t={t.listPending} /></p>
+        </div>
+      </section>
+
+      {/* FIGURES — reserve breakdown (form, custodian, account, issuer). The
+          contract card next to it does NOT depend on reserve data, so it stays
+          on its own below.
+
+      <section class="mx-auto w-full max-w-[1376px] grid gap-4 lg:grid-cols-2">
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
+          <h2 class={sectionHeadingClass}><T t={t.reserveHeading} /></h2>
+          <dl class="grid grid-cols-2 gap-x-4 gap-y-3 m-0">
+            <dt class={rowLabelClass}><T t={t.reserveForm} /></dt>
+            <dd class={rowValueClass}><T t={t.reserveFormValue} /></dd>
+
+            <dt class={rowLabelClass}><T t={t.custodian} /></dt>
+            <dd class={rowValueClass}><span data-tp="custodian">{custodian}</span></dd>
+
+            <dt class={rowLabelClass}><T t={t.account} /></dt>
+            <dd class={rowValueClass}>
+              <span data-tp="account">{account ? account : <T t={t.notAvailable} />}</span>
+            </dd>
+
+            <dt class={rowLabelClass}><T t={t.issuer} /></dt>
+            <dd class={rowValueClass}>{COMPANY_LEGAL_NAME}</dd>
+          </dl>
+          <p class={`text-white/60 text-sm leading-6 m-0 ${reserveNote ? "" : "hidden"}`} data-tp-note-row>
+            <span class="text-white/45"><T t={t.note} />: </span>
+            <span data-tp="note">{reserveNote}</span>
+          </p>
+        </div>
+      </section>
+      */}
+
+      <!-- Contract address — independent of the reserve data, and the first
+           thing an explorer reviewer looks for.
+
+           Hidden until the API hands over a real contract address. A card
+           titled "Contract Address" whose address reads "not yet available" is
+           the exact kind of unfinished placeholder that got the token-info
+           submission rejected — better to show nothing than a blank promise.
+           renderToken() reveals it. -->
+      <section data-tp-contract class={`${cardClass} hidden`}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5 max-w-[760px]">
+          <h2 class={sectionHeadingClass}><T t={t.contractHeading} /></h2>
+          <!-- Columns hug their content: a stretched 2-column grid with
+               right-aligned values leaves a canyon between "Network" and
+               "Polygon" on a card this wide. -->
+          <dl class="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-3 m-0">
+            <dt class={rowLabelClass}><T t={ui.token.network} /></dt>
+            <dd class={contractValueClass}><span data-tp="chain">Polygon</span></dd>
+
+            <dt class={rowLabelClass}><T t={ui.token.symbol} /></dt>
+            <dd class={contractValueClass}><span data-tp="symbol">USDX</span></dd>
+
+            <dt class={rowLabelClass}><T t={ui.token.decimals} /></dt>
+            <dd class={contractValueClass}>
+              <span data-tp="decimals">—</span>
+            </dd>
+          </dl>
+          <div class="flex flex-col gap-2">
+            <span class={rowLabelClass}><T t={ui.token.contractAddress} /></span>
+            <code
+              data-tp="address"
+              class="block break-all rounded-lg bg-black/50 border border-white/10 px-3 py-2.5 text-white text-[13px] leading-5 font-mono"
+            >—</code>
+          </div>
+          {/* No href until the API hands over a real PolygonScan URL: an anchor
+              without href is not a link, so nothing dead ships in the HTML. */}
+          <a
+            data-tp-explorer
+            target="_blank"
+            rel="noopener noreferrer"
+            class="hidden w-fit items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={ui.token.explorer} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5h5v5M19 5l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      {/* FIGURES — "how these figures are read" (supply + collateral ratio
+          definitions). Nothing to explain while no figure is on screen.
+
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
+          <h2 class={sectionHeadingClass}><T t={t.methodHeading} /></h2>
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="flex flex-col gap-2">
+              <h3 class="text-white text-base font-medium m-0"><T t={t.supplyDefinitionTitle} /></h3>
+              <p class="text-white/70 text-sm leading-6 m-0"><T t={t.supplyDefinition} /></p>
+            </div>
+            <div class="flex flex-col gap-2">
+              <h3 class="text-white text-base font-medium m-0"><T t={t.ratioDefinitionTitle} /></h3>
+              <p class="text-white/70 text-sm leading-6 m-0"><T t={t.ratioDefinition} /></p>
+            </div>
+          </div>
+        </div>
+      </section>
+      */}
+
+      <!-- Smart contract audit -->
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-4 items-start">
+          <h2 class={sectionHeadingClass}><T t={t.auditHeading} /></h2>
+          <p class="text-white/70 text-sm leading-6 m-0 max-w-[640px]"><T t={t.auditBody} /></p>
+          <a
+            href={AUDIT_REPORT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={ui.footer.audit} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <Footer base="/" />
+    </main>
+  </div>
+</Layout>
+
+<script>
+  import { ui, type Lang, type Translated } from "../i18n";
+  import {
+    resolveApiBaseUrl,
+    resolveAttestationFileUrl,
+    TRANSPARENCY_PATH,
+    formatPeriod,
+    type TransparencyEnvelope,
+    type TransparencyData,
+    type TransparencyAttestation,
+  } from "../data/transparency";
+
+  const t = ui.transparency;
+
+  /**
+   * Write a value into every `[data-tp="<key>"]` slot. Translated values render
+   * as the site's two `[data-l]` spans so the language switcher keeps working.
+   * Always built with textContent — the API is trusted, but never trusted enough
+   * to be injected as HTML.
+   */
+  function setValue(key: string, value: string | Translated) {
+    document.querySelectorAll<HTMLElement>(`[data-tp="${key}"]`).forEach((el) => {
+      if (typeof value === "string") {
+        el.textContent = value;
+        return;
+      }
+      el.replaceChildren(langSpan("id", value.id), langSpan("en", value.en));
+    });
+  }
+
+  function langSpan(lang: Lang, text: string): HTMLSpanElement {
+    const span = document.createElement("span");
+    span.dataset.l = lang;
+    span.textContent = text;
+    return span;
+  }
+
+  function bilingualNode(value: Translated): DocumentFragment {
+    const fragment = document.createDocumentFragment();
+    fragment.append(langSpan("id", value.id), langSpan("en", value.en));
+    return fragment;
+  }
+
+  function setStatus(message: Translated) {
+    const el = document.querySelector<HTMLElement>("[data-tp-status]");
+    if (el) el.replaceChildren(bilingualNode(message));
+  }
+
+  /**
+   * The explorer link only ever accepts an absolute PolygonScan URL. Unlike the
+   * attestation file links (see resolveAttestationFileUrl), a relative value
+   * here would be meaningless, so there is no base to resolve against.
+   */
+  function safePolygonscanUrl(raw: string | undefined): string | null {
+    if (!raw) return null;
+    try {
+      const url = new URL(raw);
+      if (url.protocol !== "https:") return null;
+      if (url.hostname !== "polygonscan.com" && !url.hostname.endsWith(".polygonscan.com")) {
+        return null;
+      }
+      return url.href;
+    } catch {
+      return null;
+    }
+  }
+
+  // ── Attestation table ──────────────────────────────────────────────────────
+
+  function cell(className: string): HTMLTableCellElement {
+    const td = document.createElement("td");
+    td.className = className;
+    return td;
+  }
+
+  /** "2026-07" -> "2026". Falls back to an em dash when the period is malformed. */
+  function yearOf(period: string): string {
+    const match = /^(\d{4})-\d{2}$/.exec(period);
+    return match ? match[1] : "—";
+  }
+
+  /**
+   * The document's public ID: its reporting period, verbatim.
+   *
+   * This used to be a running counter (`index + 1` over the list sorted oldest
+   * first) while the note under the table promised the number never changes.
+   * The counter could not keep that promise, because it was a function of the
+   * LIST rather than of the document: an older period uploaded late renumbered
+   * every document after it, a withdrawn report pulled every later number down
+   * by one, and the backend only returns the last 24 reports, so the window
+   * sliding forward renumbered the whole column.
+   *
+   * The period is a property of the document itself, so nothing else in the list
+   * can move it. Malformed values fall back to an em dash rather than inventing
+   * an ID.
+   */
+  function documentId(period: string): string {
+    return /^\d{4}-\d{2}$/.test(period) ? period : "—";
+  }
+
+  function monthNode(period: string): Node {
+    // Month name follows the active site language, like every other label.
+    if (!/^\d{4}-\d{2}$/.test(period)) return document.createTextNode(period || "—");
+    return bilingualNode({ id: formatPeriod(period, "id"), en: formatPeriod(period, "en") });
+  }
+
+  function renderAttestations(attestations: TransparencyAttestation[], apiBaseUrl: string) {
+    const wrap = document.querySelector<HTMLElement>("[data-doc-table-wrap]");
+    const body = document.querySelector<HTMLTableSectionElement>("[data-doc-rows]");
+    const empty = document.querySelector<HTMLElement>("[data-doc-empty]");
+    const pending = document.querySelector<HTMLElement>("[data-doc-pending]");
+    const idNote = document.querySelector<HTMLElement>("[data-doc-id-note]");
+    if (!wrap || !body || !empty || !pending || !idNote) return;
+
+    // The API has answered, so the "loading from the API" line has done its job
+    // either way.
+    pending.classList.add("hidden");
+
+    if (attestations.length === 0) {
+      wrap.classList.add("hidden");
+      idNote.classList.add("hidden");
+      empty.classList.remove("hidden");
+      return;
+    }
+
+    // Newest period first. The ID is the period itself (see documentId), so the
+    // sort only decides the reading order — it can no longer change any ID. A
+    // UUID is never shown to the public.
+    const newestFirst = [...attestations].sort((a, b) => b.period.localeCompare(a.period));
+
+    body.replaceChildren(
+      ...newestFirst.map((item) => {
+        const tr = document.createElement("tr");
+        tr.className = "border-b border-white/[0.06] last:border-0";
+
+        const idCell = cell("px-4 py-4 text-white/45 text-sm tabular-nums align-middle");
+        idCell.textContent = documentId(item.period);
+
+        const nameCell = cell("px-4 py-4 text-white text-sm font-medium align-middle");
+        nameCell.textContent = item.title;
+
+        const monthCell = cell("px-4 py-4 text-white/70 text-sm align-middle");
+        monthCell.append(monthNode(item.period));
+
+        const yearCell = cell("px-4 py-4 text-white/70 text-sm tabular-nums align-middle");
+        yearCell.textContent = yearOf(item.period);
+
+        const actionCell = cell("px-4 py-4 text-right align-middle");
+        const href = resolveAttestationFileUrl(item.fileUrl, apiBaseUrl);
+        if (href) {
+          const link = document.createElement("a");
+          link.href = href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className =
+            "inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium no-underline transition-colors";
+          link.append(bilingualNode(t.download));
+          actionCell.append(link);
+        } else {
+          // No usable file link: say so rather than render a button that goes
+          // nowhere.
+          const dash = document.createElement("span");
+          dash.className = "text-white/35 text-sm";
+          dash.textContent = "—";
+          actionCell.append(dash);
+        }
+
+        tr.append(idCell, nameCell, monthCell, yearCell, actionCell);
+        return tr;
+      }),
+    );
+
+    wrap.classList.remove("hidden");
+    idNote.classList.remove("hidden");
+    empty.classList.add("hidden");
+  }
+
+  // ── Contract card ──────────────────────────────────────────────────────────
+
+  function renderToken(data: TransparencyData) {
+    // No address, no card. An address is the one field on it that a reader
+    // cannot look up for themselves, so a card without one says nothing and
+    // reads as unfinished. It stays hidden until the API supplies a real one.
+    if (!data.token?.contractAddress) return;
+
+    setValue("chain", data.token.chain === "polygon" ? "Polygon" : data.token.chain);
+    setValue("symbol", data.token.symbol);
+    setValue(
+      "decimals",
+      typeof data.token.decimals === "number" ? String(data.token.decimals) : "—",
+    );
+    setValue("address", data.token.contractAddress);
+    document.querySelector("[data-tp-contract]")?.classList.remove("hidden");
+
+    // The explorer link stays hidden unless the backend hands over a real
+    // PolygonScan URL (or an address to build one from).
+    const explorer =
+      safePolygonscanUrl(data.token.explorerUrl) ??
+      (data.token.contractAddress
+        ? `https://polygonscan.com/token/${encodeURIComponent(data.token.contractAddress)}`
+        : null);
+    const link = document.querySelector<HTMLAnchorElement>("[data-tp-explorer]");
+    if (link && explorer) {
+      link.href = explorer;
+      link.classList.remove("hidden");
+      link.classList.add("inline-flex");
+    }
+  }
+
+  /* FIGURES — the number slots this page used to fill from the same response.
+     The fields are still on TransparencyData; they are simply not rendered
+     while the reserve position is unpublished. Bring this back together with
+     the commented markup above.
+
+  function bilingual(
+    format: (value: string, lang: Lang) => string,
+    value: string | null | undefined,
+  ): Translated {
+    if (!value) return t.notAvailable;
+    const id = format(value, "id");
+    const en = format(value, "en");
+    return id && en ? { id, en } : t.notAvailable;
+  }
+
+  function renderFigures(data: TransparencyData) {
+    setValue("supply", bilingual(formatAmount, data.circulatingSupply?.amount));
+    setValue("supply-unit", data.circulatingSupply?.unit ?? "USDX");
+    setValue("supply-read-at", bilingual(formatDateTime, data.circulatingSupply?.readAt));
+
+    setValue("reserve", bilingual(formatAmount, data.reserve?.amount));
+    setValue("reserve-currency", data.reserve?.currency ?? "USD");
+    setValue("reserve-as-of", bilingual(formatDate, data.reserve?.asOf));
+    setValue("ratio", bilingual(formatRatio, data.collateralRatio));
+    setValue("updated-at", bilingual(formatDateTime, data.updatedAt));
+
+    // A missing reserve snapshot must read as "not yet available", never as 0.
+    setValue("custodian", data.reserve?.custodian ?? "Bank BNI");
+    setValue("account", data.reserve?.accountLabel ? data.reserve.accountLabel : t.notAvailable);
+
+    const noteRow = document.querySelector<HTMLElement>("[data-tp-note-row]");
+    if (data.reserve?.note) {
+      setValue("note", data.reserve.note);
+      noteRow?.classList.remove("hidden");
+    } else {
+      noteRow?.classList.add("hidden");
+    }
+  }
+  */
+
+  async function load() {
+    const apiBaseUrl = resolveApiBaseUrl(window.location.hostname);
+    try {
+      const response = await fetch(`${apiBaseUrl}${TRANSPARENCY_PATH}`, {
+        headers: { Accept: "application/json" },
+        // Public, unauthenticated endpoint — no cookies should ride along.
+        credentials: "omit",
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const body = (await response.json()) as TransparencyEnvelope;
+      if (!body?.data) throw new Error("empty payload");
+      renderAttestations(body.data.attestations ?? [], apiBaseUrl);
+      renderToken(body.data);
+      setStatus(t.statusLive);
+    } catch {
+      // Leave whatever is baked into the HTML in place and say so plainly.
+      setStatus(t.statusFallback);
+    }
+  }
+
+  void load();
+</script>

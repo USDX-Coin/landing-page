@@ -1,8 +1,45 @@
 import { useState } from "react";
-import { faqItems } from "../data/faq";
-import { APP_URL } from "../data/navigation";
+import { faqItems, type FaqItem } from "../data/faq";
+import { iconPaths } from "../data/icons";
+import { chains } from "../data/chains";
+import { COMPANY_EMAIL } from "../data/company";
 import { ui } from "../i18n";
 import { T } from "./LangText";
+
+/**
+ * Per-row visual shown under an open answer. Rows that carry neither `visual`
+ * nor `icon` render plain — most of the official FAQ has no meaningful graphic,
+ * and inventing one for every row is just noise.
+ */
+function RowVisual({ item }: { item: FaqItem }) {
+  if (item.visual === "chains") {
+    return (
+      <div className="flex flex-wrap items-center gap-2 px-5 pb-5">
+        {chains.map((chain) => (
+          <span
+            key={chain.name}
+            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5"
+          >
+            <img src={chain.icon} alt="" aria-hidden="true" className="w-4 h-4" />
+            <span className="text-white/80 text-xs font-medium">{chain.name}</span>
+          </span>
+        ))}
+      </div>
+    );
+  }
+  if (item.icon) {
+    return (
+      <div className="px-5 pb-5">
+        <span className="inline-flex w-9 h-9 items-center justify-center rounded-full bg-gold/10 text-gold">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d={iconPaths[item.icon]} />
+          </svg>
+        </span>
+      </div>
+    );
+  }
+  return null;
+}
 
 export default function Faq() {
   // Click to toggle; single open at a time; first item open by default.
@@ -35,17 +72,20 @@ export default function Faq() {
               <T t={ui.faq.sub} />
             </p>
           </div>
-          <a
-            href={APP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-8 lg:mt-auto inline-flex w-fit items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors no-underline"
-          >
-            <T t={ui.faq.contact} />
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </a>
+          {/* "Contact Us" used to open the app, which is not a contact channel.
+              It now opens the official inbox — and stays hidden until that
+              address is confirmed, rather than becoming a dead button. */}
+          {COMPANY_EMAIL && (
+            <a
+              href={`mailto:${COMPANY_EMAIL}`}
+              className="mt-8 lg:mt-auto inline-flex w-fit items-center gap-2 px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition-colors no-underline"
+            >
+              <T t={ui.faq.contact} />
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          )}
         </div>
 
         {/* Right: accordion — separate rounded cards (Figma); open card is lighter */}
@@ -79,9 +119,10 @@ export default function Faq() {
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="px-5 pb-5 text-zinc-300 leading-6 text-sm">
+                    <p className="px-5 pb-4 text-zinc-300 leading-6 text-sm">
                       <T t={item.answer} />
                     </p>
+                    <RowVisual item={item} />
                   </div>
                 </div>
               </div>
