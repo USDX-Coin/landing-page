@@ -1,6 +1,6 @@
 # USDX Landing Page
 
-Single-page responsive landing page for **USDX** — The Transparent & Regulated USD Stablecoin.
+Single-page responsive landing page for **USDX** — a U.S. dollar stablecoin issued by PT Macan Asia Finance for digital asset settlement, cross-border transactions, and institutional liquidity.
 
 Built with Astro 5, React 19 (islands), TypeScript 5.9, and Tailwind CSS v4. Deployed on Netlify.
 

@@ -19,16 +19,28 @@ export const LANG_LABEL: Record<Lang, string> = {
 };
 
 export const meta: { title: Translated; description: Translated } = {
+  // This is the <title> AND the og:title, so it is the single line every
+  // explorer reviewer, crawler and link preview reads first. It used to call
+  // USDX "Teregulasi" / "Regulated". Nothing in the twelve pages of the official
+  // documentation supports that: "regulated", "licensed", "license", "OJK" and
+  // "Bappebti" have zero occurrences there. The wording below follows the front
+  // page of the documentation instead — "a trusted U.S. dollar stablecoin for
+  // digital asset settlement, cross-border transactions, and institutional
+  // liquidity" — trimmed to a length a <title> can carry. Do not put a
+  // regulatory status back here without a licence number to point at.
   title: {
-    id: "USDX — Stablecoin USD yang Transparan & Teregulasi",
-    en: "USDX — The Transparent & Regulated USD Stablecoin",
+    id: "USDX — Stablecoin Dolar AS untuk Aset Digital & Lintas Negara",
+    en: "USDX — The U.S. Dollar Stablecoin for Digital Asset & Cross-Border Use",
   },
-  // Backing copy states one thing only: US Dollars held in custody at Bank BNI.
-  // The old "US Treasury bonds" line was generic stablecoin copy and does not
-  // describe USDX's actual reserves — it must not come back.
+  // Backing copy states one thing only: 100% U.S. dollar CASH reserves held at
+  // Bank Negara Indonesia (BNI). The old "US Treasury bonds" line was generic
+  // stablecoin copy and does not describe USDX's actual reserves — it must not
+  // come back. "di kustodian Bank BNI" is gone for the same reason as in the
+  // footer: it is the site's own word, not the documentation's.
+  // Source: faq.md — "How is USDX backed?" and "Who issues USDX?".
   description: {
-    id: "USDX adalah dolar digital yang didukung penuh, dapat ditukar 1:1 dengan US Dolar yang disimpan di kustodian Bank BNI. Diterbitkan oleh PT Macan Asia Finance.",
-    en: "USDX is a fully-backed digital dollar, redeemable 1:1 for US Dollars held in custody at Bank BNI. Issued by PT Macan Asia Finance.",
+    id: "Stablecoin Dolar AS terbitan PT Macan Asia Finance, dijamin 100% oleh cadangan kas Dolar AS di Bank Negara Indonesia (BNI). Untuk aset digital dan lintas negara.",
+    en: "A U.S. dollar stablecoin issued by PT Macan Asia Finance, backed by 100% U.S. dollar cash reserves held at Bank Negara Indonesia (BNI). For digital asset and cross-border use.",
   },
 };
 
@@ -38,12 +50,20 @@ export const ui = {
   supportedBy: { id: "Didukung oleh", en: "Supported by" },
 
   hero: {
-    badge: { id: "Stablecoin USD Teregulasi", en: "Regulated USD Stablecoin" },
+    // The badge said "Teregulasi" / "Regulated" — an unbacked regulatory-status
+    // claim (see the note on meta.title). It now names what USDX actually is.
+    badge: { id: "Stablecoin Dolar AS", en: "U.S. Dollar Stablecoin" },
     line1: { id: "Akses US Dolar Digital", en: "Easier Access to the" },
     line2: { id: "Lebih Mudah", en: "Digital US Dollar" },
+    // The old paragraph promised access "kapan saja di mana saja" / "anytime,
+    // anywhere", which reads as open retail access and collides with the FAQ
+    // further down the same page: minting and redemption are limited to
+    // Authorized Customers, and USDX is not a domestic Indonesian payment
+    // instrument. This is the documentation's own description of what USDX is
+    // for. Source: faq.md — "What is USDX?" and "How is USDX backed?".
     paragraph: {
-      id: "USDX memberikan akses terhadap US Dolar digital yang aman kapan saja di mana saja. Didukung penuh 1:1 dengan US Dolar di kustodian Bank BNI secara transparan.",
-      en: "USDX gives you secure access to the digital US Dollar anytime, anywhere — fully backed 1:1 by the US Dollar, held transparently in custody at Bank BNI.",
+      id: "USDX adalah representasi digital dari Dolar AS untuk penyelesaian aset digital, transaksi lintas negara, dan operasi keuangan institusional. Dijamin 100% oleh cadangan kas Dolar AS di Bank Negara Indonesia (BNI).",
+      en: "USDX is a digital representation of the U.S. dollar for digital asset settlement, cross-border transactions, and institutional financial operations. Backed by 100% U.S. dollar cash reserves held at Bank Negara Indonesia (BNI).",
     },
     // shared wallet/labels (also used by the Features fee card)
     totalBalance: { id: "Total Saldo", en: "Total Balance" },
@@ -60,9 +80,13 @@ export const ui = {
       id: "Stabil seperti dolar, cepat seperti internet. Pelajari apa yang membuat USDX bekerja.",
       en: "Stable like the dollar, fast like the internet. Explore what makes USDX work.",
     },
-    // wallet card mock
+    // Wallet card mock (the near-zero-fee card). The row used to read "Menerima
+    // pembayaran" / "Receiving payment", which pictures a merchant accepting
+    // USDX — the domestic-payment framing the FAQ answers "No." to. It shows an
+    // incoming cross-border settlement instead, which is a documented use case.
+    // Source: use-cases.md — Cross-Border Settlement.
     walletCompany: { id: "ABC Company", en: "ABC Company" },
-    walletNote: { id: "Menerima pembayaran", en: "Receiving payment" },
+    walletNote: { id: "Penyelesaian lintas negara", en: "Cross-border settlement" },
     gaugeLabel: { id: "Penyelesaian", en: "Settlement" },
     // The two "Dokumen Transparansi dan Audit" links read as a pair: the audit
     // PDF (Cyberscope) and the attestation table on /transparency.
@@ -125,9 +149,15 @@ export const ui = {
 
   footer: {
     headline: { id: "Masa Depan Dolar Digital", en: "The Future of Digital Dollars" },
+    // "di kustodian Bank BNI" / "held in custody at Bank BNI" was the site's own
+    // wording, not the documentation's. The hero and the FAQ both say what the
+    // source says — the reserves are held AT Bank Negara Indonesia (BNI) — so
+    // the footer says it the same way rather than adding a custody arrangement
+    // no page of the documentation describes.
+    // Source: faq.md — "How is USDX backed?".
     tagline: {
-      id: "Stablecoin USD yang diterbitkan PT Macan Asia Finance. Didukung penuh 1:1 dengan US Dolar di kustodian Bank BNI.",
-      en: "The USD stablecoin issued by PT Macan Asia Finance. Fully backed 1:1 by the US Dollar, held in custody at Bank BNI.",
+      id: "Stablecoin Dolar AS yang diterbitkan PT Macan Asia Finance. Dijamin 100% oleh cadangan kas Dolar AS di Bank Negara Indonesia (BNI).",
+      en: "The U.S. dollar stablecoin issued by PT Macan Asia Finance. Backed by 100% U.S. dollar cash reserves held at Bank Negara Indonesia (BNI).",
     },
     quickLinks: { id: "Tautan Cepat", en: "Quick Links" },
     legal: { id: "Legal", en: "Legal" },
@@ -219,9 +249,12 @@ export const ui = {
     // Both status lines used to end with "…the figures below are the last ones
     // embedded in this page", which only made sense while the figures were on.
     // Restore that wording together with the FIGURES block.
+    // Nothing about the document list is baked into the HTML — the table is
+    // built entirely from the API response — so a failed fetch leaves no list at
+    // all. Saying it "may be incomplete" would imply there is something there.
     statusFallback: {
-      id: "Data langsung tidak dapat dimuat saat ini, jadi daftar dokumen di bawah mungkin belum lengkap.",
-      en: "Live data could not be loaded right now, so the document list below may be incomplete.",
+      id: "Data langsung tidak dapat dimuat saat ini, jadi daftar dokumen belum dapat ditampilkan.",
+      en: "Live data could not be loaded right now, so the document list cannot be shown.",
     },
     statusNoJs: {
       id: "Peramban Anda tidak menjalankan JavaScript, jadi daftar dokumen belum dapat ditampilkan.",
@@ -238,13 +271,32 @@ export const ui = {
     colAction: { id: "Aksi", en: "Action" },
     download: { id: "Unduh", en: "Download" },
 
+    // The ID column used to be a running counter over whatever the API happened
+    // to return (oldest = 1), while this note promised the number never moves.
+    // It did move — in three ways: an older period uploaded late renumbered
+    // everything after it, a revoked report pulled every later number down, and
+    // the backend only ever returns the last 24 reports, so the window sliding
+    // shifted the whole column. The ID is now the reporting period itself, which
+    // is a property of the document and cannot be changed by anything else in
+    // the list. Do not put a positional counter back without dropping this note.
     idNote: {
-      id: "Nomor urut bersifat tetap: dokumen paling lama bernomor 1, sehingga nomor sebuah dokumen tidak berubah ketika laporan baru terbit. Daftar ditampilkan dari yang terbaru.",
-      en: "Numbering is stable: the oldest document is number 1, so a document keeps its number when newer reports are published. The list itself is shown newest first.",
+      id: "Nomor dokumen adalah periode laporannya (tahun-bulan), jadi nomor itu melekat pada dokumen dan tidak berubah ketika laporan lain terbit, dicabut, atau daftar diperbarui. Daftar ditampilkan dari yang terbaru.",
+      en: "A document's ID is its reporting period (year-month), so the ID belongs to the document itself and does not change when other reports are published, withdrawn, or the list is refreshed. The list is shown newest first.",
     },
+    // Shown ONLY after the API has answered with an empty list. It states a fact
+    // about the world ("nothing has been published"), so it must never be the
+    // page's initial state — see listPending.
     empty: {
       id: "Belum ada dokumen yang diterbitkan. Laporan atestasi bulanan akan muncul di tabel ini begitu diterbitkan.",
       en: "No document has been published yet. Monthly attestation reports will appear in this table as soon as they are published.",
+    },
+    // The initial, pre-answer state. Says how the list gets here and claims
+    // nothing about how many documents exist — which is the only honest thing to
+    // say to a crawler, a link-preview bot, or a reviewer with JavaScript off,
+    // none of which ever see the API response.
+    listPending: {
+      id: "Daftar dokumen dimuat langsung dari API USDX saat halaman ini dibuka.",
+      en: "The document list is loaded directly from the USDX API when this page opens.",
     },
 
     contractHeading: { id: "Alamat Kontrak", en: "Contract Address" },

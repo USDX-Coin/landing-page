@@ -15,8 +15,10 @@ const cluster = [
   { left: 20, top: 69 },
   { left: 20, top: 31 },
 ];
-// Real avatar photos on the world map (global-access card), each tagged with a
-// city to underline worldwide reach.
+// Real avatar photos on the world map (cross-border card), each tagged with a
+// city. Four cities in four countries, which is the point: the card is about
+// value moving BETWEEN jurisdictions. Jakarta belongs here as one end of that
+// route — the issuer is Indonesian — not as a domestic-payments hint.
 const avatars = [
   { src: "/image/avatar-1.png", top: 12, left: 58, city: "London" },
   { src: "/image/avatar-2.png", top: 52, left: 14, city: "New York" },
@@ -191,9 +193,9 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
                     <span data-fx-bar class="origin-bottom rounded-t-sm bg-white/[0.04]" style={`width:${w}px; height:${h}px; background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px); background-size: 9px 11px;`}></span>
                   ))}
                 </div>
-                <!-- regulated institution in a large thin ring + rotating compliance scan -->
+                <!-- the issuing institution in a large thin ring + rotating verification scan -->
                 <div data-fx-bank class="relative w-36 h-36 rounded-full border border-white/[0.12] flex items-center justify-center bg-[radial-gradient(circle,rgba(255,255,255,0.03),transparent_70%)]">
-                  <!-- gold "compliance verified" ring that draws around the institution while active -->
+                  <!-- gold "checks completed" ring that draws around the institution while active -->
                   <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100" fill="none">
                     <circle data-fx-cring cx="50" cy="50" r="49" pathLength="1" stroke="#E0A93C" stroke-width="1.5" stroke-linecap="round" style="stroke-dasharray:1;stroke-dashoffset:1;opacity:0" />
                   </svg>
@@ -419,7 +421,7 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
             .to({}, { duration: 0.7 });
           break;
         }
-        case "check": { // the institution gets verified: a gold ring draws + the city powers on
+        case "check": { // the issuing institution's checks complete: a gold ring draws + the city powers on
           const bars = qa(card, "[data-fx-bar]");
           const bank = q1(card, "[data-fx-bank]");
           const ring = q1(card, "[data-fx-cring]");
