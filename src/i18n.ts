@@ -160,10 +160,13 @@ export const ui = {
       en: "The U.S. dollar stablecoin issued by PT Macan Asia Finance. Backed by 100% U.S. dollar cash reserves held at Bank Negara Indonesia (BNI).",
     },
     quickLinks: { id: "Tautan Cepat", en: "Quick Links" },
-    // Column heading, not an action. "Legal" covered the legal chapter but not
-    // the audit report sitting next to it, and a bare adjective reads like
-    // something you click. A plain category noun covers both entries.
-    legal: { id: "Dokumen", en: "Documents" },
+    // No heading for the legal links any more, so no label to get wrong. Three
+    // were tried: "Legal" did not cover the audit report beside it and read like
+    // something to click; "Dokumen" echoed the "Dokumentasi" nav entry, which
+    // goes somewhere else entirely; "Informasi" described nothing. The links now
+    // sit in the bottom bar next to the copyright, which is where the convention
+    // puts them and where readers look for them by habit.
+    // legal: { id: "Legal", en: "Legal" },
     social: { id: "Media Sosial", en: "Social Media" },
     // The three legal pages have no copy yet, so their links were pulled out of
     // the footer rather than left pointing at "#". Restore these labels together

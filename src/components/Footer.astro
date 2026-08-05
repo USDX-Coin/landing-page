@@ -70,7 +70,8 @@ const columnLinkClass =
     </svg>
   </div>
 
-  <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col lg:flex-row gap-10 lg:gap-6">
+  <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-10">
+   <div class="flex flex-col lg:flex-row gap-10 lg:gap-6">
     <!-- Brand -->
     <div class="flex-1 lg:max-w-[680px] flex flex-col gap-6">
       <a href={navHref("#hero", base)} class="flex items-center no-underline w-fit">
@@ -107,10 +108,10 @@ const columnLinkClass =
       {/* The "All system normal" pill that used to sit here was a hard-coded
           string, not a real status signal — the same placeholder category that
           got the token-info submission rejected. Bring it back only when it is
-          wired to something that can actually report a problem. */}
-      <div class="flex flex-wrap items-center gap-4">
-        <p class="text-white text-base"><T t={ui.footer.rights} /></p>
-      </div>
+          wired to something that can actually report a problem.
+
+          The copyright line moved down to the bottom bar, where it now sits
+          beside the legal links. */}
     </div>
 
     <!-- Quick Links -->
@@ -130,23 +131,8 @@ const columnLinkClass =
       </div>
     </div>
 
-    <!-- Legal + Social -->
+    <!-- Social -->
     <div class="lg:w-[280px] flex flex-col gap-6">
-      <div class="flex flex-col gap-4">
-        <h4 class={columnHeadingClass}><T t={ui.footer.legal} /></h4>
-        <div class="flex flex-col gap-1.5">
-          {legalLinks.map((link) => (
-            <a
-              href={link.href}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noopener noreferrer" : undefined}
-              class={columnLinkClass}
-            >
-              <T t={link.label} />
-            </a>
-          ))}
-        </div>
-      </div>
       <div class="flex flex-col gap-4">
         <h4 class={columnHeadingClass}><T t={ui.footer.social} /></h4>
         <div class="flex items-center gap-4">
@@ -164,6 +150,30 @@ const columnLinkClass =
             </a>
           ))}
         </div>
+      </div>
+    </div>
+   </div>
+
+    <!-- Bottom bar: copyright on the left, legal documents on the right.
+         These links used to sit in a titled column, and no heading worked —
+         "Legal" did not cover the audit report next to it and read like
+         something to click, "Dokumen" echoed the "Dokumentasi" nav entry.
+         The convention solves it: legal links belong in the bottom row, which
+         is where IDRX and most sites put them, and where a reader looks for
+         them by habit. No heading, so nothing to misread. -->
+    <div class="pt-6 border-t border-white/10 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
+      <p class="text-white/60 text-sm m-0"><T t={ui.footer.rights} /></p>
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-2">
+        {legalLinks.map((link) => (
+          <a
+            href={link.href}
+            target={link.external ? "_blank" : undefined}
+            rel={link.external ? "noopener noreferrer" : undefined}
+            class="text-white/60 hover:text-white text-sm no-underline transition-colors"
+          >
+            <T t={link.label} />
+          </a>
+        ))}
       </div>
     </div>
   </div>
