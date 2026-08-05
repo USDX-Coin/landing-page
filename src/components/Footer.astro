@@ -35,6 +35,16 @@ const legalLinks = [
   { label: ui.footer.legalDisclaimer, href: LEGAL_DISCLAIMER_URL, external: true },
   { label: ui.footer.audit, href: AUDIT_REPORT_URL, external: true },
 ];
+
+// Column headings used to be `text-base font-normal` while the links under them
+// were `text-base font-medium` — the heading was the same size and lighter than
+// its own items, so "Legal" read as one more link rather than the name of the
+// group. Headings are now small, uppercase and dimmed (the same label idiom as
+// the table headers on /transparency), and links carry the weight instead.
+const columnHeadingClass =
+  "text-white/50 text-xs font-medium uppercase tracking-wide m-0";
+const columnLinkClass =
+  "text-white/85 hover:text-white text-base font-medium no-underline transition-colors w-fit";
 ---
 <footer class="relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden">
   <!-- red glow (#B60000) -->
@@ -76,7 +86,7 @@ const legalLinks = [
       </div>
       {(COMPANY_ADDRESS || COMPANY_EMAIL) && (
         <div class="flex flex-col gap-2 text-base">
-          <h4 class="text-white font-normal m-0"><T t={ui.footer.contact} /></h4>
+          <h4 class={columnHeadingClass}><T t={ui.footer.contact} /></h4>
           {COMPANY_ADDRESS && (
             <p class="text-white/80 leading-[26px] max-w-[420px] m-0">
               <span class="text-white/50"><T t={ui.footer.office} />: </span>
@@ -105,14 +115,14 @@ const legalLinks = [
 
     <!-- Quick Links -->
     <div class="lg:w-[280px] flex flex-col gap-4">
-      <h4 class="text-white text-base font-normal"><T t={ui.footer.quickLinks} /></h4>
+      <h4 class={columnHeadingClass}><T t={ui.footer.quickLinks} /></h4>
       <div class="flex flex-col gap-1.5">
         {navLinks.map((link) => (
           <a
             href={navHref(link.href, base)}
             target={link.external ? "_blank" : undefined}
             rel={link.external ? "noopener noreferrer" : undefined}
-            class="text-white/90 hover:text-white text-base font-medium no-underline transition-colors w-fit"
+            class={columnLinkClass}
           >
             <T t={link.label} />
           </a>
@@ -123,14 +133,14 @@ const legalLinks = [
     <!-- Legal + Social -->
     <div class="lg:w-[280px] flex flex-col gap-6">
       <div class="flex flex-col gap-4">
-        <h4 class="text-white text-base font-normal"><T t={ui.footer.legal} /></h4>
+        <h4 class={columnHeadingClass}><T t={ui.footer.legal} /></h4>
         <div class="flex flex-col gap-1.5">
           {legalLinks.map((link) => (
             <a
               href={link.href}
               target={link.external ? "_blank" : undefined}
               rel={link.external ? "noopener noreferrer" : undefined}
-              class="text-white/90 hover:text-white text-base font-medium no-underline transition-colors w-fit"
+              class={columnLinkClass}
             >
               <T t={link.label} />
             </a>
@@ -138,7 +148,7 @@ const legalLinks = [
         </div>
       </div>
       <div class="flex flex-col gap-4">
-        <h4 class="text-white text-base font-normal"><T t={ui.footer.social} /></h4>
+        <h4 class={columnHeadingClass}><T t={ui.footer.social} /></h4>
         <div class="flex items-center gap-4">
           {socials.map((social) => (
             <a
