@@ -3,7 +3,7 @@ import { navLinks, navHref } from "../data/navigation";
 import { socials } from "../data/socials";
 import { socialIconPaths } from "../data/icons";
 import { AUDIT_REPORT_URL } from "../data/audit";
-import { LEGAL_DISCLAIMER_URL } from "../data/whitepaper";
+import { LEGAL_DISCLAIMER_URL, USER_POLICY_URL } from "../data/whitepaper";
 import { COMPANY_ADDRESS, COMPANY_EMAIL } from "../data/company";
 import { ui } from "../i18n";
 import T from "./T.astro";
@@ -18,11 +18,19 @@ const { base = "" } = Astro.props;
 // Only links that resolve to something real. "Kebijakan Privasi", "Syarat &
 // Ketentuan" and "Kepatuhan Data" used to sit here pointing at "#" — dead links
 // are one of the reasons PolygonScan rejected the token-info submission, so they
-// are pulled until the pages exist. Put them back like this once they do:
-//   { label: ui.footer.privacy, href: "/privacy" },
-//   { label: ui.footer.terms, href: "/terms" },
-//   { label: ui.footer.compliance, href: "/data-compliance" },
-// (and uncomment the matching labels in i18n.ts).
+// were pulled until the pages existed.
+//
+// "User Policy Standard" is now published in the documentation and covers what
+// the "Syarat & Ketentuan" entry was for: eligibility and KYC, permitted and
+// prohibited uses, suspension, limitation of liability, governing law. It is
+// linked below under its own name, so a reader lands on a page titled the same
+// thing they clicked.
+//
+// STILL MISSING — a privacy policy. The user policy deliberately does not cover
+// personal data handling, so it cannot stand in for one, and UU PDP means USDX
+// owes one regardless. Add it here the moment it is published:
+//   { label: ui.footer.privacy, href: PRIVACY_POLICY_URL, external: true },
+// (and uncomment the matching label in i18n.ts).
 // No "Whitepaper" entry here: the whitepaper IS the GitBook documentation, which
 // the Quick Links column already links to via the "Dokumentasi" nav entry. Two
 // links to an identical URL in one footer is padding, not navigation.
@@ -32,6 +40,7 @@ const { base = "" } = Astro.props;
 // legal position (intended use, no guarantee of value, user responsibility,
 // technology risks), so the heading now describes what sits under it.
 const legalLinks = [
+  { label: ui.footer.userPolicy, href: USER_POLICY_URL, external: true },
   { label: ui.footer.legalDisclaimer, href: LEGAL_DISCLAIMER_URL, external: true },
   { label: ui.footer.audit, href: AUDIT_REPORT_URL, external: true },
 ];

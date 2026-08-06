@@ -30,3 +30,19 @@ export const WHITEPAPER_URL: string = DOCUMENTATION_URL;
  * Verified reachable (HTTP 200).
  */
 export const LEGAL_DISCLAIMER_URL = `${DOCUMENTATION_URL}/legal-and-disclaimer`;
+
+/**
+ * "User Policy Standard" chapter — this is the terms-and-conditions document.
+ * Eighteen clauses covering eligibility and KYC, permitted and prohibited uses,
+ * compliance monitoring, minting and redemption, wallet responsibility,
+ * suspension, limitation of liability and governing law.
+ *
+ * It does NOT cover personal data handling, so it is not a privacy policy and
+ * must not be labelled as one. A privacy policy is still owed — /privacy,
+ * /privacy-policy and /terms all return 404 on the documentation today — and it
+ * is needed both for UU PDP and for the PolygonScan submission. Add it here the
+ * same way once it is published.
+ *
+ * Verified reachable (HTTP 200).
+ */
+export const USER_POLICY_URL = `${DOCUMENTATION_URL}/user-policy-standard`;
