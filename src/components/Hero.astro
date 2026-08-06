@@ -1,5 +1,6 @@
 ---
 import { ui } from "../i18n";
+import { CERTIFICATE_NUMBER, CERTIFICATION_BODY_SHORT } from "../data/certification";
 import T from "./T.astro";
 ---
 <section id="hero" class="relative min-h-screen flex items-end overflow-hidden bg-[#0a0a0a]">
@@ -53,9 +54,27 @@ import T from "./T.astro";
         <p data-hero-el class="text-white text-base leading-[26px] max-w-[511px]">
           <T t={ui.hero.paragraph} />
         </p>
-        <div data-hero-el class="flex items-center gap-3">
+        <div data-hero-el class="flex flex-wrap items-center gap-x-3 gap-y-4">
           <span class="text-white text-base"><T t={ui.supportedBy} /></span>
           <img src="/image/bni.png" alt="BNI" class="h-8 w-auto" />
+
+          <!-- Certification is stated in plain text, not as a badge.
+               A drawn seal was tried and removed: it imitated a certification
+               mark without being one, and the only mark we may display is the
+               combined TSI + KAN artwork, which TSI supplies and which must sit
+               adjacent to the USDX logo rather than float here. Linking the
+               certificate PDF was tried too, and is expressly forbidden.
+               data/certification.ts carries the rules and the citations.
+
+               So this line claims only what is true and unrestricted: the
+               standard, the registration number, and who issued it — the three
+               things a reviewer needs to verify it against TSI's register. -->
+          <span class="w-full text-white/70 text-sm leading-5">
+            <T t={ui.hero.securityBadge} />
+            <span class="text-white/45">
+              {" · "}No. {CERTIFICATE_NUMBER} ({CERTIFICATION_BODY_SHORT}, <T t={ui.hero.securityBadgeAccredited} />)
+            </span>
+          </span>
         </div>
       </div>
     </div>

@@ -53,6 +53,25 @@ export const ui = {
     // The badge said "Teregulasi" / "Regulated" — an unbacked regulatory-status
     // claim (see the note on meta.title). It now names what USDX actually is.
     badge: { id: "Stablecoin Dolar AS", en: "U.S. Dollar Stablecoin" },
+    // Deliberately "tested against", not "certified". USDX holds the equivalent
+    // policy documentation SEOJK accepts in place of an ISO 27001 certificate;
+    // no certificate was ever issued, so a certification claim would be false.
+    // Replace with "Bersertifikat ISO/IEC 27001:2022" only when a certificate
+    // number and an issuing body exist.
+    // A real certificate backs this now: SNI ISO/IEC 27001:2022, number
+    // ISMS 26302, issued by PT TSI Sertifikasi Internasional under KAN
+    // accreditation (an IAF MLA signatory, which is what makes it recognised
+    // outside Indonesia). The badge links to the certificate itself, so a
+    // reviewer never has to take the word for it. See data/certification.ts —
+    // including the expiry date, after which this wording has to change.
+    // Plain statement of certification, which is not restricted the way the
+    // certification mark is. See data/certification.ts for what the mark itself
+    // will require once TSI supplies the artwork.
+    securityBadge: {
+      id: "Bersertifikat ISO/IEC 27001:2022",
+      en: "Certified to ISO/IEC 27001:2022",
+    },
+    securityBadgeAccredited: { id: "akreditasi KAN", en: "KAN accredited" },
     line1: { id: "Akses US Dolar Digital", en: "Easier Access to the" },
     line2: { id: "Lebih Mudah", en: "Digital US Dollar" },
     // The old paragraph promised access "kapan saja di mana saja" / "anytime,
