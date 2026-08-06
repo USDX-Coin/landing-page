@@ -72,6 +72,10 @@ export const ui = {
       en: "Certified to ISO/IEC 27001:2022",
     },
     securityBadgeAccredited: { id: "akreditasi KAN", en: "KAN accredited" },
+    securityBadgeTitle: {
+      id: "Verifikasi sertifikat ISMS 26302 di portal resmi TSI",
+      en: "Verify certificate ISMS 26302 on TSI's official portal",
+    },
     line1: { id: "Akses US Dolar Digital", en: "Easier Access to the" },
     line2: { id: "Lebih Mudah", en: "Digital US Dollar" },
     // The old paragraph promised access "kapan saja di mana saja" / "anytime,

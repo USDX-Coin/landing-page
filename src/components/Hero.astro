@@ -1,6 +1,6 @@
 ---
 import { ui } from "../i18n";
-import { CERTIFICATE_NUMBER, CERTIFICATION_BODY_SHORT } from "../data/certification";
+import { CERTIFICATE_NUMBER, CERTIFICATION_BODY_SHORT, CERTIFICATE_VERIFY_URL } from "../data/certification";
 import T from "./T.astro";
 ---
 <section id="hero" class="relative min-h-screen flex items-end overflow-hidden bg-[#0a0a0a]">
@@ -69,8 +69,16 @@ import T from "./T.astro";
                So this line claims only what is true and unrestricted: the
                standard, the registration number, and who issued it — the three
                things a reviewer needs to verify it against TSI's register. -->
-          <span class="w-full text-white/70 text-sm leading-5">
-            <T t={ui.hero.securityBadge} />
+          <span class="text-white/70 text-sm leading-5">
+            <a
+              href={CERTIFICATE_VERIFY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={ui.hero.securityBadgeTitle.id}
+              class="text-white underline decoration-white/30 underline-offset-4 hover:decoration-white transition-colors"
+            >
+              <T t={ui.hero.securityBadge} />
+            </a>
             <span class="text-white/45">
               {" · "}No. {CERTIFICATE_NUMBER} ({CERTIFICATION_BODY_SHORT}, <T t={ui.hero.securityBadgeAccredited} />)
             </span>

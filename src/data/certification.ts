@@ -51,6 +51,19 @@
 // EXPIRY: after 23 June 2029 this certificate lapses and the claim must go with
 // it. Recertification normally issues a new number.
 export const CERTIFICATE_NUMBER = "ISMS 26302";
+
+/**
+ * TSI's own public verification portal, deep-linked to this certificate. Opens
+ * on the result: PT MACAN ASIA FINANCE — ISMS 26302 — Valid.
+ *
+ * This is what the badge links to instead of the certificate file. Pointing at
+ * the issuer's register breaks none of the rules above — we publish nothing —
+ * and it is stronger evidence than a PDF, because the reader sees the live
+ * status straight from the body that issued it. A withdrawn or lapsed
+ * certificate stops showing here, which a PDF on our own server never would.
+ */
+export const CERTIFICATE_VERIFY_URL =
+  "https://certificate.tsicertification.com/search?q=ISMS%2026302";
 export const CERTIFICATION_BODY = "PT TSI Sertifikasi Internasional";
 /** Short form for the badge, where the full legal name will not fit. */
 export const CERTIFICATION_BODY_SHORT = "TSI";
