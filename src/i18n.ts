@@ -198,6 +198,10 @@ export const ui = {
     // compliance: { id: "Kepatuhan Data", en: "Data Compliance" },
     // Kept close to the chapter's own title in the documentation so a reader
     // who follows the link lands on a page named the same thing.
+    // Named after the chapter it opens, so the page a reader lands on carries
+    // the same title they clicked. It is the terms-and-conditions document in
+    // substance — eligibility, KYC, prohibited uses, suspension, liability.
+    userPolicy: { id: "Ketentuan Pengguna", en: "User Policy" },
     legalDisclaimer: { id: "Ketentuan Hukum & Sanggahan", en: "Legal & Disclaimer" },
     audit: { id: "Laporan Audit", en: "Audit Report" },
     // The whitepaper is the GitBook documentation, already reachable through the
