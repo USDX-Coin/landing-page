@@ -1,6 +1,6 @@
 ---
 import { ui } from "../i18n";
-import { CERTIFICATE_VERIFY_URL } from "../data/certification";
+import { CERTIFICATE_NUMBER, CERTIFICATE_VERIFY_URL } from "../data/certification";
 import T from "./T.astro";
 ---
 <section id="hero" class="relative min-h-screen flex items-end overflow-hidden bg-[#0a0a0a]">
@@ -54,30 +54,38 @@ import T from "./T.astro";
         <p data-hero-el class="text-white text-base leading-[26px] max-w-[511px]">
           <T t={ui.hero.paragraph} />
         </p>
-        <div data-hero-el class="flex flex-wrap items-center gap-x-2 gap-y-3">
-          <span class="text-white text-base"><T t={ui.supportedBy} /></span>
-          <img src="/image/bni.png" alt="BNI" class="h-7 w-auto" />
+        <!-- Two trust signals, two rows. They were fought into one line and it
+             never held: the bank lockup and the certification are unrelated
+             claims, and every time one grew the row overflowed. Stacked, each
+             gets its own reading, and the width stops being a constraint. -->
+        <div data-hero-el class="flex flex-col gap-3">
+          <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span class="text-white text-base"><T t={ui.supportedBy} /></span>
+            <img src="/image/bni.png" alt="BNI" class="h-8 w-auto" />
+          </div>
 
-          <!-- Certification stated in plain text, next to the bank it sits
-               beside. Two earlier attempts are worth not repeating: a drawn
-               seal, which imitated a certification mark without being one, and
-               a link to the certificate PDF, which TSI expressly forbids
-               publishing. The only mark we may show is the combined TSI + KAN
-               artwork, and it belongs beside the USDX logo, not here — the
-               rules and their citations are in data/certification.ts.
+          <!-- The registration number is shown rather than hidden behind the
+               link: it is what makes the claim checkable, and TSI requires it
+               to accompany the certification anyway.
 
-               The link carries the proof instead: it opens TSI's own register
-               on this certificate, so the reader sees live status from the body
-               that issued it rather than a file we host ourselves. -->
-          <a
-            href={CERTIFICATE_VERIFY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            title={ui.hero.securityBadgeTitle.id}
-            class="text-white/90 hover:text-white text-[13px] leading-5 whitespace-nowrap ml-3 underline decoration-white/30 underline-offset-4 hover:decoration-white transition-colors"
-          >
-            <T t={ui.hero.securityBadge} />
-          </a>
+               The link is deliberately NOT to a copy of the certificate —
+               publishing that is forbidden (§2b, §3.2; see
+               data/certification.ts). It opens TSI's own register on this
+               number, so the reader sees live status from the body that issued
+               it. That is why an anchor still belongs here even though nothing
+               of ours is being served. -->
+          <p class="text-white/55 text-[13px] leading-5 m-0">
+            <a
+              href={CERTIFICATE_VERIFY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={ui.hero.securityBadgeTitle.id}
+              class="text-white/85 hover:text-white underline decoration-white/25 underline-offset-4 hover:decoration-white transition-colors"
+            >
+              <T t={ui.hero.securityBadge} />
+            </a>
+            {" · "}No. {CERTIFICATE_NUMBER}
+          </p>
         </div>
       </div>
     </div>
