@@ -53,6 +53,28 @@ export const ui = {
     // The badge said "Teregulasi" / "Regulated" — an unbacked regulatory-status
     // claim (see the note on meta.title). It now names what USDX actually is.
     badge: { id: "Stablecoin Dolar AS", en: "U.S. Dollar Stablecoin" },
+    // A plain statement of certification, backed by a real certificate: SNI
+    // ISO/IEC 27001:2022, number ISMS 26302, issued by PT TSI Sertifikasi
+    // Internasional under KAN accreditation — KAN being an IAF MLA signatory,
+    // which is what makes it recognised outside Indonesia.
+    //
+    // A statement is not the certification MARK and is not restricted the same
+    // way; the mark has its own rules and is not on the site yet. The number
+    // and issuing body are not spelled out here because the link goes straight
+    // to TSI's register, where both are shown by the body that issued them.
+    // See data/certification.ts — including the expiry date, after which this
+    // claim must come down.
+    // Column label; the standard number itself is rendered untranslated beneath
+    // it, since "ISO/IEC 27001:2022" reads the same in both languages.
+    certifiedLabel: { id: "Bersertifikat", en: "Certified" },
+    securityBadge: {
+      id: "Bersertifikat ISO/IEC 27001:2022",
+      en: "Certified to ISO/IEC 27001:2022",
+    },
+    securityBadgeTitle: {
+      id: "Verifikasi sertifikat ISMS 26302 di portal resmi TSI",
+      en: "Verify certificate ISMS 26302 on TSI's official portal",
+    },
     line1: { id: "Akses US Dolar Digital", en: "Easier Access to the" },
     line2: { id: "Lebih Mudah", en: "Digital US Dollar" },
     // The old paragraph promised access "kapan saja di mana saja" / "anytime,

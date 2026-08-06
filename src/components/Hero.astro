@@ -1,6 +1,12 @@
 ---
 import { ui } from "../i18n";
+import { CERTIFICATE_NUMBER, CERTIFICATE_VERIFY_URL } from "../data/certification";
 import T from "./T.astro";
+
+// Same label idiom as the footer column headings: small, uppercase, dimmed, so
+// the label never competes with the credential sitting under it.
+const credentialLabelClass =
+  "text-white/50 text-xs font-medium uppercase tracking-wide";
 ---
 <section id="hero" class="relative min-h-screen flex items-end overflow-hidden bg-[#0a0a0a]">
   <!-- Background city photo (parallax). Replace /image/hero-city.jpg with the
@@ -53,9 +59,43 @@ import T from "./T.astro";
         <p data-hero-el class="text-white text-base leading-[26px] max-w-[511px]">
           <T t={ui.hero.paragraph} />
         </p>
-        <div data-hero-el class="flex items-center gap-3">
-          <span class="text-white text-base"><T t={ui.supportedBy} /></span>
-          <img src="/image/bni.png" alt="BNI" class="h-8 w-auto" />
+        <!-- Two credentials, side by side under their own labels. They were
+             fought into a single line first and it never held: the bank and the
+             certification are separate claims, so every time one grew the row
+             overflowed. Labelled columns give each its own reading, keep them
+             level, and leave room for TSI's mark under the right-hand one when
+             it arrives. -->
+        <div data-hero-el class="flex flex-wrap gap-x-10 gap-y-6">
+          <div class="flex flex-col gap-2">
+            <span class={credentialLabelClass}><T t={ui.supportedBy} /></span>
+            <img src="/image/bni.png" alt="BNI" class="h-8 w-auto" />
+          </div>
+
+          <div class="flex flex-col gap-2">
+            <span class={credentialLabelClass}><T t={ui.hero.certifiedLabel} /></span>
+            <span class="flex flex-col gap-0.5">
+              <!-- The link is deliberately NOT to a copy of the certificate:
+                   publishing that is forbidden (§2b, §3.2 — see
+                   data/certification.ts). It opens TSI's own register on this
+                   number, so the reader sees live status from the body that
+                   issued it. That is why an anchor belongs here even though
+                   nothing of ours is being served.
+
+                   The registration number is shown rather than tucked behind
+                   the link — it is what makes the claim checkable, and TSI
+                   expects it to accompany the certification. -->
+              <a
+                href={CERTIFICATE_VERIFY_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={ui.hero.securityBadgeTitle.id}
+                class="w-fit text-white text-[15px] leading-5 font-medium underline decoration-white/25 underline-offset-4 hover:decoration-white transition-colors"
+              >
+                ISO/IEC 27001:2022
+              </a>
+              <span class="text-white/45 text-xs leading-4">No. {CERTIFICATE_NUMBER}</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
