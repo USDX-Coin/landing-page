@@ -64,6 +64,9 @@ export const ui = {
     // to TSI's register, where both are shown by the body that issued them.
     // See data/certification.ts — including the expiry date, after which this
     // claim must come down.
+    // Column label; the standard number itself is rendered untranslated beneath
+    // it, since "ISO/IEC 27001:2022" reads the same in both languages.
+    certifiedLabel: { id: "Bersertifikat", en: "Certified" },
     securityBadge: {
       id: "Bersertifikat ISO/IEC 27001:2022",
       en: "Certified to ISO/IEC 27001:2022",
