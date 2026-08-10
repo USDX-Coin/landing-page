@@ -1,72 +1,102 @@
 ---
-// "Dokumen Transparansi dan Audit" — the monthly reserve attestation table, the
-// contract address, and the smart-contract audit.
+// "Dokumen Transparansi dan Audit" — the three headline figures, what the
+// reserve is made of, the contract address, the monthly attestation table, and
+// the smart-contract audit.
 //
-// The table is NOT a hand-maintained list in this repo. It is fed by the public
-// endpoint GET {API_BASE}/api/v1/public/transparency, so the flow is: the
-// auditor hands over a document -> the team uploads it in back office -> it
-// shows up here on the next page load. Nothing to commit. Empty is the normal
-// state right now, and it renders as an explanation rather than a bare table.
+// Neither the figures nor the table is hand-maintained in this repo. Both come
+// from the public endpoint GET {API_BASE}/api/v1/public/transparency, so the
+// flow is: the ledger moves (or the auditor hands over a document) -> it shows
+// up here on the next page load. Nothing to commit.
 //
-// FIGURES OFF: this page used to lead with circulating supply, total reserves,
-// the collateral ratio and a reserve breakdown. Finance has not published a
-// reserve position yet, so those sections are commented out rather than
-// deleted — a transparency page must never print a number nobody can stand
-// behind. Every switched-off block below is marked "FIGURES", and the
-// step-by-step way back on is written at the FIGURES block in src/i18n.ts.
-// The data layer (src/data/transparency.ts) and its tests are untouched.
+// THE RULE THIS PAGE IS BUILT AROUND. A figure that is not known renders as
+// "Belum tersedia", in words, in both languages — never as 0, and never as a
+// blank. A zero is not a missing number, it is a different claim: "no USDX
+// exists", "there are no reserves", "the backing is gone". Every slot below has
+// an unavailable state, and the empty states are the ones that ship in the
+// static HTML today, because the endpoint is not live yet.
+//
+// The contract card is the exception: it is static, from src/data/token.ts, and
+// deliberately NOT taken from the response. See the note above it.
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer.astro";
 import T from "../components/T.astro";
-import { ui } from "../i18n";
+import { ui, type Translated } from "../i18n";
 import { AUDIT_REPORT_URL } from "../data/audit";
-
-// FIGURES: the fallback position and the number formatters come back with the
-// commented sections below.
-// import { COMPANY_LEGAL_NAME } from "../data/company";
-// import { type Translated } from "../i18n";
-// import {
-//   TRANSPARENCY_FALLBACK,
-//   formatAmount,
-//   formatDate,
-//   formatDateTime,
-//   formatRatio,
-// } from "../data/transparency";
+import { COMPANY_LEGAL_NAME } from "../data/company";
+import { tokenInfo, polygonscanTokenUrl } from "../data/token";
+import {
+  RESERVE_COMPOSITION,
+  RESERVE_CUSTODIAN,
+  TRANSPARENCY_FALLBACK,
+  formatAmount,
+  formatDateTimeWib,
+  formatPegLine,
+  formatRatio,
+  formatShare,
+} from "../data/transparency";
 
 const t = ui.transparency;
 
-// FIGURES: pre-format the fallback in both languages so the static markup
-// carries real content even with JavaScript off. Null everywhere means "not yet
-// available", which is rendered as words — never as a zero.
-// const fallback = TRANSPARENCY_FALLBACK;
-// const bilingual = (fn: (value: string, lang: "id" | "en") => string, value?: string | null): Translated | null => {
-//   if (!value) return null;
-//   const id = fn(value, "id");
-//   const en = fn(value, "en");
-//   return id && en ? { id, en } : null;
-// };
-//
-// const supplyAmount = bilingual(formatAmount, fallback.circulatingSupply?.amount);
-// const supplyReadAt = bilingual(formatDateTime, fallback.circulatingSupply?.readAt);
-// const reserveAmount = bilingual(formatAmount, fallback.reserve?.amount);
-// const reserveAsOf = bilingual(formatDate, fallback.reserve?.asOf);
-// const ratio = bilingual(formatRatio, fallback.collateralRatio);
-//
-// const supplyUnit = fallback.circulatingSupply?.unit ?? "USDX";
-// const reserveCurrency = fallback.reserve?.currency ?? "USD";
-// const custodian = fallback.reserve?.custodian ?? "Bank BNI";
-// const account = fallback.reserve?.accountLabel ?? "";
-// const reserveNote = fallback.reserve?.note ?? "";
+// Pre-format the fallback in both languages so the static markup carries the
+// same content the browser would render. Null in means null out — the caller
+// prints "Belum tersedia" rather than substituting anything.
+const bilingual = (
+  fn: (value: string, lang: "id" | "en") => string,
+  value?: string | null,
+): Translated | null => {
+  if (!value) return null;
+  const id = fn(value, "id");
+  const en = fn(value, "en");
+  return id && en ? { id, en } : null;
+};
+
+/** "<prefix> 10 Agustus 2026, 11.05 WIB", or a plain "no timestamp" line. */
+const caption = (prefix: Translated, iso?: string | null): Translated => {
+  const stamp = bilingual(formatDateTimeWib, iso);
+  if (!stamp) return t.captionUnavailable;
+  return { id: `${prefix.id} ${stamp.id}`, en: `${prefix.en} ${stamp.en}` };
+};
+
+const fallback = TRANSPARENCY_FALLBACK;
+
+const supplyAmount = bilingual(formatAmount, fallback.circulatingSupply?.amount);
+const supplyUnit = fallback.circulatingSupply?.unit ?? "USDX";
+const supplyCaption = caption(t.supplyCaption, fallback.circulatingSupply?.readAt);
+
+const reserveAmount = bilingual(formatAmount, fallback.reserve?.amount);
+const reserveCurrency = fallback.reserve?.currency ?? "USD";
+const reserveCaption = caption(t.reserveCaption, fallback.reserve?.balanceAt);
+
+const ratio = bilingual(formatRatio, fallback.collateralRatio);
+const peg = bilingual(formatPegLine, fallback.collateralRatio);
+const updatedCaption = caption(t.updatedCaption, fallback.updatedAt);
+
+const composition = RESERVE_COMPOSITION.map((item) => ({
+  label: item.label,
+  share: bilingual(formatShare, item.share),
+}));
+
+const contractAddress = tokenInfo.contractAddress;
+const explorerUrl = contractAddress ? polygonscanTokenUrl(contractAddress) : "";
 
 const cardClass =
   "relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden";
+const figureCardClass =
+  "rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2";
+const figureLabelClass = "text-white/55 text-sm";
+const figureValueClass = "text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0";
+// Unit and currency sit beside the number, and are hidden whenever the number
+// itself is unavailable — "Belum tersedia USDX" is not a sentence.
+const figureAffixClass = "text-white/50 text-xl";
+// `mt-auto` pins every caption to the bottom of its card, so the three line up
+// even though the ratio card carries an extra line above it.
+const captionClass = "text-white/45 text-xs leading-5 m-0 mt-auto pt-2";
 const sectionHeadingClass = "font-serif font-medium text-3xl sm:text-4xl tracking-tight text-white m-0";
 const rowLabelClass = "text-white/55 text-sm m-0";
-const rowValueClass = "text-white text-sm font-medium m-0 text-right break-words";
-// Contract rows sit in a hug-the-content grid, so the value starts right after
-// its label instead of being pushed to the far edge of the card.
-const contractValueClass = "text-white text-sm font-medium m-0 break-words";
+// Rows sit in a hug-the-content grid, so the value starts right after its label
+// instead of being pushed to the far edge of the card.
+const rowValueClass = "text-white text-sm font-medium m-0 break-words";
 const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-wide px-4 py-3";
 ---
 <Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
@@ -101,44 +131,48 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
         </div>
       </section>
 
-      {/* FIGURES — headline figures (circulating supply, total reserves,
-          collateral ratio). Switched off until finance publishes a reserve
-          position; see the FIGURES block in src/i18n.ts.
-
+      <!-- Headline figures: circulating supply, reserve assets, collateral
+           ratio. Each ships with its unavailable state and is filled in by
+           renderFigures() once the API answers. -->
       <section class="mx-auto w-full max-w-[1376px] grid gap-4 md:grid-cols-3">
-        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
-          <span class="text-white/55 text-sm"><T t={t.supplyLabel} /></span>
-          <p class="text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
-            <span data-tp="supply">{supplyAmount ? <T t={supplyAmount} /> : <T t={t.notAvailable} />}</span>
-            <span class="text-white/50 text-xl ml-2" data-tp="supply-unit">{supplyUnit}</span>
+        <div class={figureCardClass}>
+          <span class={figureLabelClass}><T t={t.supplyLabel} /></span>
+          <p class={figureValueClass}>
+            <span data-tp="supply">{supplyAmount ? <T t={supplyAmount} /> : <T t={t.notAvailable} />}</span><span
+              data-tp="supply-unit"
+              data-tp-affix="supply"
+              class={`${figureAffixClass} ml-2 ${supplyAmount ? "" : "hidden"}`}
+            >{supplyUnit}</span>
           </p>
-          <p class="text-white/45 text-xs leading-5 m-0">
-            <T t={t.readAt} />: <span data-tp="supply-read-at">{supplyReadAt ? <T t={supplyReadAt} /> : <T t={t.notAvailable} />}</span>
-          </p>
+          <p class={captionClass}><span data-tp="supply-caption"><T t={supplyCaption} /></span></p>
         </div>
 
-        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
-          <span class="text-white/55 text-sm"><T t={t.reserveLabel} /></span>
-          <p class="text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
-            <span data-tp="reserve">{reserveAmount ? <T t={reserveAmount} /> : <T t={t.notAvailable} />}</span>
-            <span class="text-white/50 text-xl ml-2" data-tp="reserve-currency">{reserveCurrency}</span>
+        <div class={figureCardClass}>
+          <span class={figureLabelClass}><T t={t.reserveLabel} /></span>
+          <p class={figureValueClass}>
+            <span
+              data-tp="reserve-currency"
+              data-tp-affix="reserve"
+              class={`${figureAffixClass} mr-2 ${reserveAmount ? "" : "hidden"}`}
+            >{reserveCurrency}</span><span data-tp="reserve">{reserveAmount ? <T t={reserveAmount} /> : <T t={t.notAvailable} />}</span>
           </p>
-          <p class="text-white/45 text-xs leading-5 m-0">
-            <T t={t.asOf} />: <span data-tp="reserve-as-of">{reserveAsOf ? <T t={reserveAsOf} /> : <T t={t.notAvailable} />}</span>
-          </p>
+          <p class={captionClass}><span data-tp="reserve-caption"><T t={reserveCaption} /></span></p>
         </div>
 
-        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2">
-          <span class="text-white/55 text-sm"><T t={t.ratioLabel} /></span>
-          <p class="text-gold font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0">
+        <div class={figureCardClass}>
+          <span class={figureLabelClass}><T t={t.ratioLabel} /></span>
+          <p class={`text-gold font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0`}>
             <span data-tp="ratio">{ratio ? <T t={ratio} /> : <T t={t.notAvailable} />}</span>
           </p>
-          <p class="text-white/45 text-xs leading-5 m-0">
-            <T t={t.updatedAt} />: <span data-tp="updated-at">{reserveAsOf ? <T t={reserveAsOf} /> : <T t={t.notAvailable} />}</span>
+          {/* Derived from the ratio, so it disappears with it. An unknown ratio
+              rendered as "1 USDX = USD 0,00" would announce a total loss of
+              backing where there is only a missing figure. */}
+          <p data-tp-peg-row class={`text-white/70 text-sm leading-5 m-0 ${peg ? "" : "hidden"}`}>
+            <span data-tp="peg">{peg && <T t={peg} />}</span>
           </p>
+          <p class={captionClass}><span data-tp="updated-caption"><T t={updatedCaption} /></span></p>
         </div>
       </section>
-      */}
 
       <!-- Attestation documents -->
       <section class={cardClass}>
@@ -181,88 +215,81 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
         </div>
       </section>
 
-      {/* FIGURES — reserve breakdown (form, custodian, account, issuer). The
-          contract card next to it does NOT depend on reserve data, so it stays
-          on its own below.
-
       <section class="mx-auto w-full max-w-[1376px] grid gap-4 lg:grid-cols-2">
+        <!-- What the reserve is made of. Static copy, not a live figure: the
+             locked public payload carries no composition field, and "100% U.S.
+             dollar cash at BNI" is a statement from the official documentation
+             rather than a balance. See RESERVE_COMPOSITION. -->
         <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
           <h2 class={sectionHeadingClass}><T t={t.reserveHeading} /></h2>
-          <dl class="grid grid-cols-2 gap-x-4 gap-y-3 m-0">
-            <dt class={rowLabelClass}><T t={t.reserveForm} /></dt>
-            <dd class={rowValueClass}><T t={t.reserveFormValue} /></dd>
-
+          <ul class="list-none p-0 m-0 flex flex-col gap-3">
+            {composition.map((item) => (
+              <li class="flex items-baseline justify-between gap-4 border-b border-white/[0.06] pb-3 last:border-0 last:pb-0">
+                <span class="text-white text-sm leading-6"><T t={item.label} /></span>
+                <span class="text-white text-sm font-medium tabular-nums shrink-0">
+                  {item.share ? <T t={item.share} /> : "—"}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <dl class="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-3 m-0">
             <dt class={rowLabelClass}><T t={t.custodian} /></dt>
-            <dd class={rowValueClass}><span data-tp="custodian">{custodian}</span></dd>
-
-            <dt class={rowLabelClass}><T t={t.account} /></dt>
-            <dd class={rowValueClass}>
-              <span data-tp="account">{account ? account : <T t={t.notAvailable} />}</span>
-            </dd>
+            {/* The custodian is a fact about USDX, not a figure, so it is named
+                even before the API answers. Only ever the bank's name — an
+                account number must never reach this page. */}
+            <dd class={rowValueClass}><span data-tp="custodian">{RESERVE_CUSTODIAN}</span></dd>
 
             <dt class={rowLabelClass}><T t={t.issuer} /></dt>
             <dd class={rowValueClass}>{COMPANY_LEGAL_NAME}</dd>
           </dl>
-          <p class={`text-white/60 text-sm leading-6 m-0 ${reserveNote ? "" : "hidden"}`} data-tp-note-row>
-            <span class="text-white/45"><T t={t.note} />: </span>
-            <span data-tp="note">{reserveNote}</span>
-          </p>
+          <p class="text-white/60 text-sm leading-6 m-0"><T t={t.reserveCompositionNote} /></p>
         </div>
-      </section>
-      */}
 
-      <!-- Contract address — independent of the reserve data, and the first
-           thing an explorer reviewer looks for.
+        <!-- Contract address — the first thing an explorer reviewer looks for.
 
-           Hidden until the API hands over a real contract address. A card
-           titled "Contract Address" whose address reads "not yet available" is
-           the exact kind of unfinished placeholder that got the token-info
-           submission rejected — better to show nothing than a blank promise.
-           renderToken() reveals it. -->
-      <section data-tp-contract class={`${cardClass} hidden`}>
-        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5 max-w-[760px]">
+             STATIC, from src/data/token.ts, and deliberately not taken from the
+             API response even though the response carries a token block. There
+             are two USDX deployments on Polygon mainnet, and this same static
+             build is served on preview hosts that talk to the DEV backend,
+             which still points at the abandoned 0x2702… deployment. Letting the
+             response set this value would put a dead address under a
+             USDX-branded "Contract Address" heading — the one field on this
+             page a reader cannot check without being told it first, and the
+             exact thing address-swap scams rely on. It changes when a human
+             changes it in the repo, with DEPLOYED.md open. -->
+        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
           <h2 class={sectionHeadingClass}><T t={t.contractHeading} /></h2>
-          <!-- Columns hug their content: a stretched 2-column grid with
-               right-aligned values leaves a canyon between "Network" and
-               "Polygon" on a card this wide. -->
           <dl class="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-3 m-0">
             <dt class={rowLabelClass}><T t={ui.token.network} /></dt>
-            <dd class={contractValueClass}><span data-tp="chain">Polygon</span></dd>
+            <dd class={rowValueClass}>{tokenInfo.network}</dd>
 
             <dt class={rowLabelClass}><T t={ui.token.symbol} /></dt>
-            <dd class={contractValueClass}><span data-tp="symbol">USDX</span></dd>
+            <dd class={rowValueClass}>{tokenInfo.symbol}</dd>
 
             <dt class={rowLabelClass}><T t={ui.token.decimals} /></dt>
-            <dd class={contractValueClass}>
-              <span data-tp="decimals">—</span>
-            </dd>
+            <dd class={rowValueClass}>{String(tokenInfo.decimals)}</dd>
           </dl>
           <div class="flex flex-col gap-2">
             <span class={rowLabelClass}><T t={ui.token.contractAddress} /></span>
-            <code
-              data-tp="address"
-              class="block break-all rounded-lg bg-black/50 border border-white/10 px-3 py-2.5 text-white text-[13px] leading-5 font-mono"
-            >—</code>
+            <code class="block break-all rounded-lg bg-black/50 border border-white/10 px-3 py-2.5 text-white text-[13px] leading-5 font-mono">{contractAddress}</code>
           </div>
-          {/* No href until the API hands over a real PolygonScan URL: an anchor
-              without href is not a link, so nothing dead ships in the HTML. */}
-          <a
-            data-tp-explorer
-            target="_blank"
-            rel="noopener noreferrer"
-            class="hidden w-fit items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
-          >
-            <T t={ui.token.explorer} />
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5h5v5M19 5l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
-            </svg>
-          </a>
+          {explorerUrl && (
+            <a
+              href={explorerUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex w-fit items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
+            >
+              <T t={ui.token.explorer} />
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5h5v5M19 5l-8 8M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" />
+              </svg>
+            </a>
+          )}
         </div>
       </section>
 
-      {/* FIGURES — "how these figures are read" (supply + collateral ratio
-          definitions). Nothing to explain while no figure is on screen.
-
+      <!-- How the figures are read -->
       <section class={cardClass}>
         <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
           <h2 class={sectionHeadingClass}><T t={t.methodHeading} /></h2>
@@ -278,7 +305,6 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
           </div>
         </div>
       </section>
-      */}
 
       <!-- Smart contract audit -->
       <section class={cardClass}>
@@ -309,8 +335,13 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
   import {
     resolveApiBaseUrl,
     resolveAttestationFileUrl,
+    RESERVE_CUSTODIAN,
     TRANSPARENCY_PATH,
+    formatAmount,
+    formatDateTimeWib,
+    formatPegLine,
     formatPeriod,
+    formatRatio,
     type TransparencyEnvelope,
     type TransparencyData,
     type TransparencyAttestation,
@@ -347,28 +378,74 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
     return fragment;
   }
 
+  function show(selector: string, visible: boolean) {
+    document
+      .querySelectorAll<HTMLElement>(selector)
+      .forEach((el) => el.classList.toggle("hidden", !visible));
+  }
+
   function setStatus(message: Translated) {
     const el = document.querySelector<HTMLElement>("[data-tp-status]");
     if (el) el.replaceChildren(bilingualNode(message));
   }
 
+  // ── Figures ────────────────────────────────────────────────────────────────
+
   /**
-   * The explorer link only ever accepts an absolute PolygonScan URL. Unlike the
-   * attestation file links (see resolveAttestationFileUrl), a relative value
-   * here would be meaningless, so there is no base to resolve against.
+   * Format a decimal string into both languages, or null if there is nothing to
+   * format. Null is the honest answer and every caller turns it into words —
+   * this is the single place a missing figure could have become a 0, and it
+   * does not.
    */
-  function safePolygonscanUrl(raw: string | undefined): string | null {
-    if (!raw) return null;
-    try {
-      const url = new URL(raw);
-      if (url.protocol !== "https:") return null;
-      if (url.hostname !== "polygonscan.com" && !url.hostname.endsWith(".polygonscan.com")) {
-        return null;
-      }
-      return url.href;
-    } catch {
-      return null;
-    }
+  function bilingual(
+    format: (value: string, lang: Lang) => string,
+    value: string | null | undefined,
+  ): Translated | null {
+    if (!value) return null;
+    const id = format(value, "id");
+    const en = format(value, "en");
+    return id && en ? { id, en } : null;
+  }
+
+  /** "<prefix> 10 Agustus 2026, 11.05 WIB", or a plain "no timestamp" line. */
+  function caption(prefix: Translated, iso: string | null | undefined): Translated {
+    const stamp = bilingual(formatDateTimeWib, iso);
+    if (!stamp) return t.captionUnavailable;
+    return { id: `${prefix.id} ${stamp.id}`, en: `${prefix.en} ${stamp.en}` };
+  }
+
+  /**
+   * Fill one headline figure. When the value is missing, the number reads
+   * "Belum tersedia" and its unit/currency is hidden with it, so nothing on
+   * screen ever reads "Belum tersedia USDX" — or, worse, "USD 0,00".
+   */
+  function setFigure(key: string, value: Translated | null, affix?: string) {
+    setValue(key, value ?? t.notAvailable);
+    if (affix) show(`[data-tp-affix="${affix}"]`, value !== null);
+  }
+
+  function renderFigures(data: TransparencyData) {
+    const supply = bilingual(formatAmount, data.circulatingSupply?.amount);
+    setFigure("supply", supply, "supply");
+    setValue("supply-unit", data.circulatingSupply?.unit?.trim() || "USDX");
+    setValue("supply-caption", caption(t.supplyCaption, data.circulatingSupply?.readAt));
+
+    const reserve = bilingual(formatAmount, data.reserve?.amount);
+    setFigure("reserve", reserve, "reserve");
+    setValue("reserve-currency", data.reserve?.currency?.trim() || "USD");
+    setValue("reserve-caption", caption(t.reserveCaption, data.reserve?.balanceAt));
+
+    setFigure("ratio", bilingual(formatRatio, data.collateralRatio));
+    const peg = bilingual(formatPegLine, data.collateralRatio);
+    if (peg) setValue("peg", peg);
+    show("[data-tp-peg-row]", peg !== null);
+
+    setValue("updated-caption", caption(t.updatedCaption, data.updatedAt));
+
+    // The custodian keeps its baked-in name when the reserve is still null —
+    // it is a documented fact rather than a balance, so "not yet available"
+    // would be the wrong answer.
+    setValue("custodian", data.reserve?.custodian?.trim() || RESERVE_CUSTODIAN);
   }
 
   // ── Attestation table ──────────────────────────────────────────────────────
@@ -481,78 +558,6 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
     empty.classList.add("hidden");
   }
 
-  // ── Contract card ──────────────────────────────────────────────────────────
-
-  function renderToken(data: TransparencyData) {
-    // No address, no card. An address is the one field on it that a reader
-    // cannot look up for themselves, so a card without one says nothing and
-    // reads as unfinished. It stays hidden until the API supplies a real one.
-    if (!data.token?.contractAddress) return;
-
-    setValue("chain", data.token.chain === "polygon" ? "Polygon" : data.token.chain);
-    setValue("symbol", data.token.symbol);
-    setValue(
-      "decimals",
-      typeof data.token.decimals === "number" ? String(data.token.decimals) : "—",
-    );
-    setValue("address", data.token.contractAddress);
-    document.querySelector("[data-tp-contract]")?.classList.remove("hidden");
-
-    // The explorer link stays hidden unless the backend hands over a real
-    // PolygonScan URL (or an address to build one from).
-    const explorer =
-      safePolygonscanUrl(data.token.explorerUrl) ??
-      (data.token.contractAddress
-        ? `https://polygonscan.com/token/${encodeURIComponent(data.token.contractAddress)}`
-        : null);
-    const link = document.querySelector<HTMLAnchorElement>("[data-tp-explorer]");
-    if (link && explorer) {
-      link.href = explorer;
-      link.classList.remove("hidden");
-      link.classList.add("inline-flex");
-    }
-  }
-
-  /* FIGURES — the number slots this page used to fill from the same response.
-     The fields are still on TransparencyData; they are simply not rendered
-     while the reserve position is unpublished. Bring this back together with
-     the commented markup above.
-
-  function bilingual(
-    format: (value: string, lang: Lang) => string,
-    value: string | null | undefined,
-  ): Translated {
-    if (!value) return t.notAvailable;
-    const id = format(value, "id");
-    const en = format(value, "en");
-    return id && en ? { id, en } : t.notAvailable;
-  }
-
-  function renderFigures(data: TransparencyData) {
-    setValue("supply", bilingual(formatAmount, data.circulatingSupply?.amount));
-    setValue("supply-unit", data.circulatingSupply?.unit ?? "USDX");
-    setValue("supply-read-at", bilingual(formatDateTime, data.circulatingSupply?.readAt));
-
-    setValue("reserve", bilingual(formatAmount, data.reserve?.amount));
-    setValue("reserve-currency", data.reserve?.currency ?? "USD");
-    setValue("reserve-as-of", bilingual(formatDate, data.reserve?.asOf));
-    setValue("ratio", bilingual(formatRatio, data.collateralRatio));
-    setValue("updated-at", bilingual(formatDateTime, data.updatedAt));
-
-    // A missing reserve snapshot must read as "not yet available", never as 0.
-    setValue("custodian", data.reserve?.custodian ?? "Bank BNI");
-    setValue("account", data.reserve?.accountLabel ? data.reserve.accountLabel : t.notAvailable);
-
-    const noteRow = document.querySelector<HTMLElement>("[data-tp-note-row]");
-    if (data.reserve?.note) {
-      setValue("note", data.reserve.note);
-      noteRow?.classList.remove("hidden");
-    } else {
-      noteRow?.classList.add("hidden");
-    }
-  }
-  */
-
   async function load() {
     const apiBaseUrl = resolveApiBaseUrl(window.location.hostname);
     try {
@@ -564,11 +569,13 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = (await response.json()) as TransparencyEnvelope;
       if (!body?.data) throw new Error("empty payload");
+      renderFigures(body.data);
       renderAttestations(body.data.attestations ?? [], apiBaseUrl);
-      renderToken(body.data);
       setStatus(t.statusLive);
     } catch {
-      // Leave whatever is baked into the HTML in place and say so plainly.
+      // Leave whatever is baked into the HTML in place and say so plainly. The
+      // figure slots keep their "Belum tersedia" wording rather than collapsing
+      // to zero, and the contract card is static, so the page stays whole.
       setStatus(t.statusFallback);
     }
   }
