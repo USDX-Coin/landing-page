@@ -26,8 +26,10 @@ import { AUDIT_REPORT_URL } from "../data/audit";
 import { COMPANY_LEGAL_NAME } from "../data/company";
 import { tokenInfo, polygonscanTokenUrl } from "../data/token";
 import {
+  RESERVE_BANK,
   RESERVE_COMPOSITION,
-  RESERVE_CUSTODIAN,
+  RESERVE_CURRENCY,
+  SUPPLY_UNIT,
   TRANSPARENCY_FALLBACK,
   formatAmount,
   formatDateTimeWib,
@@ -61,11 +63,9 @@ const caption = (prefix: Translated, iso?: string | null): Translated => {
 const fallback = TRANSPARENCY_FALLBACK;
 
 const supplyAmount = bilingual(formatAmount, fallback.circulatingSupply?.amount);
-const supplyUnit = fallback.circulatingSupply?.unit ?? "USDX";
 const supplyCaption = caption(t.supplyCaption, fallback.circulatingSupply?.readAt);
 
 const reserveAmount = bilingual(formatAmount, fallback.reserve?.amount);
-const reserveCurrency = fallback.reserve?.currency ?? "USD";
 const reserveCaption = caption(t.reserveCaption, fallback.reserve?.balanceAt);
 
 const ratio = bilingual(formatRatio, fallback.collateralRatio);
@@ -88,6 +88,12 @@ const figureLabelClass = "text-white/55 text-sm";
 const figureValueClass = "text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0";
 // Unit and currency sit beside the number, and are hidden whenever the number
 // itself is unavailable — "Belum tersedia USDX" is not a sentence.
+//
+// Both are printed from the repo's own constants and are never rewritten by the
+// browser script. They are the labels that say what the number MEANS, and a
+// label that arrives over the network is one an upstream mistake can change
+// under a figure that stays put. A response naming a different unit or currency
+// costs that figure its slot instead — see buildFiguresView.
 const figureAffixClass = "text-white/50 text-xl";
 // `mt-auto` pins every caption to the bottom of its card, so the three line up
 // even though the ratio card carries an extra line above it.
@@ -133,16 +139,15 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
 
       <!-- Headline figures: circulating supply, reserve assets, collateral
            ratio. Each ships with its unavailable state and is filled in by
-           renderFigures() once the API answers. -->
+           applyFigures() once the API answers. -->
       <section class="mx-auto w-full max-w-[1376px] grid gap-4 md:grid-cols-3">
         <div class={figureCardClass}>
           <span class={figureLabelClass}><T t={t.supplyLabel} /></span>
           <p class={figureValueClass}>
             <span data-tp="supply">{supplyAmount ? <T t={supplyAmount} /> : <T t={t.notAvailable} />}</span><span
-              data-tp="supply-unit"
               data-tp-affix="supply"
               class={`${figureAffixClass} ml-2 ${supplyAmount ? "" : "hidden"}`}
-            >{supplyUnit}</span>
+            >{SUPPLY_UNIT}</span>
           </p>
           <p class={captionClass}><span data-tp="supply-caption"><T t={supplyCaption} /></span></p>
         </div>
@@ -151,10 +156,9 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
           <span class={figureLabelClass}><T t={t.reserveLabel} /></span>
           <p class={figureValueClass}>
             <span
-              data-tp="reserve-currency"
               data-tp-affix="reserve"
               class={`${figureAffixClass} mr-2 ${reserveAmount ? "" : "hidden"}`}
-            >{reserveCurrency}</span><span data-tp="reserve">{reserveAmount ? <T t={reserveAmount} /> : <T t={t.notAvailable} />}</span>
+            >{RESERVE_CURRENCY}</span><span data-tp="reserve">{reserveAmount ? <T t={reserveAmount} /> : <T t={t.notAvailable} />}</span>
           </p>
           <p class={captionClass}><span data-tp="reserve-caption"><T t={reserveCaption} /></span></p>
         </div>
@@ -177,6 +181,8 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       <!-- Attestation documents -->
       <section class={cardClass}>
         <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5">
+          <h2 class={sectionHeadingClass}><T t={t.docsHeading} /></h2>
+
           {/* Hidden until there is at least one row — an empty table with
               headers and nothing under them looks broken. */}
           <div data-doc-table-wrap class="hidden overflow-x-auto -mx-2 px-2">
@@ -196,7 +202,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
 
           <p data-doc-id-note class="hidden text-white/45 text-xs leading-5 m-0"><T t={t.idNote} /></p>
 
-          {/* Three mutually exclusive states, and which one ships in the static
+          {/* Four mutually exclusive states, and which one ships in the static
               HTML matters. The table is built entirely in the browser from the
               API response, so anything visible here by default is what a
               crawler, a link-preview bot, or a reviewer with JavaScript off will
@@ -206,10 +212,21 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
               unconditional, telling every one of those readers that no
               attestation had ever been published, however many actually had.
               The initial state is now "pending", which claims nothing: it only
-              says where the list comes from. renderAttestations() then reveals
-              exactly one of the table or "empty", and a failed fetch leaves
-              "pending" standing next to the status line that explains it. */}
+              says where the list comes from. applyAttestations() then reveals
+              exactly one of the table, "empty" or "unavailable", and a failed
+              fetch leaves "pending" standing next to the status line that
+              explains it.
+
+              "empty" and "unavailable" are separate on purpose, and the
+              separation is the whole point of the state machine: "no document
+              has been published yet" is a statement about USDX, reachable only
+              from a list the API actually sent with nothing in it. A missing or
+              unreadable list gets "unavailable", which states nothing about how
+              many reports exist. The two shared one sentence until recently,
+              and it was the wrong one. */}
           <p data-doc-empty class="hidden text-white/55 text-sm leading-6 m-0"><T t={t.empty} /></p>
+
+          <p data-doc-unavailable class="hidden text-white/55 text-sm leading-6 m-0"><T t={t.listUnavailable} /></p>
 
           <p data-doc-pending class="text-white/55 text-sm leading-6 m-0"><T t={t.listPending} /></p>
         </div>
@@ -233,11 +250,16 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
             ))}
           </ul>
           <dl class="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-3 m-0">
-            <dt class={rowLabelClass}><T t={t.custodian} /></dt>
-            {/* The custodian is a fact about USDX, not a figure, so it is named
-                even before the API answers. Only ever the bank's name — an
-                account number must never reach this page. */}
-            <dd class={rowValueClass}><span data-tp="custodian">{RESERVE_CUSTODIAN}</span></dd>
+            <dt class={rowLabelClass}><T t={t.reserveBank} /></dt>
+            {/* Where the reserves are held is a fact about USDX, not a figure,
+                so it is named even before the API answers — and it is named
+                from the repo's constant, never from `reserve.custodian` in the
+                response. The contract hardcodes that field server-side so no
+                free-text staff input can carry an account number onto a public
+                page; rendering the local constant means no value from the
+                network reaches this line at all. The browser script does not
+                touch it. */}
+            <dd class={rowValueClass}>{RESERVE_BANK}</dd>
 
             <dt class={rowLabelClass}><T t={t.issuer} /></dt>
             <dd class={rowValueClass}>{COMPANY_LEGAL_NAME}</dd>
@@ -331,23 +353,30 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
 </Layout>
 
 <script>
+  // The BROWSER SIDE of /transparency, and deliberately nothing but wiring.
+  //
+  // Every decision — what a figure reads, which of the attestation card's four
+  // states to show, which status line goes with them — is made by pure functions
+  // in ../data/transparencyView.ts, where tests can reach them. Code that lives
+  // inside this block cannot be imported, and the two worst bugs this page has
+  // had both lived here for exactly that reason. What is left is DOM writing:
+  // put this string in that element, show this one, hide that one.
   import { ui, type Lang, type Translated } from "../i18n";
+  import { resolveApiBaseUrl, TRANSPARENCY_PATH, type TransparencyEnvelope } from "../data/transparency";
   import {
-    resolveApiBaseUrl,
-    resolveAttestationFileUrl,
-    RESERVE_CUSTODIAN,
-    TRANSPARENCY_PATH,
-    formatAmount,
-    formatDateTimeWib,
-    formatPegLine,
-    formatPeriod,
-    formatRatio,
-    type TransparencyEnvelope,
-    type TransparencyData,
-    type TransparencyAttestation,
-  } from "../data/transparency";
+    buildView,
+    type AttestationRow,
+    type AttestationsView,
+    type FiguresView,
+    type TransparencyStatus,
+  } from "../data/transparencyView";
 
   const t = ui.transparency;
+
+  const STATUS_LINE: Record<TransparencyStatus, Translated> = {
+    live: t.statusLive,
+    partial: t.statusLivePartial,
+  };
 
   /**
    * Write a value into every `[data-tp="<key>"]` slot. Translated values render
@@ -392,29 +421,6 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
   // ── Figures ────────────────────────────────────────────────────────────────
 
   /**
-   * Format a decimal string into both languages, or null if there is nothing to
-   * format. Null is the honest answer and every caller turns it into words —
-   * this is the single place a missing figure could have become a 0, and it
-   * does not.
-   */
-  function bilingual(
-    format: (value: string, lang: Lang) => string,
-    value: string | null | undefined,
-  ): Translated | null {
-    if (!value) return null;
-    const id = format(value, "id");
-    const en = format(value, "en");
-    return id && en ? { id, en } : null;
-  }
-
-  /** "<prefix> 10 Agustus 2026, 11.05 WIB", or a plain "no timestamp" line. */
-  function caption(prefix: Translated, iso: string | null | undefined): Translated {
-    const stamp = bilingual(formatDateTimeWib, iso);
-    if (!stamp) return t.captionUnavailable;
-    return { id: `${prefix.id} ${stamp.id}`, en: `${prefix.en} ${stamp.en}` };
-  }
-
-  /**
    * Fill one headline figure. When the value is missing, the number reads
    * "Belum tersedia" and its unit/currency is hidden with it, so nothing on
    * screen ever reads "Belum tersedia USDX" — or, worse, "USD 0,00".
@@ -424,28 +430,22 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
     if (affix) show(`[data-tp-affix="${affix}"]`, value !== null);
   }
 
-  function renderFigures(data: TransparencyData) {
-    const supply = bilingual(formatAmount, data.circulatingSupply?.amount);
-    setFigure("supply", supply, "supply");
-    setValue("supply-unit", data.circulatingSupply?.unit?.trim() || "USDX");
-    setValue("supply-caption", caption(t.supplyCaption, data.circulatingSupply?.readAt));
+  function applyFigures(figures: FiguresView) {
+    setFigure("supply", figures.supply, "supply");
+    setValue("supply-caption", figures.supplyCaption);
 
-    const reserve = bilingual(formatAmount, data.reserve?.amount);
-    setFigure("reserve", reserve, "reserve");
-    setValue("reserve-currency", data.reserve?.currency?.trim() || "USD");
-    setValue("reserve-caption", caption(t.reserveCaption, data.reserve?.balanceAt));
+    setFigure("reserve", figures.reserve, "reserve");
+    setValue("reserve-caption", figures.reserveCaption);
 
-    setFigure("ratio", bilingual(formatRatio, data.collateralRatio));
-    const peg = bilingual(formatPegLine, data.collateralRatio);
-    if (peg) setValue("peg", peg);
-    show("[data-tp-peg-row]", peg !== null);
+    setFigure("ratio", figures.ratio);
+    if (figures.peg) setValue("peg", figures.peg);
+    show("[data-tp-peg-row]", figures.peg !== null);
 
-    setValue("updated-caption", caption(t.updatedCaption, data.updatedAt));
+    setValue("updated-caption", figures.updatedCaption);
 
-    // The custodian keeps its baked-in name when the reserve is still null —
-    // it is a documented fact rather than a balance, so "not yet available"
-    // would be the wrong answer.
-    setValue("custodian", data.reserve?.custodian?.trim() || RESERVE_CUSTODIAN);
+    // The unit, the currency and the bank the reserves are held at are printed
+    // from the repo's own constants in the static markup, and nothing here
+    // overwrites them. See the note beside RESERVE_BANK.
   }
 
   // ── Attestation table ──────────────────────────────────────────────────────
@@ -456,110 +456,66 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
     return td;
   }
 
-  /** "2026-07" -> "2026". Falls back to an em dash when the period is malformed. */
-  function yearOf(period: string): string {
-    const match = /^(\d{4})-\d{2}$/.exec(period);
-    return match ? match[1] : "—";
-  }
+  function rowNode(row: AttestationRow): HTMLTableRowElement {
+    const tr = document.createElement("tr");
+    tr.className = "border-b border-white/[0.06] last:border-0";
 
-  /**
-   * The document's public ID: its reporting period, verbatim.
-   *
-   * This used to be a running counter (`index + 1` over the list sorted oldest
-   * first) while the note under the table promised the number never changes.
-   * The counter could not keep that promise, because it was a function of the
-   * LIST rather than of the document: an older period uploaded late renumbered
-   * every document after it, a withdrawn report pulled every later number down
-   * by one, and the backend only returns the last 24 reports, so the window
-   * sliding forward renumbered the whole column.
-   *
-   * The period is a property of the document itself, so nothing else in the list
-   * can move it. Malformed values fall back to an em dash rather than inventing
-   * an ID.
-   */
-  function documentId(period: string): string {
-    return /^\d{4}-\d{2}$/.test(period) ? period : "—";
-  }
+    const idCell = cell("px-4 py-4 text-white/45 text-sm tabular-nums align-middle");
+    idCell.textContent = row.id;
 
-  function monthNode(period: string): Node {
-    // Month name follows the active site language, like every other label.
-    if (!/^\d{4}-\d{2}$/.test(period)) return document.createTextNode(period || "—");
-    return bilingualNode({ id: formatPeriod(period, "id"), en: formatPeriod(period, "en") });
-  }
+    const nameCell = cell("px-4 py-4 text-white text-sm font-medium align-middle");
+    nameCell.textContent = row.title;
 
-  function renderAttestations(attestations: TransparencyAttestation[], apiBaseUrl: string) {
-    const wrap = document.querySelector<HTMLElement>("[data-doc-table-wrap]");
-    const body = document.querySelector<HTMLTableSectionElement>("[data-doc-rows]");
-    const empty = document.querySelector<HTMLElement>("[data-doc-empty]");
-    const pending = document.querySelector<HTMLElement>("[data-doc-pending]");
-    const idNote = document.querySelector<HTMLElement>("[data-doc-id-note]");
-    if (!wrap || !body || !empty || !pending || !idNote) return;
+    const monthCell = cell("px-4 py-4 text-white/70 text-sm align-middle");
+    monthCell.append(bilingualNode(row.month));
 
-    // The API has answered, so the "loading from the API" line has done its job
-    // either way.
-    pending.classList.add("hidden");
+    const yearCell = cell("px-4 py-4 text-white/70 text-sm tabular-nums align-middle");
+    yearCell.textContent = row.year;
 
-    if (attestations.length === 0) {
-      wrap.classList.add("hidden");
-      idNote.classList.add("hidden");
-      empty.classList.remove("hidden");
-      return;
+    const actionCell = cell("px-4 py-4 text-right align-middle");
+    if (row.href) {
+      const link = document.createElement("a");
+      link.href = row.href;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      link.className =
+        "inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium no-underline transition-colors";
+      link.append(bilingualNode(t.download));
+      actionCell.append(link);
+    } else {
+      // No usable file link: say so rather than render a button that goes
+      // nowhere.
+      const dash = document.createElement("span");
+      dash.className = "text-white/35 text-sm";
+      dash.textContent = "—";
+      actionCell.append(dash);
     }
 
-    // Newest period first. The ID is the period itself (see documentId), so the
-    // sort only decides the reading order — it can no longer change any ID. A
-    // UUID is never shown to the public.
-    const newestFirst = [...attestations].sort((a, b) => b.period.localeCompare(a.period));
+    tr.append(idCell, nameCell, monthCell, yearCell, actionCell);
+    return tr;
+  }
 
-    body.replaceChildren(
-      ...newestFirst.map((item) => {
-        const tr = document.createElement("tr");
-        tr.className = "border-b border-white/[0.06] last:border-0";
+  function applyAttestations(view: AttestationsView) {
+    const body = document.querySelector<HTMLTableSectionElement>("[data-doc-rows]");
+    if (!body) return;
 
-        const idCell = cell("px-4 py-4 text-white/45 text-sm tabular-nums align-middle");
-        idCell.textContent = documentId(item.period);
+    const isList = view.state === "list";
+    // Rows go in BEFORE anything is revealed, so the card can never be shown
+    // around an empty table. The old code hid the "loading" line first and then
+    // threw partway through building the rows, leaving a bare 98px box with
+    // nothing in it and no sentence to explain it.
+    if (view.state === "list") body.replaceChildren(...view.rows.map(rowNode));
 
-        const nameCell = cell("px-4 py-4 text-white text-sm font-medium align-middle");
-        nameCell.textContent = item.title;
-
-        const monthCell = cell("px-4 py-4 text-white/70 text-sm align-middle");
-        monthCell.append(monthNode(item.period));
-
-        const yearCell = cell("px-4 py-4 text-white/70 text-sm tabular-nums align-middle");
-        yearCell.textContent = yearOf(item.period);
-
-        const actionCell = cell("px-4 py-4 text-right align-middle");
-        const href = resolveAttestationFileUrl(item.fileUrl, apiBaseUrl);
-        if (href) {
-          const link = document.createElement("a");
-          link.href = href;
-          link.target = "_blank";
-          link.rel = "noopener noreferrer";
-          link.className =
-            "inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium no-underline transition-colors";
-          link.append(bilingualNode(t.download));
-          actionCell.append(link);
-        } else {
-          // No usable file link: say so rather than render a button that goes
-          // nowhere.
-          const dash = document.createElement("span");
-          dash.className = "text-white/35 text-sm";
-          dash.textContent = "—";
-          actionCell.append(dash);
-        }
-
-        tr.append(idCell, nameCell, monthCell, yearCell, actionCell);
-        return tr;
-      }),
-    );
-
-    wrap.classList.remove("hidden");
-    idNote.classList.remove("hidden");
-    empty.classList.add("hidden");
+    show("[data-doc-table-wrap]", isList);
+    show("[data-doc-id-note]", isList);
+    show("[data-doc-empty]", view.state === "empty");
+    show("[data-doc-unavailable]", view.state === "unavailable");
+    show("[data-doc-pending]", false);
   }
 
   async function load() {
     const apiBaseUrl = resolveApiBaseUrl(window.location.hostname);
+    let view: ReturnType<typeof buildView> = null;
     try {
       const response = await fetch(`${apiBaseUrl}${TRANSPARENCY_PATH}`, {
         headers: { Accept: "application/json" },
@@ -568,16 +524,28 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = (await response.json()) as TransparencyEnvelope;
-      if (!body?.data) throw new Error("empty payload");
-      renderFigures(body.data);
-      renderAttestations(body.data.attestations ?? [], apiBaseUrl);
-      setStatus(t.statusLive);
+      view = buildView(body?.data, apiBaseUrl);
+      if (!view) throw new Error("empty payload");
     } catch {
-      // Leave whatever is baked into the HTML in place and say so plainly. The
-      // figure slots keep their "Belum tersedia" wording rather than collapsing
-      // to zero, and the contract card is static, so the page stays whole.
+      // Nothing usable arrived. Leave whatever is baked into the HTML in place
+      // and say so plainly: the figure slots keep their "Belum tersedia"
+      // wording rather than collapsing to zero, the document list keeps its
+      // "loaded from the API" line rather than claiming none exists, and the
+      // contract card is static, so the page stays whole.
+      //
+      // ONLY the fetch and the reading of it sit in this try. Rendering does
+      // not, because a failure while rendering used to be reported as a failure
+      // to LOAD: the figures were already on screen, filled from the response,
+      // under a status line announcing that they could not be shown. Everything
+      // below this point is total — buildView never throws — so the status line
+      // and the screen agree.
       setStatus(t.statusFallback);
+      return;
     }
+
+    applyFigures(view.figures);
+    applyAttestations(view.attestations);
+    setStatus(STATUS_LINE[view.status]);
   }
 
   void load();

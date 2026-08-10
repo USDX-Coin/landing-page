@@ -282,6 +282,15 @@ export const ui = {
 
     statusLoading: { id: "Memuat data terbaru…", en: "Loading the latest data…" },
     statusLive: { id: "Data langsung dari API USDX.", en: "Live data from the USDX API." },
+    // Shown when the figures came through but the document list did not — the
+    // page half-succeeded, which it can do and used to lie about. A malformed
+    // `attestations` value left three freshly filled figure cards sitting under
+    // a status line that said the figures could not be shown. A status line is
+    // only worth having if it describes what is actually on the screen.
+    statusLivePartial: {
+      id: "Angka di halaman ini dimuat langsung dari API USDX. Daftar dokumen belum dapat ditampilkan saat ini.",
+      en: "The figures on this page are live from the USDX API. The document list cannot be shown right now.",
+    },
     // Neither line promises anything is still on screen after a failed fetch.
     // Nothing about the document list is baked into the HTML — the table is
     // built entirely from the API response — and TRANSPARENCY_FALLBACK carries
@@ -304,6 +313,10 @@ export const ui = {
     notAvailable: { id: "Belum tersedia", en: "Not yet available" },
 
     // ── Attestation table (moved here from the old /docs page) ──────────────
+    // The card carrying the table had no heading while the three cards around
+    // it did, so the table opened straight into column labels with nothing
+    // naming it — including for anyone reading the page through its headings.
+    docsHeading: { id: "Laporan Atestasi Bulanan", en: "Monthly Attestation Reports" },
     colId: { id: "ID", en: "ID" },
     colName: { id: "Nama", en: "Name" },
     colMonth: { id: "Bulan", en: "Month" },
@@ -337,6 +350,16 @@ export const ui = {
     listPending: {
       id: "Daftar dokumen dimuat langsung dari API USDX saat halaman ini dibuka.",
       en: "The document list is loaded directly from the USDX API when this page opens.",
+    },
+    // The API answered, but not with a list this page can read: no
+    // `attestations` field, or a value of some other shape. That says nothing
+    // about how many reports exist, so neither does this line. It exists so the
+    // difference between "we cannot show the list" and "no report has ever been
+    // published" survives all the way to the reader — the two used to share a
+    // single sentence, and it was the second one.
+    listUnavailable: {
+      id: "Daftar dokumen belum dapat ditampilkan saat ini. Silakan muat ulang halaman ini beberapa saat lagi.",
+      en: "The document list cannot be shown right now. Please reload this page in a little while.",
     },
 
     contractHeading: { id: "Alamat Kontrak", en: "Contract Address" },
@@ -382,11 +405,25 @@ export const ui = {
     // States the absence explicitly. Readers arrive at this page having seen
     // other stablecoins list treasuries and money market funds, and will assume
     // the same mix unless told otherwise.
+    // The attestation table sits ABOVE this card, so the note used to point
+    // readers "di bawah" / "below" at a table they had already scrolled past.
+    // It names the page instead of a direction, which stays true whatever the
+    // cards are reordered into next.
     reserveCompositionNote: {
-      id: "Cadangan USDX seluruhnya berbentuk kas Dolar AS. Tidak ada surat utang negara, reksa dana pasar uang, atau instrumen lain di dalamnya. Isi cadangan diverifikasi secara independen lewat atestasi bulanan yang tercantum di bawah.",
-      en: "USDX reserves are held entirely as U.S. dollar cash. They contain no treasury instruments, no money market funds and no other instruments. What the reserves hold is verified independently through the monthly attestations listed below.",
+      id: "Cadangan USDX seluruhnya berbentuk kas Dolar AS. Tidak ada surat utang negara, reksa dana pasar uang, atau instrumen lain di dalamnya. Isi cadangan diverifikasi secara independen lewat atestasi bulanan yang tercantum di halaman ini.",
+      en: "USDX reserves are held entirely as U.S. dollar cash. They contain no treasury instruments, no money market funds and no other instruments. What the reserves hold is verified independently through the monthly attestations listed on this page.",
     },
-    custodian: { id: "Kustodian", en: "Custodian" },
+    // NOT "Kustodian" / "Custodian". The official documentation says the
+    // reserves are "held in U.S. dollar cash at Bank Negara Indonesia (BNI)"
+    // and never once calls BNI a custodian — which is a licensed banking role
+    // with a specific meaning, not a synonym for the bank an account is at.
+    // The same phrase ("di kustodian Bank BNI") was already taken out of the
+    // footer and the meta description for being the site's own wording rather
+    // than the documentation's; putting it back on the transparency page, next
+    // to the reserve figures, is the same unbacked claim in the worst possible
+    // place. This label states where the money is and claims no role for
+    // anyone. See RESERVE_BANK in src/data/transparency.ts.
+    reserveBank: { id: "Bank penyimpan", en: "Held at" },
     issuer: { id: "Penerbit", en: "Issuer" },
 
     // ── How the figures are read ───────────────────────────────────────────
