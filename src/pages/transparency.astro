@@ -80,11 +80,61 @@ const composition = RESERVE_COMPOSITION.map((item) => ({
 const contractAddress = tokenInfo.contractAddress;
 const explorerUrl = contractAddress ? polygonscanTokenUrl(contractAddress) : "";
 
-const cardClass =
-  "relative mx-auto w-full max-w-[1376px] rounded-2xl border border-white/[0.07] bg-[#0f0f0f] overflow-hidden";
-const figureCardClass =
-  "rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-2";
-const figureLabelClass = "text-white/55 text-sm";
+// ── The page's surfaces, and why they are these values ──────────────────────
+//
+// This page is read, not skimmed: it is nothing but figures, label–value pairs
+// and a table. Its text contrast was never the problem — the body copy measured
+// 6.24 against its card and the row labels 4.53, both of which pass WCAG AA.
+// What was missing was SURFACE SEPARATION. Cards were #0f0f0f on a #0a0a0a
+// page, a contrast ratio of 1.033 where 1.00 means "invisible", edged with a
+// border at white/[0.07] worth 1.176 against the card it sat on. The whole page
+// was therefore one unbroken black field: nothing told the eye where one block
+// ended and the next began, which is tiring in a way that no per-element
+// contrast check can see.
+//
+// Two levers were available, and they are not worth the same:
+//
+//   SURFACE STEP is weak in this range. Going from #0f0f0f all the way to
+//   #1c1c20 buys only 1.033 -> 1.166, and every step costs text contrast on top
+//   of it (white/45 falls 4.53 -> 4.43, below where the captions already sat).
+//
+//   THE EDGE is where the value is. A border at white/[0.12] is 1.419 against
+//   its card — more separation than the entire surface range offers — and it is
+//   a hard boundary, which is what the eye actually reads a card by. It costs
+//   the text nothing.
+//
+// So the surface is lifted to #17171a (1.107 against the page, and text on it
+// still measures 6.13 at white/55, 5.26 at white/50) and most of the work is
+// given to a border that is genuinely visible. Keep both if either is touched:
+// the surface alone is too subtle to carry a card, and a border alone floats.
+//
+// The page stays near-black on purpose. It is the brand, and the fix here is
+// separation, not brightness.
+const SURFACE = "border border-white/[0.12] bg-[#17171a]";
+/** Hairlines INSIDE a card: table rows, list separators, caption rules. */
+const DIVIDER = "border-white/[0.10]";
+
+const cardClass = `relative mx-auto w-full max-w-[1376px] rounded-2xl ${SURFACE} overflow-hidden`;
+const figureCardClass = `rounded-2xl ${SURFACE} p-6 sm:p-7 flex flex-col gap-3`;
+// ── The type scale, and the four roles it has to keep apart ─────────────────
+//
+// Everything on this page used to be 12–14px, which left a figure's label, a
+// row's label and a paragraph of prose all looking like the same kind of thing.
+// Four roles now read differently at a glance, before a word of any of them is
+// read:
+//
+//   LABEL    small, dim, uppercase, tracked — names a number, is never one
+//   VALUE    16px, white, medium — the answer
+//   PROSE    16px/28, white/70 — sentences, capped at ~62 characters a line
+//   CAPTION  13px, white/50, under a rule — the timestamp and the footnotes
+//
+// Uppercase is what makes a label unmistakably a label rather than a short
+// sentence, and it puts the three figure labels in the same visual family as
+// the table's column headers, which are the same kind of thing. It is a CSS
+// transform: the strings in i18n.ts are untouched and screen readers still get
+// the original words.
+const figureLabelClass =
+  "text-white/60 text-xs font-semibold uppercase tracking-[0.08em] leading-5";
 const figureValueClass = "text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0";
 // Unit and currency sit beside the number, and are hidden whenever the number
 // itself is unavailable — "Belum tersedia USDX" is not a sentence.
@@ -94,26 +144,46 @@ const figureValueClass = "text-white font-serif font-medium text-3xl sm:text-[40
 // label that arrives over the network is one an upstream mistake can change
 // under a figure that stays put. A response naming a different unit or currency
 // costs that figure its slot instead — see buildFiguresView.
-const figureAffixClass = "text-white/50 text-xl";
+const figureAffixClass = "text-white/55 text-xl";
 // `mt-auto` pins every caption to the bottom of its card, so the three line up
-// even though the ratio card carries an extra line above it.
-const captionClass = "text-white/45 text-xs leading-5 m-0 mt-auto pt-2";
+// even though the ratio card carries an extra line above it. That left a void
+// of dead space in the two shorter cards; the rule turns it into a footer, so
+// the gap now reads as structure rather than as something failing to load.
+const captionClass = `text-white/50 text-[13px] leading-5 m-0 mt-auto pt-4 border-t ${DIVIDER}`;
 const sectionHeadingClass = "font-serif font-medium text-3xl sm:text-4xl tracking-tight text-white m-0";
-const rowLabelClass = "text-white/55 text-sm m-0";
-// Rows sit in a hug-the-content grid, so the value starts right after its label
-// instead of being pushed to the far edge of the card.
-const rowValueClass = "text-white text-sm font-medium m-0 break-words";
-const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-wide px-4 py-3";
+// ── Label–value rows ────────────────────────────────────────────────────────
+//
+// From `sm` up these sit in a hug-the-content grid, so the value starts right
+// after its label instead of being pushed to the far edge of the card.
+//
+// BELOW `sm` THEY STACK. Two columns at 390px left the value with about 150px
+// to live in, which turned "Bank Negara Indonesia (BNI)" and "PT Macan Asia
+// Finance" into three ragged lines each — and raising the value to 16px would
+// have made that worse, not better. Stacked, each value gets the full card
+// width. The margins below carry the rhythm the grid's `gap-y` carries on
+// wider screens: a pair holds together (8px) and pairs stand apart (20px).
+const rowGridClass =
+  "grid grid-cols-1 gap-x-8 gap-y-2 sm:grid-cols-[max-content_1fr] sm:gap-y-4 m-0";
+const rowLabelClass = "text-white/60 text-sm leading-6 m-0 mt-3 first:mt-0 sm:mt-0";
+const rowValueClass = "text-white text-base font-medium leading-6 m-0 break-words";
+/** Sentences. Capped near 62 characters — the cards are 1376px wide. */
+const proseClass = "text-white/70 text-base leading-7 m-0 max-w-[62ch]";
+const thClass =
+  "text-left text-white/60 text-xs font-semibold uppercase tracking-[0.08em] px-4 py-3.5";
 ---
 <Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
   <div class="min-h-screen bg-bg text-[#e7e7e7]">
     <Navbar client:load base="/" />
 
-    <main class="px-4 sm:px-8 pt-[104px] pb-4 flex flex-col gap-4">
+    <!-- gap-6 between blocks, not gap-4. With cards that were invisible the
+         page had nothing but this gap to separate one block from the next, and
+         16px was not enough to do it alone. Now the cards carry their own edge
+         and the gap only has to give them room to breathe. -->
+    <main class="px-4 sm:px-8 pt-[104px] pb-5 sm:pb-6 flex flex-col gap-5 sm:gap-6">
       <!-- Header -->
       <section class={cardClass}>
         <div class="absolute -top-20 right-10 w-[560px] h-[240px] bg-[#b60000]/20 blur-[130px] rounded-[50%] pointer-events-none"></div>
-        <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-6 max-w-[760px]">
+        <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-6">
           <span
             class="inline-flex w-fit items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight"
             style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)"
@@ -125,14 +195,24 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
             </span>
             <T t={t.eyebrow} />
           </span>
-          <h1 class="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent m-0">
+          <h1 class="font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent m-0 max-w-[760px]">
             <span class="block"><T t={t.heading1} /></span>
             <span class="block"><T t={t.heading2} /></span>
           </h1>
-          <p class="text-white/80 text-base leading-[26px] m-0"><T t={t.intro} /></p>
-          <p class="text-white/50 text-sm leading-5 m-0" data-tp-status><T t={t.statusLoading} /></p>
+          <p class="text-white/80 text-base leading-7 m-0 max-w-[62ch]"><T t={t.intro} /></p>
+          {/* The status line is a caption about the whole page, not a fourth
+              sentence of the intro — which is how 14px grey text sitting
+              directly under a 16px paragraph read. It gets the same treatment
+              as the figure timestamps (13px, white/50, under a rule), and the
+              rule runs the full width of the card rather than stopping at the
+              end of the prose column, so it separates two parts of the card
+              instead of hanging in the middle of one. */}
+          <p
+            class={`text-white/50 text-[13px] leading-5 m-0 pt-4 border-t ${DIVIDER}`}
+            data-tp-status
+          ><T t={t.statusLoading} /></p>
           <noscript>
-            <p class="text-white/50 text-sm leading-5 m-0"><T t={t.statusNoJs} /></p>
+            <p class="text-white/50 text-[13px] leading-5 m-0"><T t={t.statusNoJs} /></p>
           </noscript>
         </div>
       </section>
@@ -140,7 +220,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       <!-- Headline figures: circulating supply, reserve assets, collateral
            ratio. Each ships with its unavailable state and is filled in by
            applyFigures() once the API answers. -->
-      <section class="mx-auto w-full max-w-[1376px] grid gap-4 md:grid-cols-3">
+      <section class="mx-auto w-full max-w-[1376px] grid gap-5 sm:gap-6 md:grid-cols-3">
         <div class={figureCardClass}>
           <span class={figureLabelClass}><T t={t.supplyLabel} /></span>
           <p class={figureValueClass}>
@@ -171,7 +251,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
           {/* Derived from the ratio, so it disappears with it. An unknown ratio
               rendered as "1 USDX = USD 0,00" would announce a total loss of
               backing where there is only a missing figure. */}
-          <p data-tp-peg-row class={`text-white/70 text-sm leading-5 m-0 ${peg ? "" : "hidden"}`}>
+          <p data-tp-peg-row class={`text-white/70 text-[15px] leading-6 m-0 ${peg ? "" : "hidden"}`}>
             <span data-tp="peg">{peg && <T t={peg} />}</span>
           </p>
           <p class={captionClass}><span data-tp="updated-caption"><T t={updatedCaption} /></span></p>
@@ -180,15 +260,19 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
 
       <!-- Attestation documents -->
       <section class={cardClass}>
-        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5">
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
           <h2 class={sectionHeadingClass}><T t={t.docsHeading} /></h2>
 
           {/* Hidden until there is at least one row — an empty table with
               headers and nothing under them looks broken. */}
           <div data-doc-table-wrap class="hidden overflow-x-auto -mx-2 px-2">
+            {/* The header row is the only rule on the page heavier than a
+                hairline. A table is read down its columns, and the reader needs
+                one unambiguous line saying where the labels stop and the data
+                starts. */}
             <table class="w-full border-collapse min-w-[640px]">
               <thead>
-                <tr class="border-b border-white/10">
+                <tr class="border-b border-white/20">
                   <th scope="col" class={`${thClass} w-28`}><T t={t.colId} /></th>
                   <th scope="col" class={thClass}><T t={t.colName} /></th>
                   <th scope="col" class={`${thClass} w-32`}><T t={t.colMonth} /></th>
@@ -200,7 +284,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
             </table>
           </div>
 
-          <p data-doc-id-note class="hidden text-white/45 text-xs leading-5 m-0"><T t={t.idNote} /></p>
+          <p data-doc-id-note class={`hidden text-white/50 text-[13px] leading-6 m-0 max-w-[80ch] pt-4 border-t ${DIVIDER}`}><T t={t.idNote} /></p>
 
           {/* Four mutually exclusive states, and which one ships in the static
               HTML matters. The table is built entirely in the browser from the
@@ -224,32 +308,32 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
               unreadable list gets "unavailable", which states nothing about how
               many reports exist. The two shared one sentence until recently,
               and it was the wrong one. */}
-          <p data-doc-empty class="hidden text-white/55 text-sm leading-6 m-0"><T t={t.empty} /></p>
+          <p data-doc-empty class={`hidden ${proseClass}`}><T t={t.empty} /></p>
 
-          <p data-doc-unavailable class="hidden text-white/55 text-sm leading-6 m-0"><T t={t.listUnavailable} /></p>
+          <p data-doc-unavailable class={`hidden ${proseClass}`}><T t={t.listUnavailable} /></p>
 
-          <p data-doc-pending class="text-white/55 text-sm leading-6 m-0"><T t={t.listPending} /></p>
+          <p data-doc-pending class={proseClass}><T t={t.listPending} /></p>
         </div>
       </section>
 
-      <section class="mx-auto w-full max-w-[1376px] grid gap-4 lg:grid-cols-2">
+      <section class="mx-auto w-full max-w-[1376px] grid gap-5 sm:gap-6 lg:grid-cols-2">
         <!-- What the reserve is made of. Static copy, not a live figure: the
              locked public payload carries no composition field, and "100% U.S.
              dollar cash at BNI" is a statement from the official documentation
              rather than a balance. See RESERVE_COMPOSITION. -->
-        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
+        <div class={`rounded-2xl ${SURFACE} p-6 sm:p-8 flex flex-col gap-6`}>
           <h2 class={sectionHeadingClass}><T t={t.reserveHeading} /></h2>
-          <ul class="list-none p-0 m-0 flex flex-col gap-3">
+          <ul class="list-none p-0 m-0 flex flex-col gap-4">
             {composition.map((item) => (
-              <li class="flex items-baseline justify-between gap-4 border-b border-white/[0.06] pb-3 last:border-0 last:pb-0">
-                <span class="text-white text-sm leading-6"><T t={item.label} /></span>
-                <span class="text-white text-sm font-medium tabular-nums shrink-0">
+              <li class={`flex items-baseline justify-between gap-6 border-b ${DIVIDER} pb-4 last:border-0 last:pb-0`}>
+                <span class="text-white text-base leading-6"><T t={item.label} /></span>
+                <span class="text-white text-base font-medium tabular-nums shrink-0">
                   {item.share ? <T t={item.share} /> : "—"}
                 </span>
               </li>
             ))}
           </ul>
-          <dl class="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-3 m-0">
+          <dl class={rowGridClass}>
             <dt class={rowLabelClass}><T t={t.reserveBank} /></dt>
             {/* Where the reserves are held is a fact about USDX, not a figure,
                 so it is named even before the API answers — and it is named
@@ -264,7 +348,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
             <dt class={rowLabelClass}><T t={t.issuer} /></dt>
             <dd class={rowValueClass}>{COMPANY_LEGAL_NAME}</dd>
           </dl>
-          <p class="text-white/60 text-sm leading-6 m-0"><T t={t.reserveCompositionNote} /></p>
+          <p class={proseClass}><T t={t.reserveCompositionNote} /></p>
         </div>
 
         <!-- Contract address — the first thing an explorer reviewer looks for.
@@ -279,9 +363,9 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
              page a reader cannot check without being told it first, and the
              exact thing address-swap scams rely on. It changes when a human
              changes it in the repo, with DEPLOYED.md open. -->
-        <div class="rounded-2xl border border-white/[0.07] bg-[#0f0f0f] p-6 sm:p-8 flex flex-col gap-5">
+        <div class={`rounded-2xl ${SURFACE} p-6 sm:p-8 flex flex-col gap-6`}>
           <h2 class={sectionHeadingClass}><T t={t.contractHeading} /></h2>
-          <dl class="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-3 m-0">
+          <dl class={rowGridClass}>
             <dt class={rowLabelClass}><T t={ui.token.network} /></dt>
             <dd class={rowValueClass}>{tokenInfo.network}</dd>
 
@@ -291,16 +375,19 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
             <dt class={rowLabelClass}><T t={ui.token.decimals} /></dt>
             <dd class={rowValueClass}>{String(tokenInfo.decimals)}</dd>
           </dl>
-          <div class="flex flex-col gap-2">
+          <div class="flex flex-col gap-2.5">
             <span class={rowLabelClass}><T t={ui.token.contractAddress} /></span>
-            <code class="block break-all rounded-lg bg-black/50 border border-white/10 px-3 py-2.5 text-white text-[13px] leading-5 font-mono">{contractAddress}</code>
+            {/* The one thing on this page a reader is meant to copy character
+                by character, so it is set apart as a recess: black under a
+                raised card, at 14px rather than 13px. */}
+            <code class="block break-all rounded-lg bg-black/40 border border-white/[0.12] px-3.5 py-3 text-white text-sm leading-6 font-mono">{contractAddress}</code>
           </div>
           {explorerUrl && (
             <a
               href={explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
-              class="inline-flex w-fit items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:border-white/35 text-white text-sm font-medium transition-colors no-underline"
+              class="inline-flex w-fit items-center gap-2 px-4 py-2.5 rounded-lg border border-white/20 hover:border-white/40 text-white text-sm font-medium transition-colors no-underline"
             >
               <T t={ui.token.explorer} />
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -315,14 +402,16 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       <section class={cardClass}>
         <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
           <h2 class={sectionHeadingClass}><T t={t.methodHeading} /></h2>
-          <div class="grid gap-6 lg:grid-cols-2">
-            <div class="flex flex-col gap-2">
-              <h3 class="text-white text-base font-medium m-0"><T t={t.supplyDefinitionTitle} /></h3>
-              <p class="text-white/70 text-sm leading-6 m-0"><T t={t.supplyDefinition} /></p>
+          {/* Two columns of running prose, so they need a gutter wide enough
+              that the eye does not jump the gap mid-sentence. */}
+          <div class="grid gap-x-12 gap-y-8 lg:grid-cols-2">
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-white text-[17px] font-semibold leading-6 m-0"><T t={t.supplyDefinitionTitle} /></h3>
+              <p class={proseClass}><T t={t.supplyDefinition} /></p>
             </div>
-            <div class="flex flex-col gap-2">
-              <h3 class="text-white text-base font-medium m-0"><T t={t.ratioDefinitionTitle} /></h3>
-              <p class="text-white/70 text-sm leading-6 m-0"><T t={t.ratioDefinition} /></p>
+            <div class="flex flex-col gap-2.5">
+              <h3 class="text-white text-[17px] font-semibold leading-6 m-0"><T t={t.ratioDefinitionTitle} /></h3>
+              <p class={proseClass}><T t={t.ratioDefinition} /></p>
             </div>
           </div>
         </div>
@@ -330,9 +419,9 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
 
       <!-- Smart contract audit -->
       <section class={cardClass}>
-        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-4 items-start">
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5 items-start">
           <h2 class={sectionHeadingClass}><T t={t.auditHeading} /></h2>
-          <p class="text-white/70 text-sm leading-6 m-0 max-w-[640px]"><T t={t.auditBody} /></p>
+          <p class={proseClass}><T t={t.auditBody} /></p>
           <a
             href={AUDIT_REPORT_URL}
             target="_blank"
@@ -457,22 +546,26 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
   }
 
   function rowNode(row: AttestationRow): HTMLTableRowElement {
+    // Row rule at white/[0.10], not white/[0.06]. On the lifted card surface
+    // the old hairline measured 1.244 against its own background — enough to
+    // exist in the stylesheet and not enough to be seen, which left five rows
+    // of five columns reading as one block of text.
     const tr = document.createElement("tr");
-    tr.className = "border-b border-white/[0.06] last:border-0";
+    tr.className = "border-b border-white/[0.10] last:border-0";
 
-    const idCell = cell("px-4 py-4 text-white/45 text-sm tabular-nums align-middle");
+    const idCell = cell("px-4 py-4.5 text-white/55 text-[15px] tabular-nums align-middle");
     idCell.textContent = row.id;
 
-    const nameCell = cell("px-4 py-4 text-white text-sm font-medium align-middle");
+    const nameCell = cell("px-4 py-4.5 text-white text-[15px] font-medium align-middle");
     nameCell.textContent = row.title;
 
-    const monthCell = cell("px-4 py-4 text-white/70 text-sm align-middle");
+    const monthCell = cell("px-4 py-4.5 text-white/70 text-[15px] align-middle");
     monthCell.append(bilingualNode(row.month));
 
-    const yearCell = cell("px-4 py-4 text-white/70 text-sm tabular-nums align-middle");
+    const yearCell = cell("px-4 py-4.5 text-white/70 text-[15px] tabular-nums align-middle");
     yearCell.textContent = row.year;
 
-    const actionCell = cell("px-4 py-4 text-right align-middle");
+    const actionCell = cell("px-4 py-4.5 text-right align-middle");
     if (row.href) {
       const link = document.createElement("a");
       link.href = row.href;
@@ -486,7 +579,7 @@ const thClass = "text-left text-white/55 text-xs font-medium uppercase tracking-
       // No usable file link: say so rather than render a button that goes
       // nowhere.
       const dash = document.createElement("span");
-      dash.className = "text-white/35 text-sm";
+      dash.className = "text-white/50 text-[15px]";
       dash.textContent = "—";
       actionCell.append(dash);
     }
