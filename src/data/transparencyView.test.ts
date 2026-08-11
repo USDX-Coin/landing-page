@@ -12,7 +12,9 @@ import {
   buildAttestationsView,
   buildFiguresView,
   buildView,
+  STATUS_LINE,
   type AttestationRow,
+  type TransparencyStatus,
   type TransparencyView,
 } from "./transparencyView.ts";
 import { ui } from "../i18n.ts";
@@ -52,6 +54,42 @@ function payload(overrides: Record<string, unknown> = {}): Record<string, unknow
       },
     ],
     updatedAt: "2026-08-10T04:00:00.000Z",
+    ...overrides,
+  };
+}
+
+/**
+ * The backend's TOTAL-OUTAGE payload, field for field.
+ *
+ * Not an invented "broken" shape: this is `unavailableView()` in
+ * transparency.service.ts, the well-formed 200 the API serves when it cannot
+ * assemble anything and refuses to answer 500 (a 500 would send this page to
+ * its own static figures, which are the stale claim the endpoint is avoiding).
+ * The token block survives because it is pure configuration; every field that
+ * needs the database or the chain comes back null, INCLUDING `attestations`,
+ * which is null rather than `[]` precisely so the page does not announce that
+ * no report has ever been published.
+ *
+ * Every cold start of a replica while the database is down serves this, as does
+ * any outage that outlives the age limit on the last good payload.
+ */
+function unavailablePayload(overrides: Record<string, unknown> = {}): Record<string, unknown> {
+  return {
+    token: {
+      symbol: "USDX",
+      chain: "polygon",
+      contractAddress: "0x1FF2A62Dd802D74d0B0cA6d36D43D2A13AB43a55",
+      decimals: 6,
+      explorerUrl: "https://polygonscan.com/token/0x1FF2",
+    },
+    circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
+    reserve: null,
+    collateralRatio: null,
+    attestations: null,
+    // Stamped with the moment the request was served, not with the age of
+    // anything on screen — which is why the page may not read a fresh timestamp
+    // as evidence that there are figures behind it.
+    updatedAt: "2026-08-11T04:15:00.000Z",
     ...overrides,
   };
 }
@@ -407,17 +445,17 @@ describe("buildView", () => {
   // them announced that the figures could not be shown.
   it("reports a partial load when the figures arrived but the list did not", () => {
     const view = buildView(payload({ attestations: { items: [] } }), API);
-    assert.equal(view?.status, "partial");
+    assert.equal(view?.status, "figuresOnly");
     assert.deepEqual(view?.figures.supply, { id: "100.667,00", en: "100,667.00" });
     assert.deepEqual(view?.figures.reserve, { id: "100.667,41", en: "100,667.41" });
   });
 
   it("does not describe a half-loaded page as a failed one", () => {
-    // The "partial" line has to name the figures as present. statusFallback
+    // The "figures only" line has to name the figures as present. statusFallback
     // says the opposite, and was what this state used to show.
-    assert.notEqual(t.statusLivePartial.id, t.statusFallback.id);
-    assert.match(t.statusLivePartial.id, /angka/i);
-    assert.match(t.statusLivePartial.en, /figures/i);
+    assert.notEqual(t.statusFiguresOnly.id, t.statusFallback.id);
+    assert.match(t.statusFiguresOnly.id, /angka/i);
+    assert.match(t.statusFiguresOnly.en, /figures/i);
   });
 
   it("returns null only when there is no payload object to read at all", () => {
@@ -440,11 +478,162 @@ describe("buildView", () => {
   });
 });
 
+// ── BLOCKER: the status line named figures that were not there ───────────────
+// The status was derived from the document list ALONE — `attestations.state ===
+// "unavailable" ? "partial" : "live"` — which was harmless only while a
+// non-array `attestations` meant a corrupted payload. It stopped being harmless
+// when the backend adopted `attestations: null` as its formal signal that
+// NOTHING could be assembled: the one payload that means "we have nothing"
+// selected the one sentence that says "the figures on this page are live from
+// the USDX API", printed above three cards all reading "Belum tersedia" and a
+// caption stamped with the current minute.
+
+describe("buildView — the status line describes the screen", () => {
+  it("claims nothing is live for the backend's total-outage payload", () => {
+    const view = viewOf(unavailablePayload());
+
+    assert.equal(view.status, "unavailable");
+    // Which is the same sentence a dropped connection shows, because it is the
+    // same screen: nothing arrived either way.
+    assert.deepEqual(STATUS_LINE[view.status], t.statusFallback);
+    // And in particular NOT the line that names the figures as present.
+    assert.notEqual(STATUS_LINE[view.status].id, t.statusFiguresOnly.id);
+    assert.notEqual(STATUS_LINE[view.status].id, t.statusLive.id);
+  });
+
+  it("has nothing on screen for that payload to describe", () => {
+    // The other half of the claim above: the sentence is only right because
+    // every slot it covers really is empty.
+    const view = viewOf(unavailablePayload());
+    assert.equal(view.figures.supply, null);
+    assert.equal(view.figures.reserve, null);
+    assert.equal(view.figures.ratio, null);
+    assert.equal(view.figures.peg, null);
+    assert.equal(view.attestations.state, "unavailable");
+  });
+
+  it("keeps the outage payload's fresh timestamp out of the decision", () => {
+    // `updatedAt` is stamped with the moment the request was served even when
+    // nothing behind it could be read, so a caption reading "terakhir
+    // diperbarui: barusan" is not evidence of a single figure.
+    const view = viewOf(unavailablePayload());
+    assert.match(view.figures.updatedCaption.id, /11 Agustus 2026/);
+    assert.equal(view.status, "unavailable");
+  });
+
+  it("names the list, not the figures, when only the list came through", () => {
+    // No outage required: an empty reserve ledger and a failed chain read do
+    // this on a completely healthy API.
+    const view = viewOf(
+      payload({
+        circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
+        reserve: null,
+        collateralRatio: null,
+      }),
+    );
+    assert.equal(view.status, "listOnly");
+    assert.equal(view.attestations.state, "list");
+    assert.deepEqual(STATUS_LINE[view.status], t.statusListOnly);
+    assert.notEqual(STATUS_LINE[view.status].id, t.statusLive.id);
+  });
+
+  it("reads the status off the screen rather than off the payload", () => {
+    // Every figure field ARRIVED here — and every one of them is withheld by
+    // buildFiguresView, because the labels beside them disagree with the ones
+    // this page prints. A status read from the payload would call that live.
+    const view = viewOf(
+      payload({
+        circulatingSupply: {
+          amount: "100667.000000",
+          unit: "USDT",
+          source: "onchain",
+          readAt: "2026-08-10T04:00:00.000Z",
+        },
+        reserve: {
+          amount: "1810000000.00",
+          currency: "IDR",
+          custodian: "Bank Negara Indonesia (BNI)",
+          balanceAt: "2026-08-10T04:00:00.000Z",
+        },
+      }),
+    );
+    assert.equal(view.figures.supply, null);
+    assert.equal(view.figures.reserve, null);
+    assert.equal(view.figures.ratio, null);
+    assert.equal(view.status, "listOnly");
+  });
+
+  it("gives each of the four corners its own status", () => {
+    const figuresGone = {
+      circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
+      reserve: null,
+      collateralRatio: null,
+    };
+    const corners: Array<[string, unknown, TransparencyStatus]> = [
+      ["figures and list", payload(), "live"],
+      ["figures and an empty list", payload({ attestations: [] }), "live"],
+      ["figures only", payload({ attestations: null }), "figuresOnly"],
+      ["the list only", payload(figuresGone), "listOnly"],
+      ["neither", unavailablePayload(), "unavailable"],
+    ];
+    for (const [name, data, expected] of corners) {
+      assert.equal(buildView(data, API)?.status, expected, `${name} should be "${expected}"`);
+    }
+  });
+
+  it("never shows the same sentence for two different screens", () => {
+    // Four states, four sentences. Two states sharing a line means one of them
+    // is being described by the other one's screen.
+    const lines = (["live", "figuresOnly", "listOnly", "unavailable"] as const).map(
+      (status) => STATUS_LINE[status],
+    );
+    for (const lang of ["id", "en"] as const) {
+      const spoken = lines.map((line) => line[lang]);
+      assert.equal(new Set(spoken).size, spoken.length, `two ${lang} status lines are identical`);
+      for (const sentence of spoken) assert.notEqual(sentence.trim(), "");
+    }
+  });
+
+  it("only promises live figures on a screen that has one", () => {
+    // The single rule this whole state machine exists to keep, checked against
+    // the sentence a reader actually gets rather than against the enum.
+    const claimsLiveFigures = new Set([t.statusLive.id, t.statusFiguresOnly.id]);
+    const shapes: unknown[] = [
+      unavailablePayload(),
+      unavailablePayload({ attestations: [attestation()] }),
+      payload({
+        circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
+        reserve: null,
+        collateralRatio: null,
+      }),
+      payload({ circulatingSupply: null, reserve: null, collateralRatio: null }),
+      { attestations: [attestation()] },
+      {},
+    ];
+    for (const shape of shapes) {
+      const view = viewOf(shape);
+      assert.equal(view.figures.supply, null);
+      assert.equal(view.figures.reserve, null);
+      assert.equal(view.figures.ratio, null);
+      assert.ok(
+        !claimsLiveFigures.has(STATUS_LINE[view.status].id),
+        `"${STATUS_LINE[view.status].id}" was shown above three empty figure cards`,
+      );
+    }
+  });
+});
+
 // ── Both languages, everywhere ───────────────────────────────────────────────
 
 describe("bilingual copy", () => {
   it("carries every new line in both languages", () => {
-    for (const key of ["docsHeading", "listUnavailable", "statusLivePartial", "reserveBank"] as const) {
+    for (const key of [
+      "docsHeading",
+      "listUnavailable",
+      "statusFiguresOnly",
+      "statusListOnly",
+      "reserveBank",
+    ] as const) {
       assert.equal(typeof t[key].id, "string");
       assert.equal(typeof t[key].en, "string");
       assert.notEqual(t[key].id.trim(), "");

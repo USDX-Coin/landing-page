@@ -287,9 +287,19 @@ export const ui = {
     // `attestations` value left three freshly filled figure cards sitting under
     // a status line that said the figures could not be shown. A status line is
     // only worth having if it describes what is actually on the screen.
-    statusLivePartial: {
+    statusFiguresOnly: {
       id: "Angka di halaman ini dimuat langsung dari API USDX. Daftar dokumen belum dapat ditampilkan saat ini.",
       en: "The figures on this page are live from the USDX API. The document list cannot be shown right now.",
+    },
+    // And the mirror of it, because the page half-succeeds in both directions.
+    // The line above was being shown for THIS state too — naming the figures as
+    // present above three cards that all read "Belum tersedia" — because the
+    // status was read off the document list alone. An empty ledger with a failed
+    // chain read gets here without anything being broken; so does the backend's
+    // total-outage payload on any replica whose supply reading survived it.
+    statusListOnly: {
+      id: "Daftar dokumen di halaman ini dimuat langsung dari API USDX. Angka belum dapat ditampilkan saat ini.",
+      en: "The document list on this page is live from the USDX API. The figures cannot be shown right now.",
     },
     // Neither line promises anything is still on screen after a failed fetch.
     // Nothing about the document list is baked into the HTML — the table is
@@ -301,6 +311,13 @@ export const ui = {
     // If figures are ever baked into TRANSPARENCY_FALLBACK, both lines have to
     // change with them: they would then be showing a real, older position, and
     // the reader is owed that distinction.
+    //
+    // Shown for two situations that look identical to a reader, and should: a
+    // fetch that failed, and a fetch that succeeded and carried nothing usable
+    // — the backend's `attestations: null` total-outage payload, which states
+    // its own ignorance rather than answering 500. Either way the sentence is
+    // true as written: the live data could not be loaded, and there is nothing
+    // on screen for it to contradict.
     statusFallback: {
       id: "Data langsung tidak dapat dimuat saat ini, jadi angka dan daftar dokumen di halaman ini belum dapat ditampilkan.",
       en: "Live data could not be loaded right now, so the figures and the document list on this page cannot be shown.",

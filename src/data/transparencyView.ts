@@ -79,13 +79,31 @@ export type AttestationsView =
 /**
  * Which status line belongs under the heading.
  *
- * "partial" exists because the page can half-succeed, and used to lie when it
- * did: the figures rendered from the API while the status line above them read
- * "Live data could not be loaded right now, so the figures and the document
- * list on this page cannot be shown" — a sentence contradicted by the three
- * numbers directly beneath it.
+ * THE PAGE HAS TWO HALVES THAT FAIL SEPARATELY — the three figures and the
+ * document list — so there are four states, not two, and each one gets the
+ * sentence that describes it. Collapsing any pair of them puts a sentence on
+ * screen that the screen disagrees with, which is the only bug this type has
+ * ever had:
+ *
+ * - "figuresOnly" exists because the figures can arrive when the list does not,
+ *   and the page used to lie when they did: three numbers rendered from the API
+ *   under a status line reading "Live data could not be loaded right now, so
+ *   the figures and the document list on this page cannot be shown".
+ * - "unavailable" exists for the mirror of that. `attestations: null` is the
+ *   backend's formal signal that NOTHING could be assembled (see
+ *   `unavailableView` in transparency.service.ts, which sends a null reserve, a
+ *   null ratio, a null supply amount and a null attestation list together), and
+ *   deriving the status from the document list alone answered that payload with
+ *   "The figures on this page are live from the USDX API" — printed above three
+ *   cards all reading "Belum tersedia". Every cold start of a replica while the
+ *   database is down produces exactly that payload.
+ * - "listOnly" is the fourth corner, and reachable without any outage at all:
+ *   an empty reserve ledger plus a failed chain read empties all three figures
+ *   while the document list comes through intact, and so does a payload whose
+ *   currency or unit label disagrees with the ones this page prints (see
+ *   buildFiguresView, which withholds every figure that depends on them).
  */
-export type TransparencyStatus = "live" | "partial";
+export type TransparencyStatus = "live" | "figuresOnly" | "listOnly" | "unavailable";
 
 export interface TransparencyView {
   figures: FiguresView;
@@ -249,19 +267,70 @@ export function buildAttestationsView(value: unknown, apiBaseUrl: string): Attes
 // ── The whole page ───────────────────────────────────────────────────────────
 
 /**
+ * Is there a single number on the screen?
+ *
+ * The peg line is not counted: it is derived from the ratio and hidden with it,
+ * so it can never be the only thing present. The captions are not counted
+ * either — "Terakhir diperbarui 11 Agustus 2026, 11.15 WIB" is a timestamp on
+ * an empty card, and treating it as a figure is what would let the page stamp
+ * "just now" on three blank slots and call the result live.
+ */
+function hasAnyFigure(figures: FiguresView): boolean {
+  return figures.supply !== null || figures.reserve !== null || figures.ratio !== null;
+}
+
+/**
+ * Pick the sentence that matches the screen, from the two halves it describes.
+ *
+ * "Live" is a claim about what a reader can see, so it is read off the built
+ * view — the figures as they will be rendered, the list as it will be rendered
+ * — and never off the payload. A field can arrive and still not reach the
+ * screen: a rupiah reserve, a supply counted in some other unit, a ratio that
+ * fails to parse. Whatever the page withholds, the status line withholds with
+ * it.
+ *
+ * An EMPTY document list counts as live. "No report has been published yet" is
+ * a statement the API made, printed as it was made; only "unavailable" means
+ * the page could not find out.
+ */
+function statusFor(figures: FiguresView, attestations: AttestationsView): TransparencyStatus {
+  const figuresLive = hasAnyFigure(figures);
+  const listLive = attestations.state !== "unavailable";
+  if (figuresLive && listLive) return "live";
+  if (figuresLive) return "figuresOnly";
+  if (listLive) return "listOnly";
+  return "unavailable";
+}
+
+/**
+ * The sentence that goes with each status.
+ *
+ * HERE, not in the page's `<script>` block, for the same reason as everything
+ * else in this file: a mapping that cannot be imported cannot be tested, and
+ * what a reader is told about the page is precisely the thing worth testing.
+ * The status is only ever as honest as the sentence it selects.
+ */
+export const STATUS_LINE: Record<TransparencyStatus, Translated> = {
+  live: t.statusLive,
+  figuresOnly: t.statusFiguresOnly,
+  listOnly: t.statusListOnly,
+  // The same line a failed fetch shows, and for the same reason: a response
+  // that carried neither a figure nor a list leaves the reader exactly where a
+  // dropped connection would — with nothing on screen to be out of date.
+  unavailable: t.statusFallback,
+};
+
+/**
  * Build everything the page needs from one response body's `data`.
  *
- * Returns null only when there is no object to read at all, which is the one
- * case where the page really has nothing and the "could not load" status is
- * true. Every other shape produces a view: some slots may say "not yet
- * available", and the status line says which parts made it.
+ * Returns null only when there is no object to read at all. Every other shape
+ * produces a view: some slots may say "not yet available", and the status line
+ * says which parts made it — including the case where the answer is "none of
+ * them", which a well-formed response is perfectly able to say.
  */
 export function buildView(data: unknown, apiBaseUrl: string): TransparencyView | null {
   if (!isRecord(data)) return null;
+  const figures = buildFiguresView(data);
   const attestations = buildAttestationsView(data.attestations, apiBaseUrl);
-  return {
-    figures: buildFiguresView(data),
-    attestations,
-    status: attestations.state === "unavailable" ? "partial" : "live",
-  };
+  return { figures, attestations, status: statusFor(figures, attestations) };
 }

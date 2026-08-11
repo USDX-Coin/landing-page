@@ -454,18 +454,13 @@ const thClass =
   import { resolveApiBaseUrl, TRANSPARENCY_PATH, type TransparencyEnvelope } from "../data/transparency";
   import {
     buildView,
+    STATUS_LINE,
     type AttestationRow,
     type AttestationsView,
     type FiguresView,
-    type TransparencyStatus,
   } from "../data/transparencyView";
 
   const t = ui.transparency;
-
-  const STATUS_LINE: Record<TransparencyStatus, Translated> = {
-    live: t.statusLive,
-    partial: t.statusLivePartial,
-  };
 
   /**
    * Write a value into every `[data-tp="<key>"]` slot. Translated values render
