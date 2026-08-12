@@ -1,11 +1,16 @@
 // Official USDX documentation, published on GitBook. This single URL is both the
 // whitepaper and the documentation site — its landing page is titled
-// "Whitepaper USDX" — so it is exposed exactly once in the UI, through the
-// "Dokumentasi" / "Docs" nav entry in navigation.ts.
+// "Whitepaper USDX" — so it is exposed exactly once in the UI, through the nav
+// entry in navigation.ts. That entry is labelled "Whitepaper" (since 12 Aug
+// 2026; it said "Dokumentasi" / "Docs" before): listing reviewers — CMC,
+// CoinGecko, PolygonScan, OJK — search for the literal word "whitepaper", and
+// the "Docs" label made them report the whitepaper as missing.
 //
 // There is deliberately no second link to this same destination elsewhere (the
 // footer used to carry a separate "Whitepaper" entry): two links pointing at an
-// identical URL read as padding to an explorer reviewer.
+// identical URL read as padding to an explorer reviewer — and the footer's
+// Quick Links column already shows the word "Whitepaper", because it renders
+// navLinks.
 //
 // Served on the project's own subdomain. The GitBook custom domain now serves
 // the space at the ROOT, so there is no "/whitepaper-usdx" path segment any

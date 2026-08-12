@@ -32,11 +32,16 @@ export const navLinks: NavLink[] = [
   // on /transparency itself, so the second entry was removed with the page.
   { label: ui.transparency.navLabel, href: "/transparency" },
   { label: { id: "FAQ", en: "FAQ" }, href: "#faq" },
-  // "Dokumentasi" is the official GitBook, which is also the whitepaper (see
-  // data/whitepaper.ts). It keeps the "Dokumentasi" label: the GitBook is a
-  // 12-page handbook, wider than a whitepaper, and nothing clashes with it now
-  // that the "Dokumen" entry is gone. This is the site's ONLY link there.
-  { label: { id: "Dokumentasi", en: "Docs" }, href: DOCUMENTATION_URL, external: true },
+  // The official GitBook — which IS the whitepaper (its landing page is titled
+  // "Whitepaper USDX"; see data/whitepaper.ts). The entry was labelled
+  // "Dokumentasi" / "Docs" until 12 Aug 2026, and that label is exactly why
+  // listing reviewers (CMC, CoinGecko, PolygonScan, OJK) reported "no
+  // whitepaper": they search for the literal word. USDI does it right — its
+  // footer link says "White Paper" verbatim. So this entry now says
+  // "Whitepaper" in both languages (the term is used as-is in Indonesian
+  // crypto contexts), and through navLinks it appears in the navbar AND the
+  // footer's Quick Links column. Do not rename it back to a synonym.
+  { label: { id: "Whitepaper", en: "Whitepaper" }, href: DOCUMENTATION_URL, external: true },
   // "Artikel" stays removed — there is no articles page, and a nav link to "#"
   // reads as an unfinished placeholder to explorer reviewers.
   // { label: { id: "Artikel", en: "Articles" }, href: "" },
