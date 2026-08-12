@@ -111,9 +111,13 @@ export const ui = {
     walletNote: { id: "Penyelesaian lintas negara", en: "Cross-border settlement" },
     gaugeLabel: { id: "Penyelesaian", en: "Settlement" },
     // The two "Dokumen Transparansi dan Audit" links read as a pair: the audit
-    // PDF (Cyberscope) and the attestation table on /transparency.
-    auditCta: { id: "Lihat Laporan Audit", en: "View Audit Report" },
-    transparencyCta: { id: "Lihat Dokumen Transparansi", en: "View Transparency Documents" },
+    // PDF (Cyberscope) and the attestation table on /transparency. Noun-style,
+    // no "Lihat" prefix (same idiom as the footer's "Laporan Audit" link): with
+    // the verb the pair only fit side by side on the very widest cards and
+    // stacked everywhere else, which read as broken (12 Aug 2026). The arrow
+    // icons already say "open".
+    auditCta: { id: "Laporan Audit", en: "Audit Report" },
+    transparencyCta: { id: "Dokumen Transparansi", en: "Transparency Documents" },
     // Certification card (see data/certification.ts for every fact). The visual
     // is a summary of what TSI's own register shows for ISMS 26302 — not a
     // reproduction of the certificate (forbidden) and not the TSI/KAN mark
