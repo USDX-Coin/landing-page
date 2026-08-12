@@ -28,6 +28,16 @@ const credentialLabelClass =
        the lower band behind the headline + paragraph so the white text stays
        legible. The upper ~40% is left fully clear. -->
   <div class="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] from-5% via-[#0a0a0a]/70 via-28% to-transparent to-50% pointer-events-none"></div>
+  <!-- Ceiling fade: the same treatment as the bottom band, mirrored to the top
+       so the (transparent) navbar's white text always has a dark ground — one
+       of the three slides is a white sky, and text sat straight on it. Part of
+       the photo layer, NOT the navbar: a scrim on the bar itself reads as a
+       grey band (tried and rejected, 12 Aug 2026). The falloff is an EASED
+       multi-stop gradient because a plain two-stop one has a visible edge —
+       the scrim guidance in ishadeed.com/article/handling-text-over-image-css
+       and Smashing's text-over-images series. Nearly invisible on the two
+       night-city slides. -->
+  <div class="absolute inset-x-0 top-0 h-[210px] pointer-events-none" style="background-image:linear-gradient(to bottom, rgba(10,10,10,0.62) 0%, rgba(10,10,10,0.58) 8%, rgba(10,10,10,0.51) 16%, rgba(10,10,10,0.42) 26%, rgba(10,10,10,0.32) 38%, rgba(10,10,10,0.22) 51%, rgba(10,10,10,0.13) 64%, rgba(10,10,10,0.06) 78%, rgba(10,10,10,0.02) 90%, rgba(10,10,10,0) 100%);"></div>
   <!-- extra darkening at the bottom-right, behind the paragraph + "Supported by
        BNI", so the right-hand text reads clearly over brighter photos -->
   <div class="absolute inset-0 bg-[radial-gradient(ellipse_58%_55%_at_88%_92%,rgba(10,10,10,0.85),transparent_70%)] pointer-events-none"></div>
