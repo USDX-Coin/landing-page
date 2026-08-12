@@ -1,20 +1,10 @@
 ---
 import { features } from "../data/features";
 import { iconPaths } from "../data/icons";
-import { chains } from "../data/chains";
 import { AUDIT_REPORT_URL } from "../data/audit";
+import { CERTIFICATE_NUMBER, CERTIFICATE_VERIFY_URL } from "../data/certification";
 import { ui } from "../i18n";
 import T from "./T.astro";
-
-// Chains evenly on a ring around the hub (multi-chain card).
-const cluster = [
-  { left: 50, top: 13 },
-  { left: 80, top: 31 },
-  { left: 80, top: 69 },
-  { left: 50, top: 87 },
-  { left: 20, top: 69 },
-  { left: 20, top: 31 },
-];
 // Real avatar photos on the world map (cross-border card), each tagged with a
 // city. Four cities in four countries, which is the point: the card is about
 // value moving BETWEEN jurisdictions. Jakarta belongs here as one end of that
@@ -161,26 +151,42 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
               </div>
             )}
 
-            {feature.icon === "layers" && (
-              <div class="absolute inset-0 flex items-center justify-center">
-                <div class="absolute w-44 h-44 rounded-full border border-white/[0.06]"></div>
-                <div class="absolute w-28 h-28 rounded-full border border-white/[0.06]"></div>
-                <!-- shockwave rings that ripple out from the hub -->
-                <span data-fx-wave class="absolute w-16 h-16 rounded-full border-2 border-gold/50 opacity-0"></span>
-                <span data-fx-wave class="absolute w-16 h-16 rounded-full border-2 border-gold/40 opacity-0"></span>
-                <div data-fx-orbit class="absolute w-44 h-44">
-                  {chains.slice(0, 6).map((chain, ci) => (
-                    <div
-                      data-fx-chain
-                      class="absolute w-9 h-9 rounded-full bg-[#1c1c1c] border border-white/10 flex items-center justify-center"
-                      style={`top:${cluster[ci].top}%; left:${cluster[ci].left}%; transform: translate(-50%,-50%);`}
-                    >
-                      <img src={chain.icon} alt={chain.name} class="w-5 h-5" loading="lazy" />
+            {feature.icon === "cert" && (
+              <div class="absolute inset-0 p-4 flex items-center justify-center">
+                <div class="absolute w-52 h-52 rounded-full border border-white/[0.06]"></div>
+                <!-- Certificate summary chip: the same facts TSI's register
+                     shows for ISMS 26302. Deliberately NOT a reproduction of
+                     the certificate (forbidden — §2b/§3.2) and NOT the TSI/KAN
+                     mark (artwork + signed statement must come from TSI first
+                     — see data/certification.ts). -->
+                <div class="relative w-full max-w-[290px] rounded-xl bg-[#1c1c1c] border border-white/10 p-4 flex flex-col gap-3">
+                  <div class="flex items-center gap-3">
+                    <div data-fx-seal class="relative w-10 h-10 rounded-full bg-[#141414] border border-white/10 flex items-center justify-center shrink-0">
+                      <svg class="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100" fill="none">
+                        <circle data-fx-certring cx="50" cy="50" r="46" pathLength="1" stroke="#E0A93C" stroke-width="4" stroke-linecap="round" style="stroke-dasharray:1;stroke-dashoffset:1;opacity:0" />
+                      </svg>
+                      <svg class="w-[18px] h-[18px] text-gold-light" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d={iconPaths.lock} /></svg>
                     </div>
-                  ))}
-                </div>
-                <div data-fx-hub class="relative w-14 h-14 z-10">
-                  <img src="/image/logo-coin.png" alt="USDX" class="w-full h-full" />
+                    <div class="min-w-0">
+                      <div class="text-xs font-semibold text-white leading-tight">SNI ISO/IEC 27001:2022</div>
+                      <div class="text-[9px] text-gray-500 leading-tight"><T t={ui.features.certScheme} /></div>
+                    </div>
+                  </div>
+                  <div class="h-px bg-white/[0.06]"></div>
+                  <dl class="m-0 flex flex-col gap-1.5">
+                    <div data-fx-certrow class="flex items-baseline justify-between gap-3">
+                      <dt class="text-[10px] text-gray-500"><T t={ui.features.certNoLabel} /></dt>
+                      <dd class="m-0 text-[10px] font-semibold text-white">{CERTIFICATE_NUMBER}</dd>
+                    </div>
+                    <div data-fx-certrow class="flex items-baseline justify-between gap-3">
+                      <dt class="text-[10px] text-gray-500"><T t={ui.features.certBodyLabel} /></dt>
+                      <dd class="m-0 text-[10px] font-semibold text-white"><T t={ui.features.certBodyValue} /></dd>
+                    </div>
+                    <div data-fx-certrow class="flex items-baseline justify-between gap-3">
+                      <dt class="text-[10px] text-gray-500"><T t={ui.features.certValidLabel} /></dt>
+                      <dd class="m-0 text-[10px] font-semibold text-white"><T t={ui.features.certValidValue} /></dd>
+                    </div>
+                  </dl>
                 </div>
               </div>
             )}
@@ -260,6 +266,23 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
                 >
                   <T t={ui.features.transparencyCta} />
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </a>
+              </div>
+            )}
+            {/* The link goes to TSI's own register (never to a hosted copy of
+                the certificate — see data/certification.ts), same as the hero
+                credential. */}
+            {feature.icon === "cert" && (
+              <div class="mt-1">
+                <a
+                  href={CERTIFICATE_VERIFY_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={ui.hero.securityBadgeTitle.id}
+                  class="inline-flex items-center gap-1.5 w-fit text-gold-light hover:text-white text-sm font-medium no-underline transition-colors"
+                >
+                  <T t={ui.features.certCta} />
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7m0 0H8m9 0v9" /></svg>
                 </a>
               </div>
             )}
@@ -409,15 +432,17 @@ const gaugeTicks = Array.from({ length: 44 }, (_, i) => i);
             .to({}, { duration: 0.7 });
           break;
         }
-        case "layers": { // the hub fires a shockwave that lights up each chain in turn
-          const hub = q1(card, "[data-fx-hub]");
-          const chainEls = qa(card, "[data-fx-chain]");
-          const waves = qa(card, "[data-fx-wave]");
-          tl.to(hub, { scale: 1.2, duration: 0.32, yoyo: true, repeat: 1, ease: "power2.out", transformOrigin: "50% 50%" }, 0);
-          waves.forEach((w, i) => {
-            tl.fromTo(w, { scale: 0.6, opacity: 0.7 }, { scale: 5.5, opacity: 0, duration: 1.1, ease: "power1.out", transformOrigin: "50% 50%", immediateRender: false }, 0.1 + i * 0.4);
-          });
-          tl.to(chainEls, { scale: 1.34, duration: 0.3, stagger: { each: 0.1, from: "start", yoyo: true, repeat: 1 }, ease: "back.out(3)", transformOrigin: "50% 50%" }, 0.35)
+        case "cert": { // the seal verifies: a gold ring draws around the lock, then each register row confirms in turn
+          const seal = q1(card, "[data-fx-seal]");
+          const ring = q1(card, "[data-fx-certring]");
+          const rows = qa(card, "[data-fx-certrow]");
+          // .set at position 0 forces the ring back to EMPTY every loop, so it
+          // always re-draws from 0 (same idiom as the check card's ring)
+          tl.set(ring, { strokeDashoffset: 1, opacity: 0.95 })
+            .to(ring, { strokeDashoffset: 0, duration: 0.9, ease: "power1.inOut" }, 0)
+            .to(seal, { scale: 1.1, duration: 0.35, yoyo: true, repeat: 1, ease: "power2.out", transformOrigin: "50% 50%" }, 0.1)
+            .to(rows, { x: 4, duration: 0.28, stagger: { each: 0.12, yoyo: true, repeat: 1 }, ease: "power2.out" }, 0.35)
+            .to(ring, { opacity: 0, duration: 0.35 }, 1.0)
             .to({}, { duration: 0.7 });
           break;
         }

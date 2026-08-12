@@ -1,0 +1,106 @@
+---
+// "Standar Internasional" — the certification band.
+//
+// Why this section exists: the ISO/IEC 27001 certification used to appear only
+// as a one-line credential in the hero, and the feedback (12 Aug 2026) was that
+// the information "menonjolkan ISO-nya kurang". Reference pattern:
+// dcloud.co.id — a dedicated standards section that names the certifier.
+//
+// Why it is TEXT ONLY: TSI's mark guideline (see data/certification.ts) means
+// the combined TSI+KAN mark may only be used once TSI supplies the artwork and
+// MAF signs the mark-use statement. Until then this band carries a plain
+// statement plus the register facts — which TSI does not restrict — and the
+// strongest evidence available: a live lookup on the register of the body that
+// issued the certificate.
+//
+// WHEN THE MARK ARRIVES: it must sit adjacent to the USDX logo and carry the
+// certificate number (§2d/§2e/§3.2) — the natural home is a small USDX+mark
+// lockup inside the facts panel below, next to the verify CTA. Do not place
+// the mark on its own anywhere.
+import {
+  ACCREDITATION_NUMBER,
+  CERTIFICATE_HOLDER,
+  CERTIFICATE_NUMBER,
+  CERTIFICATE_STANDARD,
+  CERTIFICATE_VERIFY_URL,
+  CERTIFICATION_BODY,
+} from "../data/certification";
+import { ui } from "../i18n";
+import T from "./T.astro";
+
+// Fact rows: label is translated, value comes from data/certification.ts where
+// it is a verbatim certificate field, or from i18n where it needs translating.
+const facts = [
+  { label: ui.certification.factStandard, value: CERTIFICATE_STANDARD },
+  { label: ui.certification.factNumber, value: CERTIFICATE_NUMBER },
+  { label: ui.certification.factHolder, value: CERTIFICATE_HOLDER },
+  { label: ui.certification.factBody, value: CERTIFICATION_BODY },
+  { label: ui.certification.factAccreditation, value: null, t: ui.certification.accreditationValue },
+  { label: ui.certification.factScope, value: null, t: ui.certification.scopeValue },
+  { label: ui.certification.factValidity, value: null, t: ui.certification.validityValue },
+];
+---
+<section id="certification" class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden bg-[#0f0f0f]">
+  <!-- gold glow behind the heading — this band is about the certification, so
+       it gets the brand's gold rather than the red the other sections carry -->
+  <div class="absolute -top-24 left-[15%] w-[820px] h-[320px] bg-gold/15 blur-[130px] rounded-[50%] pointer-events-none"></div>
+  <!-- faint grid pattern, same idiom as Features -->
+  <div class="absolute inset-x-0 bottom-0 h-2/3 opacity-[0.05]" style="background-image: linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px); background-size: 48px 48px; mask-image: linear-gradient(to bottom, transparent, #000 45%); -webkit-mask-image: linear-gradient(to bottom, transparent, #000 45%);"></div>
+
+  <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px]">
+    <div class="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+      <!-- Left: eyebrow + heading + statement + verify CTA -->
+      <div class="animate-on-scroll flex flex-col items-start gap-4">
+        <span class="inline-flex items-center gap-3 pl-2 pr-5 py-2 rounded-full text-white text-base font-medium font-tight" style="background-image:linear-gradient(90deg,rgba(239,183,79,0.4) 0%,rgba(98,0,0,0) 100%)">
+          <span class="w-7 h-7 rounded-full bg-[#F7A100] flex items-center justify-center text-[#7a0a0a] shrink-0">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-5a2 2 0 00-2-2H6a2 2 0 00-2 2v5a2 2 0 002 2zm10-9V7a4 4 0 00-8 0v4h8z"/></svg>
+          </span>
+          <T t={ui.certification.eyebrow} />
+        </span>
+        <!-- 46px, not the 52-56px of the full-width sections: this heading
+             lives in a half-width column, and "bersertifikat ISO/IEC 27001"
+             at 52px wraps into a dangling "27001" third line. -->
+        <h2 class="font-serif font-medium text-[32px] leading-[36px] sm:text-5xl sm:leading-tight lg:text-[46px] lg:leading-[52px] tracking-tight bg-[linear-gradient(180deg,#fff_0%,rgba(255,255,255,0.4)_100%)] bg-clip-text text-transparent">
+          <span class="block"><T t={ui.certification.heading1} /></span>
+          <span class="block"><T t={ui.certification.heading2} /></span>
+        </h2>
+        <p class="text-zinc-400 text-base leading-[26px] max-w-[560px] m-0">
+          <T t={ui.certification.body} />
+        </p>
+        <div class="mt-2 flex flex-col gap-2">
+          <!-- Links to TSI's own register result for ISMS 26302 — live status
+               from the issuing body, never a hosted copy of the certificate
+               (forbidden — see data/certification.ts). -->
+          <a
+            href={CERTIFICATE_VERIFY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 w-fit rounded-full bg-gold/10 border border-gold/35 hover:border-gold/70 hover:bg-gold/15 px-5 py-2.5 text-gold-light hover:text-white text-sm font-medium no-underline transition-colors"
+          >
+            <T t={ui.certification.verifyCta} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 17L17 7m0 0H8m9 0v9" /></svg>
+          </a>
+          <p class="text-white/40 text-xs leading-5 max-w-[420px] m-0">
+            <T t={ui.certification.verifyNote} />
+          </p>
+        </div>
+      </div>
+
+      <!-- Right: the register facts, one labelled row per certificate field -->
+      <div class="animate-on-scroll rounded-2xl border border-white/[0.06] bg-[#141414] p-6 sm:p-8">
+        <dl class="m-0 flex flex-col">
+          {facts.map((fact, i) => (
+            <div class={`flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 py-3.5 ${i === 0 ? "" : "border-t border-white/[0.06]"}`}>
+              <dt class="sm:w-[168px] shrink-0 text-white/50 text-xs font-medium uppercase tracking-wide">
+                <T t={fact.label} />
+              </dt>
+              <dd class="m-0 text-white/90 text-[15px] leading-6 font-medium">
+                {fact.value ?? <T t={fact.t!} />}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>

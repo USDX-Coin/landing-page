@@ -51,6 +51,12 @@
 // EXPIRY: after 23 June 2029 this certificate lapses and the claim must go with
 // it. Recertification normally issues a new number.
 export const CERTIFICATE_NUMBER = "ISMS 26302";
+/** As printed on the certificate. SNI is Indonesia's national adoption of the
+ * identical ISO/IEC text — see the note at the top of this file. */
+export const CERTIFICATE_STANDARD = "SNI ISO/IEC 27001:2022";
+export const CERTIFICATE_HOLDER = "PT Macan Asia Finance";
+/** KAN accreditation of the certification body; IAF MLA signatory. */
+export const ACCREDITATION_NUMBER = "KAN LSSM-056-IDN";
 
 /**
  * TSI's own public verification portal, deep-linked to this certificate. Opens
