@@ -5,6 +5,15 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# /whitepaper is the URL listing reviewers (CMC, CoinGecko, PolygonScan, OJK)
+# probe by convention; the document itself lives on the docs site. 302 on
+# purpose: the target moves once the final whitepaper artifact exists — a 301
+# would let browsers and aggregators cache the docs site forever.
+[[redirects]]
+  from = "/whitepaper"
+  to = "https://docs.usdx.co.id"
+  status = 302
+
 [[headers]]
   for = "/*"
   [headers.values]
