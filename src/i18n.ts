@@ -313,13 +313,14 @@ export const ui = {
 
   // Copy for /transparency — "Dokumen Transparansi dan Audit".
   //
-  // The page is a document warehouse: the monthly attestation table, the
-  // contract address, and the smart-contract audit. It used to lead with reserve
-  // FIGURES (circulating supply, total reserves, collateral ratio, reserve
-  // breakdown). Those are switched OFF — not deleted — because finance has not
-  // published a reserve position yet, and a transparency page must never print a
-  // number nobody can stand behind. Everything needed to bring them back is
-  // parked in the commented "FIGURES" block below.
+  // The page carries the three headline figures (circulating supply, reserve
+  // assets, collateral ratio), what the reserve is made of, the contract
+  // address, the monthly attestation table, and the smart-contract audit.
+  //
+  // Every figure has an unavailable state, and every one of them says "Belum
+  // tersedia" in words. A transparency page must never print a number nobody
+  // can stand behind, and a missing figure shown as 0 is worse than no figure
+  // at all — it is a false one. See notAvailable below.
   //
   // The attestation table used to live on its own /docs page. That page is gone
   // and its copy was merged into this block, so there is one list in one place.
@@ -344,24 +345,58 @@ export const ui = {
 
     statusLoading: { id: "Memuat data terbaru…", en: "Loading the latest data…" },
     statusLive: { id: "Data langsung dari API USDX.", en: "Live data from the USDX API." },
-    // Both status lines used to end with "…the figures below are the last ones
-    // embedded in this page", which only made sense while the figures were on.
-    // Restore that wording together with the FIGURES block.
+    // Shown when the figures came through but the document list did not — the
+    // page half-succeeded, which it can do and used to lie about. A malformed
+    // `attestations` value left three freshly filled figure cards sitting under
+    // a status line that said the figures could not be shown. A status line is
+    // only worth having if it describes what is actually on the screen.
+    statusFiguresOnly: {
+      id: "Angka di halaman ini dimuat langsung dari API USDX. Daftar dokumen belum dapat ditampilkan saat ini.",
+      en: "The figures on this page are live from the USDX API. The document list cannot be shown right now.",
+    },
+    // And the mirror of it, because the page half-succeeds in both directions.
+    // The line above was being shown for THIS state too — naming the figures as
+    // present above three cards that all read "Belum tersedia" — because the
+    // status was read off the document list alone. An empty ledger with a failed
+    // chain read gets here without anything being broken; so does the backend's
+    // total-outage payload on any replica whose supply reading survived it.
+    statusListOnly: {
+      id: "Daftar dokumen di halaman ini dimuat langsung dari API USDX. Angka belum dapat ditampilkan saat ini.",
+      en: "The document list on this page is live from the USDX API. The figures cannot be shown right now.",
+    },
+    // Neither line promises anything is still on screen after a failed fetch.
     // Nothing about the document list is baked into the HTML — the table is
-    // built entirely from the API response — so a failed fetch leaves no list at
-    // all. Saying it "may be incomplete" would imply there is something there.
+    // built entirely from the API response — and TRANSPARENCY_FALLBACK carries
+    // no figures either, so a failed fetch really does leave the page with
+    // nothing but "Belum tersedia". Saying the numbers "may be out of date"
+    // would imply there are numbers there to be out of date.
+    //
+    // If figures are ever baked into TRANSPARENCY_FALLBACK, both lines have to
+    // change with them: they would then be showing a real, older position, and
+    // the reader is owed that distinction.
+    //
+    // Shown for two situations that look identical to a reader, and should: a
+    // fetch that failed, and a fetch that succeeded and carried nothing usable
+    // — the backend's `attestations: null` total-outage payload, which states
+    // its own ignorance rather than answering 500. Either way the sentence is
+    // true as written: the live data could not be loaded, and there is nothing
+    // on screen for it to contradict.
     statusFallback: {
-      id: "Data langsung tidak dapat dimuat saat ini, jadi daftar dokumen belum dapat ditampilkan.",
-      en: "Live data could not be loaded right now, so the document list cannot be shown.",
+      id: "Data langsung tidak dapat dimuat saat ini, jadi angka dan daftar dokumen di halaman ini belum dapat ditampilkan.",
+      en: "Live data could not be loaded right now, so the figures and the document list on this page cannot be shown.",
     },
     statusNoJs: {
-      id: "Peramban Anda tidak menjalankan JavaScript, jadi daftar dokumen belum dapat ditampilkan.",
-      en: "Your browser is not running JavaScript, so the document list cannot be shown yet.",
+      id: "Peramban Anda tidak menjalankan JavaScript, jadi angka dan daftar dokumen belum dapat ditampilkan.",
+      en: "Your browser is not running JavaScript, so the figures and the document list cannot be shown yet.",
     },
 
     notAvailable: { id: "Belum tersedia", en: "Not yet available" },
 
     // ── Attestation table (moved here from the old /docs page) ──────────────
+    // The card carrying the table had no heading while the three cards around
+    // it did, so the table opened straight into column labels with nothing
+    // naming it — including for anyone reading the page through its headings.
+    docsHeading: { id: "Laporan Atestasi Bulanan", en: "Monthly Attestation Reports" },
     colId: { id: "ID", en: "ID" },
     colName: { id: "Nama", en: "Name" },
     colMonth: { id: "Bulan", en: "Month" },
@@ -396,6 +431,16 @@ export const ui = {
       id: "Daftar dokumen dimuat langsung dari API USDX saat halaman ini dibuka.",
       en: "The document list is loaded directly from the USDX API when this page opens.",
     },
+    // The API answered, but not with a list this page can read: no
+    // `attestations` field, or a value of some other shape. That says nothing
+    // about how many reports exist, so neither does this line. It exists so the
+    // difference between "we cannot show the list" and "no report has ever been
+    // published" survives all the way to the reader — the two used to share a
+    // single sentence, and it was the second one.
+    listUnavailable: {
+      id: "Daftar dokumen belum dapat ditampilkan saat ini. Silakan muat ulang halaman ini beberapa saat lagi.",
+      en: "The document list cannot be shown right now. Please reload this page in a little while.",
+    },
 
     contractHeading: { id: "Alamat Kontrak", en: "Contract Address" },
 
@@ -405,70 +450,76 @@ export const ui = {
       en: "The USDX contract has been audited by Cyberscope. The full report is available as a PDF.",
     },
 
-    // ── FIGURES — OFF until finance publishes a reserve position ─────────────
+    // ── Headline figures ───────────────────────────────────────────────────
+    // Three cards, not four. "Underlying" is the same number as reserve assets
+    // under another name, and "value per token" is the collateral ratio in
+    // another unit — a fourth card would be a second printing of one of these.
+    supplyLabel: { id: "Token beredar", en: "Circulating supply" },
+    reserveLabel: { id: "Aset cadangan", en: "Reserve assets" },
+    ratioLabel: { id: "Rasio jaminan", en: "Collateral ratio" },
+
+    // Timestamp captions. Each is a PREFIX; the formatted WIB timestamp is
+    // appended to it ("Dibaca dari rantai per 10 Agustus 2026, 11.05 WIB").
     //
-    // Turning them back on, in this order:
-    //   1. uncomment every key in this block;
-    //   2. uncomment the three matching markup sections in
-    //      src/pages/transparency.astro ("Headline figures", "Reserve breakdown"
-    //      and "How the figures are read") and the figure lines in that page's
-    //      render() — each one is marked with the same "FIGURES" label;
-    //   3. put the published position into TRANSPARENCY_FALLBACK in
-    //      src/data/transparency.ts so the numbers survive a failed fetch;
-    //   4. restore the "figures below" wording in statusFallback / statusNoJs
-    //      above, and point metaTitle / metaDescription / heading1 / heading2 /
-    //      intro back at the reserve framing (kept below, commented).
+    // Every one of them names a clock time, not just a date, because these
+    // figures are live: circulating supply is read from the chain as the page
+    // opens, and the reserve is a running ledger balance rather than a dated
+    // snapshot. A date on its own would read as an end-of-day position.
+    supplyCaption: { id: "Dibaca dari rantai per", en: "Read on-chain as of" },
+    reserveCaption: { id: "Posisi per", en: "Balance as of" },
+    updatedCaption: { id: "Terakhir diperbarui", en: "Last updated" },
+    // Shown in place of a caption when there is no timestamp to print. Says
+    // which thing is missing, since the figure above it says "Belum tersedia"
+    // for its own reason.
+    captionUnavailable: {
+      id: "Waktu pembaruan belum tersedia",
+      en: "Update time not yet available",
+    },
+
+    // ── Reserve breakdown ──────────────────────────────────────────────────
+    reserveHeading: { id: "Rincian Cadangan", en: "Reserve Breakdown" },
+    // The list itself is a structured content list, so it lives in
+    // RESERVE_COMPOSITION in src/data/transparency.ts — which is also where the
+    // reason nothing may be added to it is written down.
     //
-    // The fetch layer in src/data/transparency.ts and its tests were left fully
-    // intact — the attestation table uses the same request, and the figure
-    // fields on the response are simply not rendered right now.
-    //
-    // metaTitle: {
-    //   id: "Transparansi Cadangan USDX — PT Macan Asia Finance",
-    //   en: "USDX Reserve Transparency — PT Macan Asia Finance",
-    // },
-    // metaDescription: {
-    //   id: "Jumlah token USDX yang beredar, cadangan US Dolar di kustodian Bank BNI, rasio jaminan, dan laporan atestasi bulanan.",
-    //   en: "USDX circulating supply, US Dollar reserves held in custody at Bank BNI, collateral ratio, and monthly attestation reports.",
-    // },
-    // heading1: { id: "Token beredar", en: "Circulating supply" },
-    // heading2: { id: "dan cadangan", en: "and reserves" },
-    // intro: {
-    //   id: "Setiap USDX yang beredar didukung oleh US Dolar yang disimpan di rekening kustodian Bank BNI. Halaman ini menampilkan posisi terakhir yang diterbitkan beserta tanggalnya, sehingga setiap angka bisa ditelusuri sumbernya.",
-    //   en: "Every USDX in circulation is backed by US Dollars held in a custodian account at Bank BNI. This page shows the latest published position together with its date, so every figure can be traced back to a source.",
-    // },
-    //
-    // supplyLabel: { id: "Jumlah Token Beredar", en: "Circulating Supply" },
-    // reserveLabel: { id: "Total Cadangan", en: "Total Reserves" },
-    // ratioLabel: { id: "Rasio Jaminan", en: "Collateral Ratio" },
-    // asOf: { id: "Posisi", en: "As of" },
-    // readAt: { id: "Dibaca dari rantai", en: "Read on-chain" },
-    // updatedAt: { id: "Terakhir diperbarui", en: "Last updated" },
-    //
-    // methodHeading: { id: "Cara angka ini dibaca", en: "How these figures are read" },
-    // supplyDefinitionTitle: {
-    //   id: "Definisi jumlah token beredar",
-    //   en: "Definition of circulating supply",
-    // },
-    // supplyDefinition: {
-    //   id: "Jumlah token beredar adalah nilai totalSupply mentah yang dibaca langsung dari kontrak USDX di jaringan Polygon — tanpa pengurangan apa pun, termasuk token yang masih ditahan di alamat treasury. Angka yang sama dapat Anda periksa sendiri di halaman kontrak USDX di PolygonScan; kalau berbeda, yang berlaku adalah angka di rantai.",
-    //   en: "Circulating supply is the raw totalSupply value read directly from the USDX contract on the Polygon network — with no deductions of any kind, including tokens still held at treasury addresses. You can check the same figure yourself on the USDX contract page on PolygonScan; if the two ever differ, the on-chain figure is the one that counts.",
-    // },
-    // ratioDefinitionTitle: { id: "Definisi rasio jaminan", en: "Definition of collateral ratio" },
-    // ratioDefinition: {
-    //   id: "Rasio jaminan adalah total cadangan dibagi jumlah token beredar. Cadangan berasal dari posisi yang diterbitkan PT Macan Asia Finance dan berlaku pada tanggal posisi yang tertera — bukan waktu nyata — sementara jumlah token beredar dibaca dari rantai saat halaman dibuka.",
-    //   en: "The collateral ratio is total reserves divided by circulating supply. Reserves come from the position published by PT Macan Asia Finance and are valid as of the stated position date — not in real time — while circulating supply is read from the chain when this page loads.",
-    // },
-    //
-    // reserveHeading: { id: "Rincian Cadangan", en: "Reserve Breakdown" },
-    // reserveForm: { id: "Bentuk cadangan", en: "Reserve form" },
-    // reserveFormValue: {
-    //   id: "US Dolar di rekening kustodian",
-    //   en: "US Dollars in a custodian account",
-    // },
-    // custodian: { id: "Kustodian", en: "Custodian" },
-    // account: { id: "Rekening", en: "Account" },
-    // issuer: { id: "Penerbit", en: "Issuer" },
-    // note: { id: "Catatan", en: "Note" },
+    // States the absence explicitly. Readers arrive at this page having seen
+    // other stablecoins list treasuries and money market funds, and will assume
+    // the same mix unless told otherwise.
+    // The attestation table sits ABOVE this card, so the note used to point
+    // readers "di bawah" / "below" at a table they had already scrolled past.
+    // It names the page instead of a direction, which stays true whatever the
+    // cards are reordered into next.
+    reserveCompositionNote: {
+      id: "Cadangan USDX seluruhnya berbentuk kas Dolar AS. Tidak ada surat utang negara, reksa dana pasar uang, atau instrumen lain di dalamnya. Isi cadangan diverifikasi secara independen lewat atestasi bulanan yang tercantum di halaman ini.",
+      en: "USDX reserves are held entirely as U.S. dollar cash. They contain no treasury instruments, no money market funds and no other instruments. What the reserves hold is verified independently through the monthly attestations listed on this page.",
+    },
+    // NOT "Kustodian" / "Custodian". The official documentation says the
+    // reserves are "held in U.S. dollar cash at Bank Negara Indonesia (BNI)"
+    // and never once calls BNI a custodian — which is a licensed banking role
+    // with a specific meaning, not a synonym for the bank an account is at.
+    // The same phrase ("di kustodian Bank BNI") was already taken out of the
+    // footer and the meta description for being the site's own wording rather
+    // than the documentation's; putting it back on the transparency page, next
+    // to the reserve figures, is the same unbacked claim in the worst possible
+    // place. This label states where the money is and claims no role for
+    // anyone. See RESERVE_BANK in src/data/transparency.ts.
+    reserveBank: { id: "Bank penyimpan", en: "Held at" },
+    issuer: { id: "Penerbit", en: "Issuer" },
+
+    // ── How the figures are read ───────────────────────────────────────────
+    methodHeading: { id: "Cara angka ini dibaca", en: "How these figures are read" },
+    supplyDefinitionTitle: {
+      id: "Definisi token beredar",
+      en: "Definition of circulating supply",
+    },
+    supplyDefinition: {
+      id: "Token beredar adalah nilai totalSupply mentah yang dibaca langsung dari kontrak USDX di jaringan Polygon — tanpa pengurangan apa pun, termasuk token yang masih ditahan di alamat treasury. Angka yang sama dapat Anda periksa sendiri di halaman kontrak USDX di PolygonScan; kalau berbeda, yang berlaku adalah angka di rantai.",
+      en: "Circulating supply is the raw totalSupply value read directly from the USDX contract on the Polygon network — with no deductions of any kind, including tokens still held at treasury addresses. You can check the same figure yourself on the USDX contract page on PolygonScan; if the two ever differ, the on-chain figure is the one that counts.",
+    },
+    ratioDefinitionTitle: { id: "Definisi rasio jaminan", en: "Definition of collateral ratio" },
+    ratioDefinition: {
+      id: "Rasio jaminan adalah aset cadangan dibagi token beredar, dan baris “1 USDX = USD …” adalah rasio yang sama dinyatakan per token — bukan angka terpisah. Cadangan dicatat dalam buku besar yang bergerak setiap kali token dicetak, dibakar, atau ditebus, sementara token beredar dibaca dari rantai saat halaman dibuka; keduanya diberi keterangan waktu masing-masing.",
+      en: "The collateral ratio is reserve assets divided by circulating supply, and the “1 USDX = USD …” line is that same ratio stated per token — not a separate figure. Reserves are recorded in a ledger that moves whenever tokens are minted, burned or redeemed, while circulating supply is read from the chain when this page opens; each carries its own timestamp.",
+    },
   },
 } satisfies Record<string, unknown>;
