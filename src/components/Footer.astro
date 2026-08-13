@@ -31,9 +31,10 @@ const { base = "" } = Astro.props;
 // owes one regardless. Add it here the moment it is published:
 //   { label: ui.footer.privacy, href: PRIVACY_POLICY_URL, external: true },
 // (and uncomment the matching label in i18n.ts).
-// No "Whitepaper" entry here: the whitepaper IS the GitBook documentation, which
-// the Quick Links column already links to via the "Dokumentasi" nav entry. Two
-// links to an identical URL in one footer is padding, not navigation.
+// No "Whitepaper" entry here: the whitepaper IS the GitBook documentation, and
+// the Quick Links column beside this row already carries it — under the literal
+// label "Whitepaper", via the nav entry in navigation.ts. Two links to an
+// identical URL in one footer is padding, not navigation.
 //
 // "Legal & Disclaimer" is deliberately first: a column headed "Legal" whose only
 // entry was the audit report did not match its own label. This is the documented

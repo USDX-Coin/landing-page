@@ -111,9 +111,70 @@ export const ui = {
     walletNote: { id: "Penyelesaian lintas negara", en: "Cross-border settlement" },
     gaugeLabel: { id: "Penyelesaian", en: "Settlement" },
     // The two "Dokumen Transparansi dan Audit" links read as a pair: the audit
-    // PDF (Cyberscope) and the attestation table on /transparency.
-    auditCta: { id: "Lihat Laporan Audit", en: "View Audit Report" },
-    transparencyCta: { id: "Lihat Dokumen Transparansi", en: "View Transparency Documents" },
+    // PDF (Cyberscope) and the attestation table on /transparency. Noun-style,
+    // no "Lihat" prefix (same idiom as the footer's "Laporan Audit" link): with
+    // the verb the pair only fit side by side on the very widest cards and
+    // stacked everywhere else, which read as broken (12 Aug 2026). The arrow
+    // icons already say "open".
+    auditCta: { id: "Laporan Audit", en: "Audit Report" },
+    transparencyCta: { id: "Dokumen Transparansi", en: "Transparency Documents" },
+    // Certification card (see data/certification.ts for every fact). The visual
+    // is a summary of what TSI's own register shows for ISMS 26302 — not a
+    // reproduction of the certificate (forbidden) and not the TSI/KAN mark
+    // (artwork must come from TSI, after a signed statement).
+    certScheme: {
+      id: "Sistem Manajemen Keamanan Informasi",
+      en: "Information Security Management Systems",
+    },
+    certNoLabel: { id: "No. Sertifikat", en: "Certificate No." },
+    certBodyLabel: { id: "Badan Sertifikasi", en: "Certification Body" },
+    // Short form — the panel is too narrow for the body's full legal name,
+    // which the section band and TSI's register both spell out.
+    certBodyValue: { id: "TSI · Akreditasi KAN", en: "TSI · KAN accredited" },
+    certValidLabel: { id: "Berlaku s.d.", en: "Valid until" },
+    // Keep in step with CERTIFICATE_EXPIRY in data/certification.ts.
+    certValidValue: { id: "23 Juni 2029", en: "23 June 2029" },
+    certCta: { id: "Verifikasi Sertifikat", en: "Verify Certificate" },
+  },
+
+  // "Standar Internasional" — the certification band (Certification.astro).
+  // Reference pattern: dcloud.co.id, a dedicated standards section that names
+  // the certifier. Deliberately text-only: the combined TSI+KAN mark may only
+  // be used once TSI supplies the artwork and MAF signs the mark-use statement
+  // (see data/certification.ts), so until then the band carries a statement
+  // plus the register facts — which TSI does not restrict.
+  certification: {
+    eyebrow: { id: "Standar Internasional", en: "International Standards" },
+    heading1: { id: "Keamanan informasi", en: "Information security," },
+    heading2: { id: "bersertifikat ISO/IEC 27001", en: "certified to ISO/IEC 27001" },
+    body: {
+      id: "PT Macan Asia Finance, penerbit USDX, tersertifikasi SNI ISO/IEC 27001:2022 — standar internasional untuk sistem manajemen keamanan informasi — dengan ruang lingkup platform layanan transaksi stablecoin. Sertifikat diterbitkan oleh PT TSI Sertifikasi Internasional di bawah akreditasi KAN, dan dapat diverifikasi langsung di portal resmi TSI.",
+      en: "PT Macan Asia Finance, the issuer of USDX, is certified to SNI ISO/IEC 27001:2022 — the international standard for information security management systems — with a scope covering its stablecoin transaction services platform. The certificate is issued by PT TSI Sertifikasi Internasional under KAN accreditation, and can be verified directly on TSI's official register.",
+    },
+    verifyCta: { id: "Verifikasi di Portal TSI", en: "Verify on TSI's Register" },
+    // Under the CTA, so the reader knows the link leaves the site and where to.
+    verifyNote: {
+      id: "Membuka hasil pencarian sertifikat ISMS 26302 di situs resmi PT TSI Sertifikasi Internasional.",
+      en: "Opens the ISMS 26302 certificate lookup on PT TSI Sertifikasi Internasional's official site.",
+    },
+    factStandard: { id: "Standar", en: "Standard" },
+    factNumber: { id: "Nomor sertifikat", en: "Certificate number" },
+    factHolder: { id: "Pemegang sertifikat", en: "Certificate holder" },
+    factBody: { id: "Badan sertifikasi", en: "Certification body" },
+    factAccreditation: { id: "Akreditasi", en: "Accreditation" },
+    factScope: { id: "Ruang lingkup", en: "Scope" },
+    factValidity: { id: "Masa berlaku", en: "Valid" },
+    // The scope as printed on the certificate, translated for the id column.
+    scopeValue: {
+      id: "Sistem Manajemen Keamanan Informasi untuk Platform Layanan Transaksi Stablecoin",
+      en: "Information Security Management System for Stablecoin Transaction Services Platform",
+    },
+    // Keep in step with the issue/expiry dates in data/certification.ts.
+    validityValue: { id: "24 Juni 2026 – 23 Juni 2029", en: "24 June 2026 – 23 June 2029" },
+    accreditationValue: {
+      id: "KAN LSSM-056-IDN · penandatangan IAF MLA",
+      en: "KAN LSSM-056-IDN · IAF MLA signatory",
+    },
   },
 
   ecosystem: {
@@ -204,10 +265,12 @@ export const ui = {
     userPolicy: { id: "Ketentuan Pengguna", en: "User Policy" },
     legalDisclaimer: { id: "Ketentuan Hukum & Sanggahan", en: "Legal & Disclaimer" },
     audit: { id: "Laporan Audit", en: "Audit Report" },
-    // The whitepaper is the GitBook documentation, already reachable through the
-    // "Dokumentasi" nav entry. A second footer link to the identical URL would be
-    // padding, so this label is unused — restore it only if a standalone
-    // whitepaper document ever ships at its own address.
+    // The whitepaper is the GitBook documentation, reachable through the nav
+    // entry — which is itself labelled "Whitepaper" now (see navigation.ts), so
+    // the word appears verbatim in the navbar and the footer's Quick Links. A
+    // second footer link to the identical URL would be padding, so this label
+    // is unused — restore it only if a standalone whitepaper document ever
+    // ships at its own address.
     // whitepaper: { id: "Whitepaper", en: "Whitepaper" },
     // "All system normal" was a static string, not a real status signal — the
     // same category of placeholder that got the token-info submission rejected.

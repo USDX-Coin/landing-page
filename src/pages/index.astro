@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Hero from "../components/Hero.astro";
 import Features from "../components/Features.astro";
 import Ecosystem from "../components/Ecosystem.astro";
+// import Certification from "../components/Certification.astro"; — see note below
 import CaseStudy from "../components/CaseStudy.astro";
 import TokenInfo from "../components/TokenInfo.astro";
 import Team from "../components/Team.astro";
@@ -19,6 +20,13 @@ import Footer from "../components/Footer.astro";
     <main class="px-4 sm:px-8 py-4">
       <Features />
       <Ecosystem />
+      {/* The "Standar Internasional" band (Certification.astro) was cut by
+          request on 13 Aug 2026 — "cukup di bagian feature aja": the ISO card
+          in Features is the certification's one home on this page, next to the
+          hero credential line. The component is kept (unimported) because it
+          documents the TSI+KAN mark placement rules and is the natural spot to
+          revisit if the mark's arrival reopens the question. */}
+      {/* <Certification /> */}
       {/* TokenInfo and Team render nothing until their data exists (confirmed
           mainnet contract address / real team profiles) — see data/token.ts and
           data/team.ts. Empty cards and invented names are exactly what got the

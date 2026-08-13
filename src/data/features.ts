@@ -1,6 +1,6 @@
 import type { Translated } from "../i18n";
 
-export type FeatureIcon = "shield" | "zap" | "dollar" | "layers" | "check" | "globe";
+export type FeatureIcon = "shield" | "zap" | "dollar" | "cert" | "check" | "globe";
 
 export interface Feature {
   title: Translated;
@@ -54,12 +54,23 @@ export const features: Feature[] = [
     //   id: "USDX tersedia di Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, dan Base.",
     //   en: "USDX is available on Ethereum, BSC, Polygon, Arbitrum, Optimism, Avalanche, Solana, and Base.",
     // },
-    title: { id: "Dibangun di Polygon", en: "Built on Polygon" },
+    //
+    // This slot carried "Dibangun di Polygon" / "Built on Polygon" until
+    // 12 Aug 2026, swapped for the certification card by request. The Polygon
+    // fact is still true and still on the page — the Ecosystem section headline
+    // ("Kini hadir di jaringan Polygon"), the chains FAQ and the token-info
+    // network row all state it — it just stopped being one of the six featured
+    // cards. Do not read this as Polygon having been dropped.
+    //
+    // Every fact on this card is verified against the certificate document in
+    // data/certification.ts — which is also where TSI's rules on how the
+    // certification may be presented are written down.
+    title: { id: "Bersertifikat ISO/IEC 27001", en: "ISO/IEC 27001 Certified" },
     description: {
-      id: "USDX hadir di jaringan Polygon — cepat, hemat biaya, dan siap diperluas ke lebih banyak blockchain.",
-      en: "USDX is live on the Polygon network — fast, low-cost, and ready to expand to more chains.",
+      id: "PT Macan Asia Finance tersertifikasi SNI ISO/IEC 27001:2022 untuk sistem manajemen keamanan informasi platform layanan transaksi stablecoin — diterbitkan PT TSI Sertifikasi Internasional dengan akreditasi KAN.",
+      en: "PT Macan Asia Finance is certified to SNI ISO/IEC 27001:2022 for the information security management system behind its stablecoin transaction services platform — issued by PT TSI Sertifikasi Internasional under KAN accreditation.",
     },
-    icon: "layers",
+    icon: "cert",
   },
   {
     // Replaces the old "Patuh Regulasi" / "Regulatory Compliant" card. The word
