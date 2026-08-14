@@ -42,6 +42,13 @@ export const navLinks: NavLink[] = [
   // crypto contexts), and through navLinks it appears in the navbar AND the
   // footer's Quick Links column. Do not rename it back to a synonym.
   { label: { id: "Whitepaper", en: "Whitepaper" }, href: DOCUMENTATION_URL, external: true },
+  // Sits next to the whitepaper on purpose: the two answer the same reviewer
+  // question — who is behind this token, and what does it say about itself.
+  // An anchor, not a page: the team is a section of the landing page, so this
+  // scrolls down to it (through Lenis on the landing page, and via the "/#team"
+  // prefix navHref adds on every other page). Renders in the navbar AND the
+  // footer's Quick Links, like every other entry.
+  { label: ui.team.navLabel, href: "#team" },
   // "Artikel" stays removed — there is no articles page, and a nav link to "#"
   // reads as an unfinished placeholder to explorer reviewers.
   // { label: { id: "Artikel", en: "Articles" }, href: "" },

@@ -14,7 +14,7 @@ The single source of truth for every factual statement on this site is the offic
 - **Two different checks, two different rhythms.** Reserves are verified by **monthly attestations** from a Public Accounting Firm (KAP). The **smart contract** has had **one** independent security audit (Cyberscope, initial audit 25 May 2026). Merging the two into "audited regularly" is how the old backing copy became false.
 - **Not a domestic payment instrument.** The FAQ answers "Can USDX be used for payments in Indonesia?" with a flat "No.", and the Use Cases page closes with the same notice. No section may read as an offer of domestic Indonesian payments.
 - **Not open to everyone.** Minting and redemption are available only to Authorized Customers who have completed KYC and KYB. Copy must not promise access to "anyone".
-- **No invented numbers, people or addresses.** `team.ts`, `token.ts` and `company.ts` are deliberately empty in places; their sections render nothing rather than a placeholder.
+- **No invented numbers, people or addresses.** `token.ts` and `company.ts` are deliberately empty in places; their sections render nothing rather than a placeholder. `team.ts` holds only real, supplied people (one as of 14 Aug 2026) and is never padded with placeholder or "coming soon" cards — the Team section renders nothing at all if the array is empty. PolygonScan's submission still wants public **LinkedIn** profiles; we only have Instagram so far, so that box is not yet ticked.
 
 ## Tech Stack
 
