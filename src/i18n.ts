@@ -283,6 +283,7 @@ export const ui = {
   },
 
   team: {
+    navLabel: { id: "Tim", en: "Team" },
     eyebrow: { id: "Tim", en: "Team" },
     heading1: { id: "Orang di balik", en: "The people behind" },
     heading2: { id: "USDX", en: "USDX" },
@@ -290,7 +291,8 @@ export const ui = {
       id: "Tim yang menjalankan penerbitan dan operasional USDX di PT Macan Asia Finance.",
       en: "The team running USDX issuance and operations at PT Macan Asia Finance.",
     },
-    linkedin: { id: "Profil LinkedIn", en: "LinkedIn profile" },
+    /** Screen-reader label for the icon-only profile link on each card. */
+    instagram: { id: "Instagram", en: "Instagram" },
   },
 
   token: {

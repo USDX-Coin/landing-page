@@ -1,27 +1,28 @@
 import type { Translated } from "../i18n";
 
 export interface TeamMember {
-  /** Full name, exactly as it appears on the LinkedIn profile. */
+  /** Full name, exactly as it appears on the member's own public profile. */
   name: string;
   role: Translated;
   /** Photo in `public/image/team/`, e.g. "/image/team/nama-orang.jpg". */
   photo: string;
-  /** Full public LinkedIn profile URL — PolygonScan asks for this specifically. */
-  linkedin: string;
+  /** Full public Instagram profile URL. */
+  instagram: string;
 }
 
-// Still waiting on management for names, roles, photos and LinkedIn URLs.
+// Real people only. Do not add invented members, and do not pad the grid with
+// empty or "coming soon" cards: a made-up team is worse than a short one, and
+// the profiles listed here are checked by the people reviewing our listings.
 //
-// While this array is empty the Team section is not rendered at all (see
-// Team.astro). Do not fill it with invented people or empty cards: a made-up
-// team is worse than no team section, and PolygonScan checks the LinkedIn
-// profiles it is given.
-//
-// Example entry:
-//   {
-//     name: "Nama Lengkap",
-//     role: { id: "Direktur Utama", en: "Chief Executive Officer" },
-//     photo: "/image/team/nama-lengkap.jpg",
-//     linkedin: "https://www.linkedin.com/in/nama-lengkap/",
-//   },
-export const team: TeamMember[] = [];
+// STILL OUTSTANDING: PolygonScan's token-info submission asks for team members
+// with public *LinkedIn* profiles specifically. We only have Instagram for the
+// people below, so that requirement is not met yet. When the LinkedIn URLs
+// arrive, add a `linkedin` field alongside `instagram` rather than replacing it.
+export const team: TeamMember[] = [
+  {
+    name: "Bintang Alexander",
+    role: { id: "Chief Executive Officer", en: "Chief Executive Officer" },
+    photo: "/image/team/bintang-alexander.jpg",
+    instagram: "https://www.instagram.com/alexander_hermawan/",
+  },
+];

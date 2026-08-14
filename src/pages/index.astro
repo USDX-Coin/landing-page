@@ -27,12 +27,12 @@ import Footer from "../components/Footer.astro";
           documents the TSI+KAN mark placement rules and is the natural spot to
           revisit if the mark's arrival reopens the question. */}
       {/* <Certification /> */}
-      {/* TokenInfo and Team render nothing until their data exists (confirmed
-          mainnet contract address / real team profiles) — see data/token.ts and
-          data/team.ts. Empty cards and invented names are exactly what got the
-          token-info submission rejected. */}
+      {/* TokenInfo renders nothing until the mainnet contract address is
+          confirmed — see data/token.ts. Empty cards and invented values are
+          exactly what got the token-info submission rejected. */}
       <TokenInfo />
       <CaseStudy />
+      {/* Target of the "Tim" nav entry — an anchor to #team, not a page. */}
       <Team />
       <Faq client:visible />
       <Footer />
