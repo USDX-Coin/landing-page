@@ -282,19 +282,6 @@ export const ui = {
     rights: { id: "© 2026 PT Macan Asia Finance", en: "© 2026 PT Macan Asia Finance" },
   },
 
-  team: {
-    navLabel: { id: "Tim", en: "Team" },
-    eyebrow: { id: "Tim", en: "Team" },
-    heading1: { id: "Orang di balik", en: "The people behind" },
-    heading2: { id: "USDX", en: "USDX" },
-    sub: {
-      id: "Tim yang menjalankan penerbitan dan operasional USDX di PT Macan Asia Finance.",
-      en: "The team running USDX issuance and operations at PT Macan Asia Finance.",
-    },
-    /** Screen-reader label for the icon-only profile link on each card. */
-    instagram: { id: "Instagram", en: "Instagram" },
-  },
-
   token: {
     eyebrow: { id: "Informasi Token", en: "Token Information" },
     heading1: { id: "Detail kontrak", en: "USDX contract" },

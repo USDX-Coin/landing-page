@@ -14,7 +14,15 @@ The single source of truth for every factual statement on this site is the offic
 - **Two different checks, two different rhythms.** Reserves are verified by **monthly attestations** from a Public Accounting Firm (KAP). The **smart contract** has had **one** independent security audit (Cyberscope, initial audit 25 May 2026). Merging the two into "audited regularly" is how the old backing copy became false.
 - **Not a domestic payment instrument.** The FAQ answers "Can USDX be used for payments in Indonesia?" with a flat "No.", and the Use Cases page closes with the same notice. No section may read as an offer of domestic Indonesian payments.
 - **Not open to everyone.** Minting and redemption are available only to Authorized Customers who have completed KYC and KYB. Copy must not promise access to "anyone".
-- **No invented numbers, people or addresses.** `token.ts` and `company.ts` are deliberately empty in places; their sections render nothing rather than a placeholder. `team.ts` holds only real, supplied people (one as of 14 Aug 2026) and is never padded with placeholder or "coming soon" cards — the Team section renders nothing at all if the array is empty. PolygonScan's submission still wants public **LinkedIn** profiles; we only have Instagram so far, so that box is not yet ticked.
+- **No invented numbers, people or addresses.** `token.ts` and `company.ts` are deliberately empty in places; their sections render nothing rather than a placeholder.
+
+### The Team section (removed 18 Aug 2026)
+
+`Team.astro`, `data/team.ts`, the `ui.team` strings and the "Tim" nav entry were removed by request on 18 Aug 2026. The section had shipped four days earlier with a single CEO card (PR #20, commit `34f40a9`).
+
+This is a pause, not a verdict that the site should never name its people: PolygonScan's token-info submission asks for founders/team with public **LinkedIn** profiles, and the card that shipped only had Instagram, so that box was never ticked anyway. `public/image/team/bintang-alexander.jpg` is deliberately kept in the repo for the return trip, and `socialIconPaths.instagram` stays in `data/icons.ts` alongside the other social marks the footer does not currently render.
+
+To bring the section back, restore both files from `34f40a9`, then re-add the `ui.team` block in `i18n.ts`, the `#team` entry in `navigation.ts` (it feeds the navbar *and* the footer's Quick Links), and the `<Team />` slot in `index.astro`. The rule the section shipped with still holds: real, supplied people only — never placeholder or "coming soon" cards.
 
 ## Tech Stack
 
