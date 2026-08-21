@@ -194,6 +194,10 @@ export const ui = {
       en: "USDX lives natively on the Polygon network and trades on Uniswap — more chains are on the way.",
     },
     availableOn: { id: "Tersedia di", en: "Available on" },
+    // Label for the register group of the credential strip. It only renders
+    // once data/listings.ts registeredWith has a citable entry — the gate and
+    // the evidence rules are written there.
+    registeredWith: { id: "Terdaftar di", en: "Registered with" },
     partners: { id: "Jaringan Mitra yang Terpercaya", en: "A Trusted Partner Network" },
   },
 

@@ -1,5 +1,6 @@
 ---
-import { chains, partners } from "../data/chains";
+import { chains } from "../data/chains";
+import { availableOn, registeredWith } from "../data/listings";
 import { APP_URL } from "../data/navigation";
 import { ui } from "../i18n";
 import T from "./T.astro";
@@ -119,25 +120,47 @@ const ring = chains.map((chain, i) => ({ chain, ...spots[i % spots.length] }));
   </div>
 </section>
 
-<!-- Card 2: partner network (light-to-dark spotlight) -->
+<!-- Card 2: partner network (light-to-dark spotlight), grouped by the kind of
+     claim each logo carries: "Tersedia di" (markets) and "Terdaftar di"
+     (registers). A group with no entries renders nothing — the register group
+     is empty until its claims are citable. The gate and the evidence rules
+     live in data/listings.ts; do not add a logo here directly. -->
 <section data-eco-partners class="relative mx-auto w-full max-w-[1376px] mb-4 rounded-2xl overflow-hidden border border-white/[0.07] bg-[linear-gradient(180deg,#0f0f0f_0%,rgba(15,15,15,0)_100%)]">
   <div class="relative px-6 sm:px-10 lg:px-11 py-12 lg:py-[52px] flex flex-col gap-10 items-center">
     <h3 class="text-center font-serif font-medium text-4xl sm:text-5xl lg:text-[56px] lg:leading-[60px] text-white tracking-tight">
       <T t={ui.ecosystem.partners} />
     </h3>
-    <div class="flex flex-wrap justify-center gap-4 max-w-[1288px]">
-      {partners.map((partner) => (
-        <a
-          href={partner.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center justify-center gap-3 w-[calc(50%-0.5rem)] sm:w-[244px] h-20 rounded-xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] transition-all no-underline"
-        >
-          <img src={partner.logo} alt={partner.name} class="w-7 h-7 object-contain flex-shrink-0" loading="lazy" />
-          <span class="text-white font-medium text-base whitespace-nowrap">{partner.name}</span>
-        </a>
+    {[
+      { label: ui.ecosystem.availableOn, items: availableOn },
+      { label: ui.ecosystem.registeredWith, items: registeredWith },
+    ]
+      .filter((group) => group.items.length > 0)
+      .map((group) => (
+        <div class="flex flex-col items-center gap-4">
+          <h4 class="text-white/50 text-xs font-medium uppercase tracking-wide m-0">
+            <T t={group.label} />
+          </h4>
+          <div class="flex flex-wrap justify-center gap-4 max-w-[1288px]">
+            {group.items.map((item) => (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center justify-center gap-3 w-[calc(50%-0.5rem)] sm:w-[244px] h-20 px-5 rounded-xl border border-white/10 bg-white/[0.06] hover:bg-white/[0.1] transition-all no-underline"
+              >
+                {item.wide ? (
+                  <img src={item.logo} alt={item.name} class="h-7 w-auto object-contain" loading="lazy" />
+                ) : (
+                  <>
+                    <img src={item.logo} alt={item.name} class="w-7 h-7 object-contain flex-shrink-0" loading="lazy" />
+                    <span class="text-white font-medium text-base whitespace-nowrap">{item.name}</span>
+                  </>
+                )}
+              </a>
+            ))}
+          </div>
+        </div>
       ))}
-    </div>
   </div>
 </section>
 

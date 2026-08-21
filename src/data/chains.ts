@@ -16,21 +16,7 @@ export const chains: Chain[] = [
   // { name: "Base", icon: "/icon/base.svg", url: "https://www.base.org" },
 ];
 
-export interface Partner {
-  name: string;
-  url: string;
-  logo: string;
-}
-
-// Only partners USDX actually trades on today. Uncomment the rest as
-// integrations go live.
-export const partners: Partner[] = [
-  { name: "Uniswap", url: "https://uniswap.org", logo: "/icon/partners/uniswap.png" },
-  // { name: "Binance", url: "https://www.binance.com", logo: "/icon/partners/binance.svg" },
-  // { name: "Coinbase", url: "https://www.coinbase.com", logo: "/icon/partners/coinbase.svg" },
-  // { name: "PancakeSwap", url: "https://pancakeswap.finance", logo: "/icon/partners/pancakeswap.png" },
-  // { name: "Aave", url: "https://aave.com", logo: "/icon/partners/aave.png" },
-  // { name: "Curve", url: "https://curve.fi", logo: "/icon/partners/curve.png" },
-  // { name: "SushiSwap", url: "https://www.sushi.com", logo: "/icon/partners/sushiswap.png" },
-  // { name: "1inch", url: "https://1inch.io", logo: "/icon/partners/1inch.png" },
-];
+// The partner shortlist that used to live here moved to data/listings.ts,
+// where it became the "Tersedia di" group of the credential strip — together
+// with the gated "Terdaftar di" register group and the rules for enabling
+// either. This file is chains only.

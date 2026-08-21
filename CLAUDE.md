@@ -15,6 +15,7 @@ The single source of truth for every factual statement on this site is the offic
 - **Not a domestic payment instrument.** The FAQ answers "Can USDX be used for payments in Indonesia?" with a flat "No.", and the Use Cases page closes with the same notice. No section may read as an offer of domestic Indonesian payments.
 - **Not open to everyone.** Minting and redemption are available only to Authorized Customers who have completed KYC and KYB. Copy must not promise access to "anyone".
 - **No invented numbers, people or addresses.** `token.ts` and `company.ts` are deliberately empty in places; their sections render nothing rather than a placeholder.
+- **No listing or register claims without a citation.** "Terdaftar di OJK/CFX" and "Tersedia di Indodax" are gated in `data/listings.ts` — logos staged, entries commented out — until USDX is actually visible in the CFX Daftar Aset Kripto / a live Indodax market exists (checked absent 18 & 21 Aug 2026). The gate and evidence rules are written in that file; enable entries there, never by hard-coding a logo into a component.
 
 ### The Team section (removed 18 Aug 2026)
 
