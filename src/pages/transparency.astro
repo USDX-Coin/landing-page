@@ -22,7 +22,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer.astro";
 import T from "../components/T.astro";
 import { ui, type Translated } from "../i18n";
-import { AUDIT_REPORT_URL } from "../data/audit";
+import { AUDIT_REPORT_URL, ATTESTATION_REPORT_URL } from "../data/audit";
 import { COMPANY_LEGAL_NAME } from "../data/company";
 import { tokenInfo, polygonscanTokenUrl } from "../data/token";
 import {
@@ -429,6 +429,43 @@ const thClass =
             class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium transition-colors no-underline"
           >
             <T t={ui.footer.audit} />
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </section>
+
+      <!-- Reserve attestation (AUP) — the counterpart to the audit above -->
+      {/* Same shape as the audit card on purpose: a heading, a paragraph, one
+          button that opens a PDF. The two checks belong side by side and are
+          read as a pair, so they should not be built differently.
+
+          Nothing here is hand-maintained EXCEPT this card. It is static, from
+          src/data/audit.ts, and does not wait on the API — which is why the
+          copy names its own period out loud. The live figures at the top of the
+          page move; the finding in this document is pinned to 27 August 2026,
+          and the sentence says so.
+
+          Not to be confused with "Laporan Atestasi Bulanan" further up: that
+          table is the running list from the API, this is the one published
+          report, published now. If the API list ever carries this same period,
+          this card is the thing to remove — not the row. */}
+      <section class={cardClass}>
+        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5 items-start">
+          <h2 class={sectionHeadingClass}><T t={t.attestationHeading} /></h2>
+          <p class={proseClass}><T t={t.attestationBody} /></p>
+          {/* Set apart from the body copy, and quieter than it: this is a note
+              about the file, not part of the finding. It still comes before the
+              button, because a reader is owed it before they open the PDF. */}
+          <p class="text-white/45 text-[13px] leading-6 m-0 max-w-[68ch]"><T t={t.attestationRedactionNote} /></p>
+          <a
+            href={ATTESTATION_REPORT_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium transition-colors no-underline"
+          >
+            <T t={t.attestationCta} />
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>

@@ -439,6 +439,43 @@ export const ui = {
       en: "The USDX contract has been audited by Cyberscope. The full report is available as a PDF.",
     },
 
+    // ── AUP report over the reserve (sits directly under the audit above) ───
+    // The section below the smart-contract audit, and deliberately built to
+    // read as its counterpart rather than more of the same thing: the audit
+    // above is about the code, this one is about the money behind it.
+    //
+    // WHAT THIS COPY IS NOT ALLOWED TO SAY. Not "audit", not "diaudit", not
+    // "opini", not "wajar tanpa pengecualian". The report states in its own
+    // letter that the procedures are not an audit or a review and that the KAP
+    // expresses no opinion or assurance of any kind. Every word here is chosen
+    // to stay inside that: the KAP "melaksanakan prosedur" and "melaporkan
+    // hasilnya" — it does not conclude anything. See data/audit.ts.
+    //
+    // WHY THE DATE IS IN THE SENTENCE. The finding it points at — a 1:1 ratio —
+    // is a position on 27 August 2026 and nothing else. The live figures at the
+    // top of this page will drift away from it within the day, and a reader who
+    // meets "rasio 1:1" with no date attached will read it as a standing
+    // promise. Never drop the date to tighten the sentence.
+    attestationHeading: {
+      id: "Laporan Atestasi Cadangan",
+      en: "Reserve Attestation Report",
+    },
+    attestationBody: {
+      id: "Kantor Akuntan Publik Griselda, Wisnu & Arum melaksanakan prosedur yang disepakati (SJT 4400) atas saldo jaminan USDX pada posisi 27 Agustus 2026, membandingkan jumlah token yang beredar di blockchain explorer publik dengan saldo Dolar AS di Bank Negara Indonesia. Hasil penerapan prosedur mencatat rasio 1:1 pada tanggal tersebut. Laporan lengkapnya tersedia dalam bentuk PDF.",
+      en: "The public accounting firm Griselda, Wisnu & Arum performed agreed-upon procedures (SJT 4400) over the USDX collateral balance as of 27 August 2026, comparing the tokens in circulation on a public blockchain explorer against the U.S. dollar balance held at Bank Negara Indonesia. The results of applying the procedures record a 1:1 ratio on that date. The full report is available as a PDF.",
+    },
+    // Said plainly on the page rather than left for a reader to discover in the
+    // file. A document that has been changed after the auditor signed it should
+    // say so before it is opened, not after.
+    attestationRedactionNote: {
+      id: "Pada lampiran surat saldo dari bank, nomor rekening disamarkan dan dua rekening Rupiah yang bukan jaminan USDX ditutup. Saldo Dolar AS sebagai jaminan USDX dan seluruh isi laporan lainnya tidak diubah.",
+      en: "In the appendix carrying the bank's balance letter, account numbers are masked and two IDR accounts that are not USDX collateral are redacted. The U.S. dollar balance held as USDX collateral, and the rest of the report, are unchanged.",
+    },
+    attestationCta: {
+      id: "Laporan Atestasi (PDF)",
+      en: "Attestation Report (PDF)",
+    },
+
     // ── Headline figures ───────────────────────────────────────────────────
     // Three cards, not four. "Underlying" is the same number as reserve assets
     // under another name, and "value per token" is the collateral ratio in
