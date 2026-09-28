@@ -126,16 +126,14 @@ describe("resolveAttestationFileUrl", () => {
 });
 
 describe("resolveApiBaseUrl", () => {
-  it("maps both production landing domains to the production API", () => {
+  it("maps the production landing domain to the production API", () => {
     assert.equal(resolveApiBaseUrl("usdx.co.id"), API);
     assert.equal(resolveApiBaseUrl("www.usdx.co.id"), API);
-    assert.equal(resolveApiBaseUrl("usdxcoin.xyz"), API);
-    assert.equal(resolveApiBaseUrl("www.usdxcoin.xyz"), API);
   });
 
-  it("keeps local and preview hosts off the production API", () => {
+  it("keeps local and dev hosts off the production API", () => {
     assert.equal(resolveApiBaseUrl("localhost"), "https://api-dev.usdx.co.id");
-    assert.equal(resolveApiBaseUrl("deploy-preview-12--usdx.netlify.app"), "https://api-dev.usdx.co.id");
+    assert.equal(resolveApiBaseUrl("127.0.0.1"), "https://api-dev.usdx.co.id");
     assert.equal(resolveApiBaseUrl("dev.usdx.co.id"), "https://api-dev.usdx.co.id");
   });
 });

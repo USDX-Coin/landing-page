@@ -2,30 +2,27 @@ import type { Lang, Translated } from "../i18n";
 
 // Public transparency endpoint — GET {API_BASE}/api/v1/public/transparency.
 //
-// The landing page is a static Netlify build, so this is fetched from the
-// browser when /transparency opens. The per-domain mapping mirrors
-// APP_URL_BY_HOST in navigation.ts: one build is served on several hostnames, so
-// the right backend is resolved at runtime instead of baked in at build time.
+// The landing page is a static build, so this is fetched from the browser when
+// /transparency opens. The per-domain mapping mirrors APP_URL_BY_HOST in
+// navigation.ts: the backend is resolved at runtime from the hostname instead
+// of baked in at build time, so a local or dev copy never reads production.
 const API_BASE_BY_HOST: Record<string, string> = {
-  "usdxcoin.xyz": "https://api.usdx.co.id",
   "usdx.co.id": "https://api.usdx.co.id",
 };
 
 /** Default / fallback (also what the SSR-rendered markup assumes). */
 export const API_BASE_URL = "https://api.usdx.co.id";
 
-/** Dev backend — used by localhost and Netlify preview/branch deploys. */
+/** Dev backend — used by localhost and dev.* hosts. */
 export const API_BASE_URL_DEV = "https://api-dev.usdx.co.id";
 
 export function resolveApiBaseUrl(hostname: string): string {
   const host = hostname.replace(/^www\./, "");
   const mapped = API_BASE_BY_HOST[host];
   if (mapped) return mapped;
-  // Anything that is not a production landing domain (localhost, Netlify
-  // previews, dev subdomains) talks to the dev backend so preview builds never
-  // hit production.
+  // Local and dev copies talk to the dev backend so they never hit production.
   if (host === "localhost" || host === "127.0.0.1") return API_BASE_URL_DEV;
-  if (host.endsWith(".netlify.app") || host.startsWith("dev.")) return API_BASE_URL_DEV;
+  if (host.startsWith("dev.")) return API_BASE_URL_DEV;
   return API_BASE_URL;
 }
 

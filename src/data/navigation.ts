@@ -1,12 +1,12 @@
-// Per-domain app links. The same static build is deployed to both landing
-// domains, so the correct app URL is resolved at runtime from the hostname.
+// Per-domain app links, resolved at runtime from the hostname. usdxcoin.xyz used
+// to be a second landing domain; it was retired in Sep 2026, so usdx.co.id is
+// the only entry — and the default, which is what every static href carries.
 const APP_URL_BY_HOST: Record<string, string> = {
-  "usdxcoin.xyz": "https://app.usdxcoin.xyz/",
   "usdx.co.id": "https://app.usdx.co.id/",
 };
 
 // Default / fallback (also the SSR-rendered href before client resolution).
-export const APP_URL = "https://app.usdxcoin.xyz/";
+export const APP_URL = "https://app.usdx.co.id/";
 
 export function resolveAppUrl(hostname: string): string {
   const host = hostname.replace(/^www\./, "");
@@ -30,7 +30,10 @@ export const navLinks: NavLink[] = [
   // One transparency entry, one destination. The old "Dokumen" entry pointed at
   // a separate /docs page that held the attestation table; that table now lives
   // on /transparency itself, so the second entry was removed with the page.
-  { label: ui.transparency.navLabel, href: "/transparency" },
+  // Trailing slash on purpose: the server answers `/transparency` with a 301 to
+  // the slashed URL, and that redirect has been seen pointing at http:// (dead
+  // on this host). Linking the final URL skips the hop entirely.
+  { label: ui.transparency.navLabel, href: "/transparency/" },
   { label: { id: "FAQ", en: "FAQ" }, href: "#faq" },
   // The official GitBook — which IS the whitepaper (its landing page is titled
   // "Whitepaper USDX"; see data/whitepaper.ts). The entry was labelled

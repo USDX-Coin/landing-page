@@ -2,9 +2,8 @@
 // URL (og:url, og:image). Everything else on the site uses relative paths so the
 // same static build works on every domain it is deployed to.
 //
-// The same build is served on usdxcoin.xyz and usdx.co.id, but og:url has to be
-// one absolute URL, so the primary domain wins. Change this if the primary
-// domain changes.
+// og:url has to be one absolute URL, so it is pinned to the production domain.
+// Change this if the domain changes.
 export const SITE_URL = "https://usdx.co.id";
 
 // Social preview image. This is a stopgap: it is the hero photo already shipped
@@ -19,12 +18,16 @@ export const OG_IMAGE_HEIGHT = "1067";
 /**
  * Absolute URL for a path on the canonical domain.
  *
- * The trailing slash is dropped (except on the root) so canonical/og:url match
- * the internal links exactly — Netlify's pretty URLs serve `/transparency`, and
- * announcing `/transparency/` would point crawlers at a redirect.
+ * A page URL always ends in "/" — every page is a directory on disk
+ * (dist/transparency/index.html), and the server answers the slash-less form
+ * with a 301 to the slashed one. Announcing `/transparency` in canonical/og:url
+ * would point crawlers at that redirect, so the slash is added, matching the
+ * internal links. A file path (anything whose last segment has an extension,
+ * e.g. the og:image) is left as is.
  */
 export function absoluteUrl(path: string): string {
   const url = new URL(path, SITE_URL);
-  if (url.pathname.length > 1) url.pathname = url.pathname.replace(/\/+$/, "");
+  const lastSegment = url.pathname.slice(url.pathname.lastIndexOf("/") + 1);
+  if (!lastSegment.includes(".") && !url.pathname.endsWith("/")) url.pathname += "/";
   return url.href;
 }
