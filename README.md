@@ -91,8 +91,11 @@ The site moved off Netlify in Sep 2026; `netlify.toml` is gone.
 What the build carries itself:
 
 - **CSP + Referrer-Policy** — `<meta>` tags at the top of `<head>` in `Layout.astro`.
-- **`/whitepaper` → `https://docs.usdx.co.id`** — `redirects` in `astro.config.mjs`,
-  emitted as `dist/whitepaper/index.html` with a meta refresh (HTTP 200, not a 3xx).
+- **`/whitepaper` → `https://docs.usdx.co.id`** — an inline script in `Layout.astro`.
+  The server answers unknown paths with `index.html`, and the script sends
+  `/whitepaper` on to the docs. A browser lands on the docs; the HTTP status is
+  200, and a client without JavaScript sees the homepage. Not an Astro `redirects`
+  entry — that emits a `dist/whitepaper/` directory, which trips the slash redirect below.
 - **Links to pages end in `/`** (`/transparency/`) — the server 301s the slash-less
   form, and that redirect must not be the first hop a visitor takes.
 
@@ -106,8 +109,8 @@ What only the server (or Cloudflare) can send — a `<meta>` tag cannot:
 | `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), interest-cohort=()` |
 
 Plus: `http://` must redirect to `https://` (Cloudflare "Always Use HTTPS"), and the
-server's slash redirect must keep the `https` scheme — otherwise `/transparency`
-and `/whitepaper` land on `http://…` and fail.
+server's slash redirect must keep the `https` scheme — today a typed
+`https://usdx.co.id/transparency` is sent to `http://usdx.co.id/transparency/` and fails.
 
 ## License
 

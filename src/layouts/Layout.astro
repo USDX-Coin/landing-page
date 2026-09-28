@@ -42,6 +42,16 @@ const ogImage = absoluteUrl(OG_IMAGE_PATH);
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <script is:inline>
+      // /whitepaper is the URL listing reviewers (CMC, CoinGecko, PolygonScan,
+      // OJK) probe by convention; the document lives on the docs site. It used
+      // to be a 302 in netlify.toml. The server has no such rule and answers an
+      // unknown path with this site's index.html, so the redirect happens here.
+      // Deliberately NOT an Astro `redirects` entry: that emits a
+      // dist/whitepaper/ directory, and the server 301s a slash-less directory
+      // URL to http://…/whitepaper/ — dead on this host (see README § Deploy).
+      if (/^\/whitepaper\/?$/.test(location.pathname)) location.replace("https://docs.usdx.co.id/");
+    </script>
+    <script is:inline>
       // Apply the saved language before paint to avoid a flash of the default.
       (function () {
         try {
