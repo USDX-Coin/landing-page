@@ -37,10 +37,16 @@ const ogImage = absoluteUrl(OG_IMAGE_PATH);
       connect-src lists the public API: /transparency fetches
       {API_BASE}/api/v1/public/transparency from the browser; without it the
       page silently falls back to its baked-in figures on every load.
+      script-src allows static.cloudflareinsights.com: Cloudflare Web Analytics
+      injects its beacon into every page (on since 29 Sep 2026). Host only, not
+      the /beacon.min.js path Cloudflare's docs show — the real URL carries a
+      version segment (/beacon.min.js/v…), which an exact path would not match.
+      Its report goes to cloudflareinsights.com/cdn-cgi/rum (seen in a browser
+      test) or /cdn-cgi/rum on this origin, so connect-src allows both.
     */}
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://app.usdx.co.id https://api.usdx.co.id https://api-dev.usdx.co.id"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://app.usdx.co.id https://api.usdx.co.id https://api-dev.usdx.co.id https://cloudflareinsights.com"
     />
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <script is:inline>
