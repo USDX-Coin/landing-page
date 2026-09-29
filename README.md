@@ -2,7 +2,7 @@
 
 Single-page responsive landing page for **USDX** — a U.S. dollar stablecoin issued by PT Macan Asia Finance for digital asset settlement, cross-border transactions, and institutional liquidity.
 
-Built with Astro 5, React 19 (islands), TypeScript 5.9, and Tailwind CSS v4. Deployed on Netlify.
+Built with Astro 5, React 19 (islands), TypeScript 5.9, and Tailwind CSS v4. Static output (`dist/`), served from USDX's own server behind Cloudflare — see [Deploy](#deploy).
 
 ## Quick Start
 
@@ -27,7 +27,6 @@ pnpm preview      # Preview production build
 │   └── image/          # USDX Logo.svg (favicon + brand)
 ├── docs/               # Brainstorms, plans, reviews
 ├── astro.config.mjs    # Astro + React + Tailwind v4
-├── netlify.toml        # Build config + security headers
 └── tsconfig.json       # Extends astro/tsconfigs/strict
 ```
 
@@ -83,6 +82,35 @@ Configured via `@theme` in `src/styles/global.css`:
 - **Dev**: `typescript`, `eslint`
 
 No routing library. No state management. No animation library (CSS + vanilla JS only).
+
+## Deploy
+
+`pnpm build` → serve `dist/` as static files (Node 22). Production is `usdx.co.id`.
+The site moved off Netlify in Sep 2026; `netlify.toml` is gone.
+
+What the build carries itself:
+
+- **CSP + Referrer-Policy** — `<meta>` tags at the top of `<head>` in `Layout.astro`.
+- **`/whitepaper` → `https://docs.usdx.co.id`** — an inline script in `Layout.astro`.
+  The server answers unknown paths with `index.html`, and the script sends
+  `/whitepaper` on to the docs. A browser lands on the docs; the HTTP status is
+  200, and a client without JavaScript sees the homepage. Not an Astro `redirects`
+  entry — that emits a `dist/whitepaper/` directory, which trips the slash redirect below.
+- **Links to pages end in `/`** (`/transparency/`) — the server 301s the slash-less
+  form, and that redirect must not be the first hop a visitor takes.
+
+What only the server (or Cloudflare) can send — a `<meta>` tag cannot:
+
+| Header | Value |
+|---|---|
+| `X-Frame-Options` | `DENY` |
+| `X-Content-Type-Options` | `nosniff` |
+| `Strict-Transport-Security` | `max-age=63072000; includeSubDomains; preload` |
+| `Permissions-Policy` | `camera=(), microphone=(), geolocation=(), interest-cohort=()` |
+
+Plus: `http://` must redirect to `https://` (Cloudflare "Always Use HTTPS"), and the
+server's slash redirect must keep the `https` scheme — today a typed
+`https://usdx.co.id/transparency` is sent to `http://usdx.co.id/transparency/` and fails.
 
 ## License
 

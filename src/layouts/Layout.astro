@@ -25,6 +25,34 @@ const ogImage = absoluteUrl(OG_IMAGE_PATH);
   data-desc-en={pageMeta.description.en}
 >
   <head>
+    <meta charset="UTF-8" />
+    {/*
+      Security policy as <meta>, because the host no longer sends it as a header
+      (it did on Netlify; the server this site moved to does not). It must be
+      first in <head> after charset (which must sit in the first 1024 bytes):
+      a meta CSP only governs what comes after it.
+      Same policy the header carried, minus `frame-ancestors` (browsers ignore
+      it in a meta tag — anti-framing needs a real header, see README § Deploy)
+      and minus the retired usdxcoin.xyz host.
+      connect-src lists the public API: /transparency fetches
+      {API_BASE}/api/v1/public/transparency from the browser; without it the
+      page silently falls back to its baked-in figures on every load.
+    */}
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; connect-src 'self' https://app.usdx.co.id https://api.usdx.co.id https://api-dev.usdx.co.id"
+    />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <script is:inline>
+      // /whitepaper is the URL listing reviewers (CMC, CoinGecko, PolygonScan,
+      // OJK) probe by convention; the document lives on the docs site. It used
+      // to be a 302 in netlify.toml. The server has no such rule and answers an
+      // unknown path with this site's index.html, so the redirect happens here.
+      // Deliberately NOT an Astro `redirects` entry: that emits a
+      // dist/whitepaper/ directory, and the server 301s a slash-less directory
+      // URL to http://…/whitepaper/ — dead on this host (see README § Deploy).
+      if (/^\/whitepaper\/?$/.test(location.pathname)) location.replace("https://docs.usdx.co.id/");
+    </script>
     <script is:inline>
       // Apply the saved language before paint to avoid a flash of the default.
       (function () {
@@ -45,7 +73,6 @@ const ogImage = absoluteUrl(OG_IMAGE_PATH);
         } catch (e) {}
       })();
     </script>
-    <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/image/logo-coin.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />

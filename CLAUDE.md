@@ -32,7 +32,7 @@ To bring the section back, restore both files from `34f40a9`, then re-add the `u
 - **Tailwind CSS v4** — utility-first, configured via `@theme` in `global.css`
 - **pnpm** — package manager
 - **Inter** — primary font (Google Fonts, loaded via `<link>` in Layout.astro)
-- **Netlify** — deployment target (static output)
+- **Own server behind Cloudflare** — deployment target (static `dist/`); moved off Netlify Sep 2026, see README § Deploy
 
 ## Project Structure
 
@@ -40,7 +40,6 @@ To bring the section back, restore both files from `34f40a9`, then re-add the `u
 ├── CLAUDE.md
 ├── README.md
 ├── astro.config.mjs         # Astro config (React + Tailwind v4 vite plugin)
-├── netlify.toml             # Netlify build config + security headers
 ├── package.json
 ├── tsconfig.json            # Extends astro/tsconfigs/strict
 ├── public/

@@ -3,8 +3,8 @@
 // not allowed to blur them (see CLAUDE.md, "Two different checks, two different
 // rhythms").
 //
-// Both PDFs live in public/audit/ so the same static build serves them on every
-// domain (usdxcoin.xyz, usdx.co.id) straight from Netlify.
+// Both PDFs live in public/audit/ so the static build serves them itself,
+// same-origin, with no third-party host in between.
 
 /** Cyberscope smart-contract security audit (initial audit: 25 May 2026). */
 export const AUDIT_REPORT_URL = "/audit/usdx-smart-contract-audit-cyberscope.pdf";
