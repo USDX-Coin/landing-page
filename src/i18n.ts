@@ -379,32 +379,27 @@ export const ui = {
     // read as its counterpart rather than more of the same thing: the audit
     // above is about the code, this one is about the money behind it.
     //
-    // WHAT THIS COPY IS NOT ALLOWED TO SAY. Not "audit", not "diaudit", not
-    // "opini", not "wajar tanpa pengecualian". The report states in its own
-    // letter that the procedures are not an audit or a review and that the KAP
-    // expresses no opinion or assurance of any kind. Every word here is chosen
-    // to stay inside that: the KAP "melaksanakan prosedur" and "melaporkan
-    // hasilnya" — it does not conclude anything. See data/audit.ts.
+    // THE PARAGRAPH IS MANAGEMENT'S WORDING, SUPPLIED VERBATIM (30 Sep 2026),
+    // in both languages. It replaced two things: a sentence that described the
+    // report behind the button — the KAP's agreed-upon procedures (SJT 4400)
+    // over the position of 27 August 2026 and the 1:1 ratio they record — and
+    // a note saying that the published file is redacted. Neither is on the page
+    // any more; both are still in the PDF itself.
     //
-    // WHY THE DATE IS IN THE SENTENCE. The finding it points at — a 1:1 ratio —
-    // is a position on 27 August 2026 and nothing else. The live figures at the
-    // top of this page will drift away from it within the day, and a reader who
-    // meets "rasio 1:1" with no date attached will read it as a standing
-    // promise. Never drop the date to tighten the sentence.
+    // It says "audit" ("dokumentasi audit transparansi") and "kepatuhan" /
+    // "compliance". That is a deliberate exception to the rule the rest of this
+    // block was written under, not a lifting of it: the report states in its
+    // own letter that the procedures are not an audit or a review and that the
+    // KAP expresses no opinion or assurance of any kind. So the heading and the
+    // button still say "atestasi", and nothing may be added here that says the
+    // KAP audited the reserves or gave an opinion on them. See data/audit.ts.
     attestationHeading: {
       id: "Laporan Atestasi Cadangan",
       en: "Reserve Attestation Report",
     },
     attestationBody: {
-      id: "Kantor Akuntan Publik Griselda, Wisnu & Arum melaksanakan prosedur yang disepakati (SJT 4400) atas saldo jaminan USDX pada posisi 27 Agustus 2026, membandingkan jumlah token yang beredar di blockchain explorer publik dengan saldo Dolar AS di Bank Negara Indonesia. Hasil penerapan prosedur mencatat rasio 1:1 pada tanggal tersebut. Laporan lengkapnya tersedia dalam bentuk PDF.",
-      en: "The public accounting firm Griselda, Wisnu & Arum performed agreed-upon procedures (SJT 4400) over the USDX collateral balance as of 27 August 2026, comparing the tokens in circulation on a public blockchain explorer against the U.S. dollar balance held at Bank Negara Indonesia. The results of applying the procedures record a 1:1 ratio on that date. The full report is available as a PDF.",
-    },
-    // Said plainly on the page rather than left for a reader to discover in the
-    // file. A document that has been changed after the auditor signed it should
-    // say so before it is opened, not after.
-    attestationRedactionNote: {
-      id: "Pada lampiran surat saldo dari bank, nomor rekening disamarkan dan dua rekening Rupiah yang bukan jaminan USDX ditutup. Saldo Dolar AS sebagai jaminan USDX dan seluruh isi laporan lainnya tidak diubah.",
-      en: "In the appendix carrying the bank's balance letter, account numbers are masked and two IDR accounts that are not USDX collateral are redacted. The U.S. dollar balance held as USDX collateral, and the rest of the report, are unchanged.",
+      id: "Akses dokumentasi audit transparansi yang lengkap untuk USDX, termasuk laporan terperinci mengenai cadangan dan kepatuhan. Kami menjunjung tinggi transparansi penuh untuk membangun kepercayaan dengan para pengguna kami. Klik tombol di bawah ini untuk mengunduh laporan transparansi terbaru.",
+      en: "Access comprehensive transparency audit documentation for USDX, including detailed reports on reserves and compliance. We maintain full transparency to build trust with our users. Click the buttons below to download the latest transparency reports.",
     },
     attestationCta: {
       id: "Laporan Atestasi (PDF)",

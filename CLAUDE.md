@@ -32,6 +32,8 @@ The backend still sends `attestations`, and the page no longer reads it: the sta
 
 To bring the table back, restore it from `a780470` (the last commit that had it): the card markup and `applyAttestations()` in `transparency.astro`, `buildAttestationsView` and the four-state status in `data/transparencyView.ts`, `resolveAttestationFileUrl` / `parsePeriod` / `formatPeriod` in `data/transparency.ts` (the origin lock on download links is the part not to rewrite from memory), their tests, and the `docsHeading` … `listUnavailable`, `statusFiguresOnly` and `statusListOnly` strings in `i18n.ts`. `statusFallback` and `statusNoJs` have to name "the document list" again when it does.
 
+The same day, the paragraph in the "Laporan Atestasi Cadangan" card was replaced with management's wording, supplied verbatim (`attestationBody` in `i18n.ts`), and the on-page note about the redacted appendix was removed. The new paragraph uses the word "audit" in a general sense — a deliberate exception to "Two different checks" above, which does not extend to the card's heading or button. The PDF behind the button is unchanged: the redacted copy.
+
 ## Tech Stack
 
 - **Astro 5** — static site generator (zero JS by default, islands architecture)
