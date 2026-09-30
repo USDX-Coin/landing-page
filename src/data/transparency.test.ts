@@ -7,12 +7,9 @@ import {
   formatAmount,
   formatDateTimeWib,
   formatPegLine,
-  formatPeriod,
   formatRatio,
   formatShare,
-  parsePeriod,
   resolveApiBaseUrl,
-  resolveAttestationFileUrl,
   RESERVE_BANK,
   RESERVE_COMPOSITION,
   TRANSPARENCY_FALLBACK,
@@ -20,110 +17,6 @@ import {
 import { ui } from "../i18n.ts";
 
 const API = "https://api.usdx.co.id";
-
-describe("resolveAttestationFileUrl", () => {
-  // The regression this exists for: the backend only emits an absolute fileUrl
-  // when TRANSPARENCY_PUBLIC_BASE_URL is set. Unset, it sends a relative path,
-  // and the landing page is served from a DIFFERENT host than the API. Resolving
-  // against the page origin would silently produce a dead link on usdx.co.id.
-  it("resolves a relative fileUrl against the API host, not the page", () => {
-    assert.equal(
-      resolveAttestationFileUrl("/api/v1/public/transparency/attestations/abc/file", API),
-      "https://api.usdx.co.id/api/v1/public/transparency/attestations/abc/file",
-    );
-  });
-
-  it("resolves a relative fileUrl against whichever API base the page is using", () => {
-    assert.equal(
-      resolveAttestationFileUrl("/api/v1/public/transparency/attestations/abc/file", "https://api-dev.usdx.co.id"),
-      "https://api-dev.usdx.co.id/api/v1/public/transparency/attestations/abc/file",
-    );
-  });
-
-  it("keeps an absolute fileUrl that is on the API host", () => {
-    const absolute = "https://api.usdx.co.id/api/v1/public/transparency/attestations/abc/file";
-    assert.equal(resolveAttestationFileUrl(absolute, API), absolute);
-  });
-
-  it("does not double up slashes when the API base has a trailing slash", () => {
-    assert.equal(
-      resolveAttestationFileUrl("/api/v1/x/file", "https://api.usdx.co.id/"),
-      "https://api.usdx.co.id/api/v1/x/file",
-    );
-  });
-
-  it("rejects non-http(s) schemes so nothing hostile reaches an href", () => {
-    assert.equal(resolveAttestationFileUrl("javascript:alert(1)", API), null);
-    assert.equal(resolveAttestationFileUrl("data:text/html,<script>", API), null);
-  });
-
-  // ── Origin lock ────────────────────────────────────────────────────────────
-  // The backend always builds fileUrl against its own redirect route, so any
-  // other origin means the value was tampered with somewhere upstream — a back
-  // office account gone bad being the realistic case. A USDX-branded "Download"
-  // button on the transparency page is exactly the wrapper a forged attestation
-  // wants, so a foreign origin loses its link rather than being rendered.
-
-  it("rejects an absolute fileUrl on a foreign host", () => {
-    assert.equal(
-      resolveAttestationFileUrl("https://storage.example.com/usdx/atestasi-2026-07.pdf", API),
-      null,
-    );
-    assert.equal(
-      resolveAttestationFileUrl("https://evil.example.com/laporan-atestasi-usdx.pdf", API),
-      null,
-    );
-  });
-
-  it("rejects a host that merely looks like the API host", () => {
-    // Suffix and prefix lookalikes: a bare `endsWith`/`startsWith` check would
-    // wave both of these through.
-    assert.equal(resolveAttestationFileUrl("https://api.usdx.co.id.evil.test/f.pdf", API), null);
-    assert.equal(resolveAttestationFileUrl("https://evil-api.usdx.co.id.co/f.pdf", API), null);
-    assert.equal(resolveAttestationFileUrl("https://notapi.usdx.co.id/f.pdf", API), null);
-  });
-
-  it("rejects the API host on a different port", () => {
-    assert.equal(resolveAttestationFileUrl("https://api.usdx.co.id:8443/f.pdf", API), null);
-  });
-
-  it("rejects a downgrade to http on the API host", () => {
-    assert.equal(resolveAttestationFileUrl("http://api.usdx.co.id/f.pdf", API), null);
-  });
-
-  it("rejects the production API host while the page is talking to dev, and vice versa", () => {
-    const DEV = "https://api-dev.usdx.co.id";
-    assert.equal(resolveAttestationFileUrl(`${API}/f.pdf`, DEV), null);
-    assert.equal(resolveAttestationFileUrl(`${DEV}/f.pdf`, API), null);
-  });
-
-  it("accepts an absolute fileUrl on whichever API base the page is using", () => {
-    const DEV = "https://api-dev.usdx.co.id";
-    assert.equal(resolveAttestationFileUrl(`${DEV}/f.pdf`, DEV), `${DEV}/f.pdf`);
-  });
-
-  it("rejects a protocol-relative url, which escapes the API host without looking like it", () => {
-    assert.equal(resolveAttestationFileUrl("//evil.example.com/f.pdf", API), null);
-  });
-
-  it("still accepts a relative value with no leading slash", () => {
-    assert.equal(
-      resolveAttestationFileUrl("attestations/abc/file", "https://api.usdx.co.id/api/v1/public/"),
-      "https://api.usdx.co.id/api/v1/public/attestations/abc/file",
-    );
-  });
-
-  it("rejects empty, blank and missing values", () => {
-    assert.equal(resolveAttestationFileUrl("", API), null);
-    assert.equal(resolveAttestationFileUrl("   ", API), null);
-    assert.equal(resolveAttestationFileUrl(null, API), null);
-    assert.equal(resolveAttestationFileUrl(undefined, API), null);
-  });
-
-  it("returns null rather than throwing when the API base is unusable", () => {
-    assert.equal(resolveAttestationFileUrl("/api/v1/x/file", "not a url"), null);
-  });
-});
 
 describe("resolveApiBaseUrl", () => {
   it("maps the production landing domain to the production API", () => {
@@ -420,39 +313,6 @@ describe("formatDateTimeWib, from anywhere in the world", () => {
     // tests above pass for the wrong reason.
     const parsed = ZONES.map((zone) => inZone(zone, () => new Date("2026-08-10T04:00:00").getTime()));
     assert.equal(new Set(parsed).size > 1, true, "TZ changes are not reaching Date parsing");
-  });
-});
-
-describe("formatPeriod", () => {
-  it("names the month in both languages", () => {
-    assert.equal(formatPeriod("2026-07", "id"), "Juli 2026");
-    assert.equal(formatPeriod("2026-07", "en"), "July 2026");
-    assert.equal(formatPeriod("2026-01", "id"), "Januari 2026");
-    assert.equal(formatPeriod("2026-12", "en"), "December 2026");
-  });
-
-  // Date.UTC rolls month 13 into January of the next year and month 0 back into
-  // December of the previous one, so one malformed period produced a row
-  // reading "ID 2026-13 · Bulan Januari 2027 · Tahun 2026" — three answers, no
-  // two of them agreeing.
-  it("does not roll an impossible month into another year", () => {
-    assert.equal(formatPeriod("2026-13", "id"), "2026-13");
-    assert.equal(formatPeriod("2026-00", "id"), "2026-00");
-    assert.equal(formatPeriod("2026-99", "en"), "2026-99");
-    assert.equal(parsePeriod("2026-13"), null);
-    assert.equal(parsePeriod("2026-00"), null);
-  });
-
-  it("returns the raw string for anything that is not a period", () => {
-    assert.equal(formatPeriod("2026", "id"), "2026");
-    assert.equal(formatPeriod("juli", "id"), "juli");
-    assert.equal(parsePeriod(null), null);
-    assert.equal(parsePeriod(undefined), null);
-    assert.equal(parsePeriod("2026-7"), null);
-  });
-
-  it("reads a real period", () => {
-    assert.deepEqual(parsePeriod("2026-07"), { year: 2026, month: 7 });
   });
 });
 

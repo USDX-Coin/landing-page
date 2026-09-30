@@ -111,7 +111,7 @@ export const ui = {
     walletNote: { id: "Penyelesaian lintas negara", en: "Cross-border settlement" },
     gaugeLabel: { id: "Penyelesaian", en: "Settlement" },
     // The two "Dokumen Transparansi dan Audit" links read as a pair: the audit
-    // PDF (Cyberscope) and the attestation table on /transparency. Noun-style,
+    // PDF (Cyberscope) and the /transparency page. Noun-style,
     // no "Lihat" prefix (same idiom as the footer's "Laporan Audit" link): with
     // the verb the pair only fit side by side on the very widest cards and
     // stacked everywhere else, which read as broken (12 Aug 2026). The arrow
@@ -304,15 +304,18 @@ export const ui = {
   //
   // The page carries the three headline figures (circulating supply, reserve
   // assets, collateral ratio), what the reserve is made of, the contract
-  // address, the monthly attestation table, and the smart-contract audit.
+  // address, the smart-contract audit, and the published reserve attestation
+  // report.
   //
   // Every figure has an unavailable state, and every one of them says "Belum
   // tersedia" in words. A transparency page must never print a number nobody
   // can stand behind, and a missing figure shown as 0 is worse than no figure
   // at all — it is a false one. See notAvailable below.
   //
-  // The attestation table used to live on its own /docs page. That page is gone
-  // and its copy was merged into this block, so there is one list in one place.
+  // The API-fed "Laporan Atestasi Bulanan" table and its copy (heading, the
+  // empty / pending / unavailable lines) were removed on 30 Sep 2026. Published
+  // reports are listed in the static table of the attestation card further
+  // down, from ATTESTATION_REPORTS in data/audit.ts.
   transparency: {
     navLabel: { id: "Transparansi", en: "Transparency" },
     metaTitle: {
@@ -334,102 +337,35 @@ export const ui = {
 
     statusLoading: { id: "Memuat data terbaru…", en: "Loading the latest data…" },
     statusLive: { id: "Data langsung dari API USDX.", en: "Live data from the USDX API." },
-    // Shown when the figures came through but the document list did not — the
-    // page half-succeeded, which it can do and used to lie about. A malformed
-    // `attestations` value left three freshly filled figure cards sitting under
-    // a status line that said the figures could not be shown. A status line is
-    // only worth having if it describes what is actually on the screen.
-    statusFiguresOnly: {
-      id: "Angka di halaman ini dimuat langsung dari API USDX. Daftar dokumen belum dapat ditampilkan saat ini.",
-      en: "The figures on this page are live from the USDX API. The document list cannot be shown right now.",
-    },
-    // And the mirror of it, because the page half-succeeds in both directions.
-    // The line above was being shown for THIS state too — naming the figures as
-    // present above three cards that all read "Belum tersedia" — because the
-    // status was read off the document list alone. An empty ledger with a failed
-    // chain read gets here without anything being broken; so does the backend's
-    // total-outage payload on any replica whose supply reading survived it.
-    statusListOnly: {
-      id: "Daftar dokumen di halaman ini dimuat langsung dari API USDX. Angka belum dapat ditampilkan saat ini.",
-      en: "The document list on this page is live from the USDX API. The figures cannot be shown right now.",
-    },
     // Neither line promises anything is still on screen after a failed fetch.
-    // Nothing about the document list is baked into the HTML — the table is
-    // built entirely from the API response — and TRANSPARENCY_FALLBACK carries
-    // no figures either, so a failed fetch really does leave the page with
-    // nothing but "Belum tersedia". Saying the numbers "may be out of date"
-    // would imply there are numbers there to be out of date.
+    // TRANSPARENCY_FALLBACK carries no figures, so a failed fetch really does
+    // leave the three cards with nothing but "Belum tersedia". Saying the
+    // numbers "may be out of date" would imply there are numbers there to be
+    // out of date.
     //
     // If figures are ever baked into TRANSPARENCY_FALLBACK, both lines have to
     // change with them: they would then be showing a real, older position, and
     // the reader is owed that distinction.
     //
     // Shown for two situations that look identical to a reader, and should: a
-    // fetch that failed, and a fetch that succeeded and carried nothing usable
-    // — the backend's `attestations: null` total-outage payload, which states
-    // its own ignorance rather than answering 500. Either way the sentence is
-    // true as written: the live data could not be loaded, and there is nothing
-    // on screen for it to contradict.
+    // fetch that failed, and a fetch that succeeded and carried no usable
+    // figure — the backend's total-outage payload, which states its own
+    // ignorance rather than answering 500. Either way the sentence is true as
+    // written: the live data could not be loaded, and there is nothing on
+    // screen for it to contradict.
+    //
+    // Both name the figures only. They used to name "the document list" too,
+    // until the table it referred to was taken off the page.
     statusFallback: {
-      id: "Data langsung tidak dapat dimuat saat ini, jadi angka dan daftar dokumen di halaman ini belum dapat ditampilkan.",
-      en: "Live data could not be loaded right now, so the figures and the document list on this page cannot be shown.",
+      id: "Data langsung tidak dapat dimuat saat ini, jadi angka di halaman ini belum dapat ditampilkan.",
+      en: "Live data could not be loaded right now, so the figures on this page cannot be shown.",
     },
     statusNoJs: {
-      id: "Peramban Anda tidak menjalankan JavaScript, jadi angka dan daftar dokumen belum dapat ditampilkan.",
-      en: "Your browser is not running JavaScript, so the figures and the document list cannot be shown yet.",
+      id: "Peramban Anda tidak menjalankan JavaScript, jadi angka di halaman ini belum dapat ditampilkan.",
+      en: "Your browser is not running JavaScript, so the figures on this page cannot be shown yet.",
     },
 
     notAvailable: { id: "Belum tersedia", en: "Not yet available" },
-
-    // ── Attestation table (moved here from the old /docs page) ──────────────
-    // The card carrying the table had no heading while the three cards around
-    // it did, so the table opened straight into column labels with nothing
-    // naming it — including for anyone reading the page through its headings.
-    docsHeading: { id: "Laporan Atestasi Bulanan", en: "Monthly Attestation Reports" },
-    colId: { id: "ID", en: "ID" },
-    colName: { id: "Nama", en: "Name" },
-    colMonth: { id: "Bulan", en: "Month" },
-    colYear: { id: "Tahun", en: "Year" },
-    colAction: { id: "Aksi", en: "Action" },
-    download: { id: "Unduh", en: "Download" },
-
-    // The ID column used to be a running counter over whatever the API happened
-    // to return (oldest = 1), while this note promised the number never moves.
-    // It did move — in three ways: an older period uploaded late renumbered
-    // everything after it, a revoked report pulled every later number down, and
-    // the backend only ever returns the last 24 reports, so the window sliding
-    // shifted the whole column. The ID is now the reporting period itself, which
-    // is a property of the document and cannot be changed by anything else in
-    // the list. Do not put a positional counter back without dropping this note.
-    idNote: {
-      id: "Nomor dokumen adalah periode laporannya (tahun-bulan), jadi nomor itu melekat pada dokumen dan tidak berubah ketika laporan lain terbit, dicabut, atau daftar diperbarui. Daftar ditampilkan dari yang terbaru.",
-      en: "A document's ID is its reporting period (year-month), so the ID belongs to the document itself and does not change when other reports are published, withdrawn, or the list is refreshed. The list is shown newest first.",
-    },
-    // Shown ONLY after the API has answered with an empty list. It states a fact
-    // about the world ("nothing has been published"), so it must never be the
-    // page's initial state — see listPending.
-    empty: {
-      id: "Belum ada dokumen yang diterbitkan. Laporan atestasi bulanan akan muncul di tabel ini begitu diterbitkan.",
-      en: "No document has been published yet. Monthly attestation reports will appear in this table as soon as they are published.",
-    },
-    // The initial, pre-answer state. Says how the list gets here and claims
-    // nothing about how many documents exist — which is the only honest thing to
-    // say to a crawler, a link-preview bot, or a reviewer with JavaScript off,
-    // none of which ever see the API response.
-    listPending: {
-      id: "Daftar dokumen dimuat langsung dari API USDX saat halaman ini dibuka.",
-      en: "The document list is loaded directly from the USDX API when this page opens.",
-    },
-    // The API answered, but not with a list this page can read: no
-    // `attestations` field, or a value of some other shape. That says nothing
-    // about how many reports exist, so neither does this line. It exists so the
-    // difference between "we cannot show the list" and "no report has ever been
-    // published" survives all the way to the reader — the two used to share a
-    // single sentence, and it was the second one.
-    listUnavailable: {
-      id: "Daftar dokumen belum dapat ditampilkan saat ini. Silakan muat ulang halaman ini beberapa saat lagi.",
-      en: "The document list cannot be shown right now. Please reload this page in a little while.",
-    },
 
     contractHeading: { id: "Alamat Kontrak", en: "Contract Address" },
 
@@ -464,17 +400,14 @@ export const ui = {
       id: "Kantor Akuntan Publik Griselda, Wisnu & Arum melaksanakan prosedur yang disepakati (SJT 4400) atas saldo jaminan USDX pada posisi 27 Agustus 2026, membandingkan jumlah token yang beredar di blockchain explorer publik dengan saldo Dolar AS di Bank Negara Indonesia. Hasil penerapan prosedur mencatat rasio 1:1 pada tanggal tersebut. Laporan lengkapnya tersedia dalam bentuk PDF.",
       en: "The public accounting firm Griselda, Wisnu & Arum performed agreed-upon procedures (SJT 4400) over the USDX collateral balance as of 27 August 2026, comparing the tokens in circulation on a public blockchain explorer against the U.S. dollar balance held at Bank Negara Indonesia. The results of applying the procedures record a 1:1 ratio on that date. The full report is available as a PDF.",
     },
-    // Said plainly on the page rather than left for a reader to discover in the
-    // file. A document that has been changed after the auditor signed it should
-    // say so before it is opened, not after.
-    attestationRedactionNote: {
-      id: "Pada lampiran surat saldo dari bank, nomor rekening disamarkan dan dua rekening Rupiah yang bukan jaminan USDX ditutup. Saldo Dolar AS sebagai jaminan USDX dan seluruh isi laporan lainnya tidak diubah.",
-      en: "In the appendix carrying the bank's balance letter, account numbers are masked and two IDR accounts that are not USDX collateral are redacted. The U.S. dollar balance held as USDX collateral, and the rest of the report, are unchanged.",
-    },
-    attestationCta: {
-      id: "Laporan Atestasi (PDF)",
-      en: "Attestation Report (PDF)",
-    },
+    // The table the reports are listed in. The rows themselves — name, month,
+    // year, file — are data, in ATTESTATION_REPORTS (data/audit.ts).
+    colId: { id: "ID", en: "ID" },
+    colName: { id: "Nama", en: "Name" },
+    colMonth: { id: "Bulan", en: "Month" },
+    colYear: { id: "Tahun", en: "Year" },
+    colAction: { id: "Aksi", en: "Action" },
+    download: { id: "Unduh", en: "Download" },
 
     // ── Headline figures ───────────────────────────────────────────────────
     // Three cards, not four. "Underlying" is the same number as reserve assets
@@ -511,10 +444,9 @@ export const ui = {
     // States the absence explicitly. Readers arrive at this page having seen
     // other stablecoins list treasuries and money market funds, and will assume
     // the same mix unless told otherwise.
-    // The attestation table sits ABOVE this card, so the note used to point
-    // readers "di bawah" / "below" at a table they had already scrolled past.
-    // It names the page instead of a direction, which stays true whatever the
-    // cards are reordered into next.
+    // Names the page instead of a direction ("di bawah" / "below"), which
+    // stays true whatever the cards are reordered into next. What it points at
+    // is the reserve attestation card — see attestationHeading.
     reserveCompositionNote: {
       id: "Cadangan USDX seluruhnya berbentuk kas Dolar AS. Tidak ada surat utang negara, reksa dana pasar uang, atau instrumen lain di dalamnya. Isi cadangan diverifikasi secara independen lewat atestasi bulanan yang tercantum di halaman ini.",
       en: "USDX reserves are held entirely as U.S. dollar cash. They contain no treasury instruments, no money market funds and no other instruments. What the reserves hold is verified independently through the monthly attestations listed on this page.",
