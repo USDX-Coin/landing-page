@@ -66,16 +66,19 @@ export interface AttestationReport {
 }
 
 /**
- * Every published reserve attestation report, NEWEST FIRST — the table prints
- * them in this order.
+ * How many reports the table shows at a time. A report is published every
+ * month, so the list is split into pages of this size in the browser; with no
+ * more than this many reports there is one page and no pager.
+ */
+export const ATTESTATION_PAGE_SIZE = 5;
+
+/**
+ * Every published reserve attestation report, in ID order — OLDEST FIRST. The
+ * table prints them in this order, ATTESTATION_PAGE_SIZE to a page.
  *
  * Static, and meant to be: a report gets onto the page by someone adding its
  * PDF to public/audit/ and an entry here, in a reviewed commit. To
- * publish the next one, put it at the TOP with the next unused `id`.
- *
- * The paragraph above the table (`attestationBody` in i18n.ts) describes the
- * 27 August 2026 report specifically. It has to be rewritten, not just left
- * standing, when a second report joins this list.
+ * publish the next one, add it at the END with the next unused `id`.
  */
 export const ATTESTATION_REPORTS: AttestationReport[] = [
   {

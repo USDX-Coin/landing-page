@@ -4,7 +4,7 @@ import { existsSync } from "node:fs";
 import { describe, it } from "node:test";
 import { fileURLToPath } from "node:url";
 
-import { ATTESTATION_REPORTS } from "./audit.ts";
+import { ATTESTATION_PAGE_SIZE, ATTESTATION_REPORTS } from "./audit.ts";
 
 const PUBLIC_DIR = fileURLToPath(new URL("../../public", import.meta.url));
 
@@ -18,9 +18,13 @@ describe("ATTESTATION_REPORTS", () => {
     assert.equal(new Set(ids).size, ids.length);
   });
 
-  it("keeps the newest report — the highest ID — at the top", () => {
+  it("lists the reports in ID order, the first one published at the top", () => {
     const ids = ATTESTATION_REPORTS.map((report) => report.id);
-    assert.deepEqual(ids, [...ids].sort((a, b) => b - a));
+    assert.deepEqual(ids, [...ids].sort((a, b) => a - b));
+  });
+
+  it("pages the table five reports at a time", () => {
+    assert.equal(ATTESTATION_PAGE_SIZE, 5);
   });
 
   it("points every Download button at a PDF this site serves itself", () => {

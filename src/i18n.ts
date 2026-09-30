@@ -380,25 +380,28 @@ export const ui = {
     // read as its counterpart rather than more of the same thing: the audit
     // above is about the code, this one is about the money behind it.
     //
-    // WHAT THIS COPY IS NOT ALLOWED TO SAY. Not "audit", not "diaudit", not
-    // "opini", not "wajar tanpa pengecualian". The report states in its own
-    // letter that the procedures are not an audit or a review and that the KAP
-    // expresses no opinion or assurance of any kind. Every word here is chosen
-    // to stay inside that: the KAP "melaksanakan prosedur" and "melaporkan
-    // hasilnya" — it does not conclude anything. See data/audit.ts.
+    // THE PARAGRAPH IS MANAGEMENT'S WORDING, SUPPLIED VERBATIM (30 Sep 2026),
+    // in both languages. It replaced a sentence that described the one report
+    // in the table — the KAP's agreed-upon procedures (SJT 4400) over the
+    // position of 27 August 2026 and the 1:1 ratio they record — and it is now
+    // a general introduction to the table instead, so it no longer has to be
+    // rewritten each time a report is added.
     //
-    // WHY THE DATE IS IN THE SENTENCE. The finding it points at — a 1:1 ratio —
-    // is a position on 27 August 2026 and nothing else. The live figures at the
-    // top of this page will drift away from it within the day, and a reader who
-    // meets "rasio 1:1" with no date attached will read it as a standing
-    // promise. Never drop the date to tighten the sentence.
+    // It says "audit" ("dokumentasi audit transparansi") and "kepatuhan" /
+    // "compliance". That is a deliberate exception to the rule the rest of this
+    // block was written under, not a lifting of it: the report in the table
+    // states in its own letter that the procedures are not an audit or a review
+    // and that the KAP expresses no opinion or assurance of any kind. So the
+    // heading and the document names in ATTESTATION_REPORTS still say
+    // "atestasi", and nothing may be added here that says the KAP audited the
+    // reserves or gave an opinion on them. See data/audit.ts.
     attestationHeading: {
       id: "Laporan Atestasi Cadangan",
       en: "Reserve Attestation Report",
     },
     attestationBody: {
-      id: "Kantor Akuntan Publik Griselda, Wisnu & Arum melaksanakan prosedur yang disepakati (SJT 4400) atas saldo jaminan USDX pada posisi 27 Agustus 2026, membandingkan jumlah token yang beredar di blockchain explorer publik dengan saldo Dolar AS di Bank Negara Indonesia. Hasil penerapan prosedur mencatat rasio 1:1 pada tanggal tersebut. Laporan lengkapnya tersedia dalam bentuk PDF.",
-      en: "The public accounting firm Griselda, Wisnu & Arum performed agreed-upon procedures (SJT 4400) over the USDX collateral balance as of 27 August 2026, comparing the tokens in circulation on a public blockchain explorer against the U.S. dollar balance held at Bank Negara Indonesia. The results of applying the procedures record a 1:1 ratio on that date. The full report is available as a PDF.",
+      id: "Akses dokumentasi audit transparansi yang lengkap untuk USDX, termasuk laporan terperinci mengenai cadangan dan kepatuhan. Kami menjunjung tinggi transparansi penuh untuk membangun kepercayaan dengan para pengguna kami. Klik tombol di bawah ini untuk mengunduh laporan transparansi terbaru.",
+      en: "Access comprehensive transparency audit documentation for USDX, including detailed reports on reserves and compliance. We maintain full transparency to build trust with our users. Click the buttons below to download the latest transparency reports.",
     },
     // The table the reports are listed in. The rows themselves — name, month,
     // year, file — are data, in ATTESTATION_REPORTS (data/audit.ts).
@@ -408,6 +411,11 @@ export const ui = {
     colYear: { id: "Tahun", en: "Year" },
     colAction: { id: "Aksi", en: "Action" },
     download: { id: "Unduh", en: "Download" },
+    // The pager under the table. It only exists once there are more reports
+    // than fit on one page (ATTESTATION_PAGE_SIZE in data/audit.ts).
+    pagerLabel: { id: "Halaman laporan", en: "Report pages" },
+    pagerPrev: { id: "Sebelumnya", en: "Previous" },
+    pagerNext: { id: "Berikutnya", en: "Next" },
 
     // ── Headline figures ───────────────────────────────────────────────────
     // Three cards, not four. "Underlying" is the same number as reserve assets
