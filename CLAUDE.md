@@ -28,7 +28,7 @@ To bring the section back, restore both files from `34f40a9`, then re-add the `u
 
 The "Laporan Atestasi Bulanan" / "Monthly Attestation Reports" card on `/transparency` was removed by request on 30 Sep 2026. It was a table built in the browser from the `attestations` list of `GET /api/v1/public/transparency`; with that list empty it read "No document has been published yet", on the same page as the static card for the one report that *has* been published (the KAP's AUP report, `data/audit.ts`).
 
-Published reports are now listed in that card instead, as a **static** table (ID · name · month · year · download) rendered at build time from `ATTESTATION_REPORTS` in `data/audit.ts`. Publishing a new report means adding its redacted PDF to `public/audit/` and an entry at the top of that list with the next unused `id` — and rewriting `attestationBody` in `i18n.ts`, which describes the 27 August 2026 report specifically.
+Published reports are now listed in that card instead, as a **static** table (ID · name · month · year · download) rendered at build time from `ATTESTATION_REPORTS` in `data/audit.ts`. Publishing a new report means adding its PDF to `public/audit/` and an entry at the top of that list with the next unused `id` — and rewriting `attestationBody` in `i18n.ts`, which describes the 27 August 2026 report specifically.
 
 The backend still sends `attestations`, and the page no longer reads it: the status line under the heading is now derived from the three figures alone (`live` / `unavailable`).
 

@@ -404,9 +404,9 @@ const tdClass = "px-4 py-4.5 text-[15px] align-middle";
       <section class={cardClass}>
         <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
           <h2 class={sectionHeadingClass}><T t={t.attestationHeading} /></h2>
-          {/* The page no longer says that the published file is redacted (the
-              note was removed by request on 30 Sep 2026). The PDF still says so
-              on the redacted page itself — see data/audit.ts. */}
+          {/* No redaction note: the file behind the Download button is the
+              KAP's original, unredacted (by request, 30 Sep 2026). See
+              data/audit.ts. */}
           <p class={proseClass}><T t={t.attestationBody} /></p>
 
           <div class="overflow-x-auto -mx-2 px-2">

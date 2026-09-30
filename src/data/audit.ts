@@ -15,7 +15,7 @@ export const AUDIT_REPORT_URL = "/audit/usdx-smart-contract-audit-cyberscope.pdf
  * collateral balance, position 27 August 2026, report no.
  * 00001/SJT/05/1829/1/VIII/2026.
  *
- * TWO THINGS ABOUT THIS FILE THAT MUST SURVIVE ANY EDIT.
+ * TWO THINGS ABOUT THIS FILE.
  *
  * 1. IT IS NOT AN AUDIT, AND THE COPY MUST NOT CALL IT ONE. The report says so
  *    itself, in both languages: "prosedur yang kami laksanakan bukan merupakan
@@ -25,24 +25,25 @@ export const AUDIT_REPORT_URL = "/audit/usdx-smart-contract-audit-cyberscope.pdf
  *    Writing "diaudit oleh KAP" here would put a claim on the page that the
  *    document it links to explicitly disclaims.
  *
- * 2. THE PUBLISHED FILE IS REDACTED, AND ON PURPOSE. Appendix 3 is a balance
- *    letter from BNI listing three corporate accounts. The published version
- *    masks the account numbers and covers the two IDR accounts, which are not
- *    USDX collateral and have no business being on a public page; the USD
- *    100,667.88 collateral balance and every other page are untouched, and the
- *    redacted page says on its face that it was redacted. Appendix 3 was
- *    rasterised to do it, so the digits are gone from the file rather than
- *    merely hidden behind a box.
+ * 2. THE LINKED FILE IS THE KAP'S ORIGINAL, UNREDACTED — by request, since
+ *    30 Sep 2026. Appendix 3 is a balance letter from BNI listing three
+ *    corporate accounts, and this file shows all three account numbers in full
+ *    and the balances of the two IDR accounts that are not USDX collateral.
  *
- *    The unredacted original is NOT in this repository. Never replace this file
- *    with a copy straight from the KAP without redoing the redaction.
+ *    Until that date the Download button pointed at a redacted copy,
+ *    `usdx-reserve-attestation-aup-2026-08.pdf`, which masks the account
+ *    numbers and covers the two IDR accounts (Appendix 3 rasterised, so the
+ *    digits are gone from the file rather than hidden behind a box). That copy
+ *    is still in public/audit/ and nothing links to it. Going back to it is a
+ *    one-line change below — and the page would then owe its readers the
+ *    "account numbers are masked" note again, which was removed the same day.
  *
- * The filename carries the reporting period (2026-08) rather than a counter:
- * the period is a property of the document, so the URL of a published report
- * never moves.
+ * The file keeps the name it was supplied under, spaces and "(1)" included, so
+ * the path is percent-encoded here. A published report's URL should never move:
+ * rename the file before this ships, or not at all.
  */
 export const ATTESTATION_REPORT_URL =
-  "/audit/usdx-reserve-attestation-aup-2026-08.pdf";
+  "/audit/Laporan%20AUP%20PT%20Macan%20Asia%20Finance_Agustus%202026%20(1).pdf";
 
 /** One row of the "Laporan Atestasi Cadangan" table on /transparency. */
 export interface AttestationReport {
@@ -69,7 +70,7 @@ export interface AttestationReport {
  * them in this order.
  *
  * Static, and meant to be: a report gets onto the page by someone adding its
- * redacted PDF to public/audit/ and an entry here, in a reviewed commit. To
+ * PDF to public/audit/ and an entry here, in a reviewed commit. To
  * publish the next one, put it at the TOP with the next unused `id`.
  *
  * The paragraph above the table (`attestationBody` in i18n.ts) describes the
