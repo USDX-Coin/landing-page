@@ -36,9 +36,9 @@ export const AUDIT_REPORT_URL = "/audit/usdx-smart-contract-audit-cyberscope.pdf
  *    The unredacted original is NOT in this repository. Never replace this file
  *    with a copy straight from the KAP without redoing the redaction.
  *
- * The filename carries the reporting period (2026-08) rather than a counter,
- * for the same reason the attestation table's ID column does: the period is a
- * property of the document, so the URL of a published report never moves.
+ * The filename carries the reporting period (2026-08) rather than a counter:
+ * the period is a property of the document, so the URL of a published report
+ * never moves.
  */
 export const ATTESTATION_REPORT_URL =
   "/audit/usdx-reserve-attestation-aup-2026-08.pdf";

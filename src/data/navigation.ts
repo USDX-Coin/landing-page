@@ -28,8 +28,8 @@ export const navLinks: NavLink[] = [
   { label: { id: "Fitur", en: "Features" }, href: "#features" },
   { label: { id: "Ekosistem", en: "Ecosystem" }, href: "#ecosystem" },
   // One transparency entry, one destination. The old "Dokumen" entry pointed at
-  // a separate /docs page that held the attestation table; that table now lives
-  // on /transparency itself, so the second entry was removed with the page.
+  // a separate /docs page that held the attestation table; the page is gone
+  // (and, since 30 Sep 2026, so is the table), so the second entry went with it.
   // Trailing slash on purpose: the server answers `/transparency` with a 301 to
   // the slashed URL, and that redirect has been seen pointing at http:// (dead
   // on this host). Linking the final URL skips the hop entirely.

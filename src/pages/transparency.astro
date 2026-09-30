@@ -1,12 +1,15 @@
 ---
 // "Dokumen Transparansi dan Audit" — the three headline figures, what the
-// reserve is made of, the contract address, the monthly attestation table, and
-// the smart-contract audit.
+// reserve is made of, the contract address, the smart-contract audit, and the
+// published reserve attestation report.
 //
-// Neither the figures nor the table is hand-maintained in this repo. Both come
-// from the public endpoint GET {API_BASE}/api/v1/public/transparency, so the
-// flow is: the ledger moves (or the auditor hands over a document) -> it shows
-// up here on the next page load. Nothing to commit.
+// The figures are not hand-maintained in this repo. They come from the public
+// endpoint GET {API_BASE}/api/v1/public/transparency, so the flow is: the
+// ledger moves -> it shows up here on the next page load. Nothing to commit.
+//
+// The "Laporan Atestasi Bulanan" table that used to sit under the figures was
+// removed on 30 Sep 2026. It was built from the same response's `attestations`
+// list, which this page no longer reads — see CLAUDE.md for the way back.
 //
 // THE RULE THIS PAGE IS BUILT AROUND. A figure that is not known renders as
 // "Belum tersedia", in words, in both languages — never as 0, and never as a
@@ -83,7 +86,7 @@ const explorerUrl = contractAddress ? polygonscanTokenUrl(contractAddress) : "";
 // ── The page's surfaces, and why they are these values ──────────────────────
 //
 // This page is read, not skimmed: it is nothing but figures, label–value pairs
-// and a table. Its text contrast was never the problem — the body copy measured
+// and prose. Its text contrast was never the problem — the body copy measured
 // 6.24 against its card and the row labels 4.53, both of which pass WCAG AA.
 // What was missing was SURFACE SEPARATION. Cards were #0f0f0f on a #0a0a0a
 // page, a contrast ratio of 1.033 where 1.00 means "invisible", edged with a
@@ -111,7 +114,7 @@ const explorerUrl = contractAddress ? polygonscanTokenUrl(contractAddress) : "";
 // The page stays near-black on purpose. It is the brand, and the fix here is
 // separation, not brightness.
 const SURFACE = "border border-white/[0.12] bg-[#17171a]";
-/** Hairlines INSIDE a card: table rows, list separators, caption rules. */
+/** Hairlines INSIDE a card: list separators, caption rules. */
 const DIVIDER = "border-white/[0.10]";
 
 const cardClass = `relative mx-auto w-full max-w-[1376px] rounded-2xl ${SURFACE} overflow-hidden`;
@@ -129,10 +132,8 @@ const figureCardClass = `rounded-2xl ${SURFACE} p-6 sm:p-7 flex flex-col gap-3`;
 //   CAPTION  13px, white/50, under a rule — the timestamp and the footnotes
 //
 // Uppercase is what makes a label unmistakably a label rather than a short
-// sentence, and it puts the three figure labels in the same visual family as
-// the table's column headers, which are the same kind of thing. It is a CSS
-// transform: the strings in i18n.ts are untouched and screen readers still get
-// the original words.
+// sentence. It is a CSS transform: the strings in i18n.ts are untouched and
+// screen readers still get the original words.
 const figureLabelClass =
   "text-white/60 text-xs font-semibold uppercase tracking-[0.08em] leading-5";
 const figureValueClass = "text-white font-serif font-medium text-3xl sm:text-[40px] leading-tight m-0";
@@ -168,8 +169,6 @@ const rowLabelClass = "text-white/60 text-sm leading-6 m-0 mt-3 first:mt-0 sm:mt
 const rowValueClass = "text-white text-base font-medium leading-6 m-0 break-words";
 /** Sentences. Capped near 62 characters — the cards are 1376px wide. */
 const proseClass = "text-white/70 text-base leading-7 m-0 max-w-[62ch]";
-const thClass =
-  "text-left text-white/60 text-xs font-semibold uppercase tracking-[0.08em] px-4 py-3.5";
 ---
 <Layout pageMeta={{ title: t.metaTitle, description: t.metaDescription }}>
   <div class="min-h-screen bg-bg text-[#e7e7e7]">
@@ -255,64 +254,6 @@ const thClass =
             <span data-tp="peg">{peg && <T t={peg} />}</span>
           </p>
           <p class={captionClass}><span data-tp="updated-caption"><T t={updatedCaption} /></span></p>
-        </div>
-      </section>
-
-      <!-- Attestation documents -->
-      <section class={cardClass}>
-        <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-6">
-          <h2 class={sectionHeadingClass}><T t={t.docsHeading} /></h2>
-
-          {/* Hidden until there is at least one row — an empty table with
-              headers and nothing under them looks broken. */}
-          <div data-doc-table-wrap class="hidden overflow-x-auto -mx-2 px-2">
-            {/* The header row is the only rule on the page heavier than a
-                hairline. A table is read down its columns, and the reader needs
-                one unambiguous line saying where the labels stop and the data
-                starts. */}
-            <table class="w-full border-collapse min-w-[640px]">
-              <thead>
-                <tr class="border-b border-white/20">
-                  <th scope="col" class={`${thClass} w-28`}><T t={t.colId} /></th>
-                  <th scope="col" class={thClass}><T t={t.colName} /></th>
-                  <th scope="col" class={`${thClass} w-32`}><T t={t.colMonth} /></th>
-                  <th scope="col" class={`${thClass} w-24`}><T t={t.colYear} /></th>
-                  <th scope="col" class={`${thClass} w-32 text-right`}><T t={t.colAction} /></th>
-                </tr>
-              </thead>
-              <tbody data-doc-rows></tbody>
-            </table>
-          </div>
-
-          <p data-doc-id-note class={`hidden text-white/50 text-[13px] leading-6 m-0 max-w-[80ch] pt-4 border-t ${DIVIDER}`}><T t={t.idNote} /></p>
-
-          {/* Four mutually exclusive states, and which one ships in the static
-              HTML matters. The table is built entirely in the browser from the
-              API response, so anything visible here by default is what a
-              crawler, a link-preview bot, or a reviewer with JavaScript off will
-              read as the page's answer.
-
-              "empty" used to be that default — it shipped VISIBLE and
-              unconditional, telling every one of those readers that no
-              attestation had ever been published, however many actually had.
-              The initial state is now "pending", which claims nothing: it only
-              says where the list comes from. applyAttestations() then reveals
-              exactly one of the table, "empty" or "unavailable", and a failed
-              fetch leaves "pending" standing next to the status line that
-              explains it.
-
-              "empty" and "unavailable" are separate on purpose, and the
-              separation is the whole point of the state machine: "no document
-              has been published yet" is a statement about USDX, reachable only
-              from a list the API actually sent with nothing in it. A missing or
-              unreadable list gets "unavailable", which states nothing about how
-              many reports exist. The two shared one sentence until recently,
-              and it was the wrong one. */}
-          <p data-doc-empty class={`hidden ${proseClass}`}><T t={t.empty} /></p>
-
-          <p data-doc-unavailable class={`hidden ${proseClass}`}><T t={t.listUnavailable} /></p>
-
-          <p data-doc-pending class={proseClass}><T t={t.listPending} /></p>
         </div>
       </section>
 
@@ -441,16 +382,15 @@ const thClass =
           button that opens a PDF. The two checks belong side by side and are
           read as a pair, so they should not be built differently.
 
-          Nothing here is hand-maintained EXCEPT this card. It is static, from
-          src/data/audit.ts, and does not wait on the API — which is why the
-          copy names its own period out loud. The live figures at the top of the
-          page move; the finding in this document is pinned to 27 August 2026,
-          and the sentence says so.
+          It is static, from src/data/audit.ts, and does not wait on the API —
+          which is why the copy names its own period out loud. The live figures
+          at the top of the page move; the finding in this document is pinned to
+          27 August 2026, and the sentence says so.
 
-          Not to be confused with "Laporan Atestasi Bulanan" further up: that
-          table is the running list from the API, this is the one published
-          report, published now. If the API list ever carries this same period,
-          this card is the thing to remove — not the row. */}
+          This is the only attestation document on the page. The "Laporan
+          Atestasi Bulanan" table that listed the API's running list of reports
+          was removed on 30 Sep 2026; if it comes back and its list carries this
+          same period, this card is the thing to remove — not the row. */}
       <section class={cardClass}>
         <div class="relative px-6 sm:px-10 lg:px-11 py-10 lg:py-12 flex flex-col gap-5 items-start">
           <h2 class={sectionHeadingClass}><T t={t.attestationHeading} /></h2>
@@ -481,21 +421,15 @@ const thClass =
 <script>
   // The BROWSER SIDE of /transparency, and deliberately nothing but wiring.
   //
-  // Every decision — what a figure reads, which of the attestation card's four
-  // states to show, which status line goes with them — is made by pure functions
-  // in ../data/transparencyView.ts, where tests can reach them. Code that lives
-  // inside this block cannot be imported, and the two worst bugs this page has
-  // had both lived here for exactly that reason. What is left is DOM writing:
-  // put this string in that element, show this one, hide that one.
+  // Every decision — what a figure reads, which status line goes with them — is
+  // made by pure functions in ../data/transparencyView.ts, where tests can
+  // reach them. Code that lives inside this block cannot be imported, and the
+  // two worst bugs this page has had both lived here for exactly that reason.
+  // What is left is DOM writing: put this string in that element, show this
+  // one, hide that one.
   import { ui, type Lang, type Translated } from "../i18n";
   import { resolveApiBaseUrl, TRANSPARENCY_PATH, type TransparencyEnvelope } from "../data/transparency";
-  import {
-    buildView,
-    STATUS_LINE,
-    type AttestationRow,
-    type AttestationsView,
-    type FiguresView,
-  } from "../data/transparencyView";
+  import { buildView, STATUS_LINE, type FiguresView } from "../data/transparencyView";
 
   const t = ui.transparency;
 
@@ -569,75 +503,6 @@ const thClass =
     // overwrites them. See the note beside RESERVE_BANK.
   }
 
-  // ── Attestation table ──────────────────────────────────────────────────────
-
-  function cell(className: string): HTMLTableCellElement {
-    const td = document.createElement("td");
-    td.className = className;
-    return td;
-  }
-
-  function rowNode(row: AttestationRow): HTMLTableRowElement {
-    // Row rule at white/[0.10], not white/[0.06]. On the lifted card surface
-    // the old hairline measured 1.244 against its own background — enough to
-    // exist in the stylesheet and not enough to be seen, which left five rows
-    // of five columns reading as one block of text.
-    const tr = document.createElement("tr");
-    tr.className = "border-b border-white/[0.10] last:border-0";
-
-    const idCell = cell("px-4 py-4.5 text-white/55 text-[15px] tabular-nums align-middle");
-    idCell.textContent = row.id;
-
-    const nameCell = cell("px-4 py-4.5 text-white text-[15px] font-medium align-middle");
-    nameCell.textContent = row.title;
-
-    const monthCell = cell("px-4 py-4.5 text-white/70 text-[15px] align-middle");
-    monthCell.append(bilingualNode(row.month));
-
-    const yearCell = cell("px-4 py-4.5 text-white/70 text-[15px] tabular-nums align-middle");
-    yearCell.textContent = row.year;
-
-    const actionCell = cell("px-4 py-4.5 text-right align-middle");
-    if (row.href) {
-      const link = document.createElement("a");
-      link.href = row.href;
-      link.target = "_blank";
-      link.rel = "noopener noreferrer";
-      link.className =
-        "inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-medium no-underline transition-colors";
-      link.append(bilingualNode(t.download));
-      actionCell.append(link);
-    } else {
-      // No usable file link: say so rather than render a button that goes
-      // nowhere.
-      const dash = document.createElement("span");
-      dash.className = "text-white/50 text-[15px]";
-      dash.textContent = "—";
-      actionCell.append(dash);
-    }
-
-    tr.append(idCell, nameCell, monthCell, yearCell, actionCell);
-    return tr;
-  }
-
-  function applyAttestations(view: AttestationsView) {
-    const body = document.querySelector<HTMLTableSectionElement>("[data-doc-rows]");
-    if (!body) return;
-
-    const isList = view.state === "list";
-    // Rows go in BEFORE anything is revealed, so the card can never be shown
-    // around an empty table. The old code hid the "loading" line first and then
-    // threw partway through building the rows, leaving a bare 98px box with
-    // nothing in it and no sentence to explain it.
-    if (view.state === "list") body.replaceChildren(...view.rows.map(rowNode));
-
-    show("[data-doc-table-wrap]", isList);
-    show("[data-doc-id-note]", isList);
-    show("[data-doc-empty]", view.state === "empty");
-    show("[data-doc-unavailable]", view.state === "unavailable");
-    show("[data-doc-pending]", false);
-  }
-
   async function load() {
     const apiBaseUrl = resolveApiBaseUrl(window.location.hostname);
     let view: ReturnType<typeof buildView> = null;
@@ -649,14 +514,13 @@ const thClass =
       });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const body = (await response.json()) as TransparencyEnvelope;
-      view = buildView(body?.data, apiBaseUrl);
+      view = buildView(body?.data);
       if (!view) throw new Error("empty payload");
     } catch {
       // Nothing usable arrived. Leave whatever is baked into the HTML in place
       // and say so plainly: the figure slots keep their "Belum tersedia"
-      // wording rather than collapsing to zero, the document list keeps its
-      // "loaded from the API" line rather than claiming none exists, and the
-      // contract card is static, so the page stays whole.
+      // wording rather than collapsing to zero, and every other card is static,
+      // so the page stays whole.
       //
       // ONLY the fetch and the reading of it sit in this try. Rendering does
       // not, because a failure while rendering used to be reported as a failure
@@ -669,7 +533,6 @@ const thClass =
     }
 
     applyFigures(view.figures);
-    applyAttestations(view.attestations);
     setStatus(STATUS_LINE[view.status]);
   }
 

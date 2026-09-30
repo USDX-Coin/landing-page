@@ -2,24 +2,25 @@
 // actually meet — including the ones the locked contract says it never will.
 //
 // The page's 36 previous tests were all over pure formatters, and every screen
-// bug it shipped lived in code no test could import: the attestation state
-// machine, the figure slots, the status line. That code is now in
-// transparencyView.ts, and this file is the reason it moved.
+// bug it shipped lived in code no test could import: the figure slots, the
+// status line. That code is now in transparencyView.ts, and this file is the
+// reason it moved.
+//
+// The payloads below still carry `attestations`, because the API still sends
+// it. The page stopped rendering that list on 30 Sep 2026, so what is tested
+// about it now is that it has no say in anything.
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
 import {
-  buildAttestationsView,
   buildFiguresView,
   buildView,
   STATUS_LINE,
-  type AttestationRow,
   type TransparencyStatus,
   type TransparencyView,
 } from "./transparencyView.ts";
 import { ui } from "../i18n.ts";
 
-const API = "https://api.usdx.co.id";
 const t = ui.transparency;
 
 /** A complete, contract-shaped payload. Individual tests bend one field. */
@@ -66,9 +67,7 @@ function payload(overrides: Record<string, unknown> = {}): Record<string, unknow
  * assemble anything and refuses to answer 500 (a 500 would send this page to
  * its own static figures, which are the stale claim the endpoint is avoiding).
  * The token block survives because it is pure configuration; every field that
- * needs the database or the chain comes back null, INCLUDING `attestations`,
- * which is null rather than `[]` precisely so the page does not announce that
- * no report has ever been published.
+ * needs the database or the chain comes back null, INCLUDING `attestations`.
  *
  * Every cold start of a replica while the database is down serves this, as does
  * any outage that outlives the age limit on the last good payload.
@@ -105,181 +104,17 @@ function attestation(overrides: Record<string, unknown> = {}): Record<string, un
 }
 
 function viewOf(data: unknown): TransparencyView {
-  const view = buildView(data, API);
+  const view = buildView(data);
   if (!view) throw new Error("expected a view, got null");
   return view;
 }
 
-function rowsOf(value: unknown): AttestationRow[] {
-  const view = buildAttestationsView(value, API);
-  assert.equal(view.state, "list", `expected a table, got "${view.state}"`);
-  return view.state === "list" ? view.rows : [];
-}
-
-// ── The document list ────────────────────────────────────────────────────────
-
-describe("buildAttestationsView — the happy path", () => {
-  it("builds one row per document, newest period first", () => {
-    const rows = rowsOf([
-      attestation({ period: "2026-06", title: "Juni" }),
-      attestation({ period: "2026-08", title: "Agustus" }),
-      attestation({ period: "2026-07", title: "Juli" }),
-    ]);
-    assert.deepEqual(
-      rows.map((row) => row.id),
-      ["2026-08", "2026-07", "2026-06"],
-    );
-    assert.deepEqual(
-      rows.map((row) => row.title),
-      ["Agustus", "Juli", "Juni"],
-    );
-  });
-
-  it("names the month in both languages and the year on its own", () => {
-    const [row] = rowsOf([attestation({ period: "2026-07" })]);
-    assert.deepEqual(row.month, { id: "Juli 2026", en: "July 2026" });
-    assert.equal(row.year, "2026");
-    assert.equal(row.id, "2026-07");
-  });
-
-  it("resolves the download link against the API host", () => {
-    const [row] = rowsOf([attestation()]);
-    assert.equal(row.href, `${API}/api/v1/public/transparency/attestations/abc/file`);
-  });
-
-  it("drops a link that points off the API's own origin", () => {
-    // The origin lock lives in resolveAttestationFileUrl; this is the wiring
-    // that makes a rejected link cost one row its button and nothing more.
-    const [row] = rowsOf([attestation({ fileUrl: "https://evil.example.com/laporan.pdf" })]);
-    assert.equal(row.href, null);
-    assert.equal(row.title, "Laporan Atestasi Juli 2026");
-  });
-
-  it("sorts on the period digits, not on locale rules", () => {
-    const rows = rowsOf([
-      attestation({ period: "2026-01" }),
-      attestation({ period: "2026-11" }),
-      attestation({ period: "2026-02" }),
-    ]);
-    assert.deepEqual(
-      rows.map((row) => row.id),
-      ["2026-11", "2026-02", "2026-01"],
-    );
-  });
-});
-
-// ── BLOCKER: a list that is not a list ───────────────────────────────────────
-// `[...attestations]` threw a TypeError on every shape below, AFTER the
-// "loading" line had been hidden — leaving an empty dark box with no sentence
-// in it — and the catch in load() then reported the whole page as failed, over
-// three figure cards that had just been filled from the same response.
-
-describe("buildAttestationsView — payloads that are not a list", () => {
-  const notLists: Array<[string, unknown]> = [
-    ["an object", { "2026-07": "Laporan Juli" }],
-    ["the admin endpoint's shape", { items: [attestation()] }],
-    ["a string", "2026-07"],
-    ["a number", 3],
-    ["null", null],
-    ["a missing field", undefined],
-    ["a boolean", false],
-  ];
-
-  for (const [name, value] of notLists) {
-    it(`reports ${name} as unavailable rather than as an empty list`, () => {
-      assert.deepEqual(buildAttestationsView(value, API), { state: "unavailable" });
-    });
-  }
-
-  it("never throws on any of them", () => {
-    for (const [, value] of notLists) {
-      assert.doesNotThrow(() => buildAttestationsView(value, API));
-    }
-  });
-
-  it("says nothing about how many reports exist", () => {
-    // The copy shown for "unavailable" must not be the copy for "empty": one is
-    // about this page's connection, the other is a claim about USDX.
-    assert.notEqual(t.listUnavailable.id, t.empty.id);
-    assert.doesNotMatch(t.listUnavailable.id, /belum ada dokumen/i);
-    assert.doesNotMatch(t.listUnavailable.en, /no document has been published/i);
-  });
-});
-
-// ── BLOCKER: a missing field is not an empty list ────────────────────────────
-// `data.attestations ?? []` made "the field never arrived" indistinguishable
-// from "the API says there are none", and answered both with the single most
-// expensive sentence this page can print.
-
-describe("buildAttestationsView — empty means empty", () => {
-  it("claims nothing has been published ONLY for a list the API sent with nothing in it", () => {
-    assert.deepEqual(buildAttestationsView([], API), { state: "empty" });
-  });
-
-  it("does not claim it for a payload with no attestations field", () => {
-    const view = buildView(payload({ attestations: undefined }), API);
-    assert.equal(view?.attestations.state, "unavailable");
-  });
-
-  it("does not claim it for a payload where the field is null", () => {
-    const view = buildView(payload({ attestations: null }), API);
-    assert.equal(view?.attestations.state, "unavailable");
-  });
-
-  it("does not claim it when every entry is unreadable", () => {
-    // Entries arrived, so the list is broken rather than empty.
-    assert.deepEqual(buildAttestationsView([null, "2026-07", 7], API), { state: "unavailable" });
-  });
-});
-
-// ── BLOCKER: one bad row may not take the table down ─────────────────────────
-
-describe("buildAttestationsView — one unreadable entry", () => {
-  it("keeps every other document when one entry has no period", () => {
-    const rows = rowsOf([
-      attestation({ period: "2026-07", title: "Juli" }),
-      attestation({ period: null, title: "Rusak" }),
-      attestation({ period: "2026-06", title: "Juni" }),
-    ]);
-    assert.equal(rows.length, 3);
-    assert.deepEqual(
-      rows.map((row) => row.title),
-      ["Juli", "Juni", "Rusak"],
-    );
-  });
-
-  it("gives the unreadable row an em dash instead of an invented ID", () => {
-    const [row] = rowsOf([attestation({ period: null })]);
-    assert.equal(row.id, "—");
-    assert.equal(row.year, "—");
-    assert.deepEqual(row.month, { id: "—", en: "—" });
-  });
-
-  it("does not throw when a period is missing, null, or of another type", () => {
-    for (const period of [null, undefined, 202607, {}, [], ""]) {
-      assert.doesNotThrow(() => buildAttestationsView([attestation({ period })], API));
-    }
-  });
-
-  it("survives an entry that is not an object at all", () => {
-    const rows = rowsOf([attestation({ title: "Juli" }), null, "rusak", 7]);
-    assert.equal(rows.length, 1);
-    assert.equal(rows[0].title, "Juli");
-  });
-
-  it("shows an impossible month as it arrived, without rolling it into a year", () => {
-    // "2026-13" used to render as ID 2026-13, month "Januari 2027", year 2026.
-    const [row] = rowsOf([attestation({ period: "2026-13" })]);
-    assert.equal(row.id, "—");
-    assert.equal(row.year, "—");
-    assert.deepEqual(row.month, { id: "2026-13", en: "2026-13" });
-  });
-
-  it("falls back to an em dash for a missing title rather than a blank cell", () => {
-    const [row] = rowsOf([attestation({ title: "   " })]);
-    assert.equal(row.title, "—");
-  });
-});
+/** Every figure slot empty, the way a healthy API can send it. */
+const FIGURES_GONE = {
+  circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
+  reserve: null,
+  collateralRatio: null,
+};
 
 // ── The three headline figures ───────────────────────────────────────────────
 
@@ -429,38 +264,16 @@ describe("buildFiguresView", () => {
 // ── The page as a whole ──────────────────────────────────────────────────────
 
 describe("buildView", () => {
-  it("reports live data when the whole payload arrived", () => {
-    const view = buildView(payload(), API);
-    assert.equal(view?.status, "live");
-    assert.equal(view?.attestations.state, "list");
-  });
-
-  it("reports live data when the API sent an empty list", () => {
-    const view = buildView(payload({ attestations: [] }), API);
-    assert.equal(view?.status, "live");
-    assert.equal(view?.attestations.state, "empty");
-  });
-
-  // BLOCKER: the figures rendered from the response while the status line above
-  // them announced that the figures could not be shown.
-  it("reports a partial load when the figures arrived but the list did not", () => {
-    const view = buildView(payload({ attestations: { items: [] } }), API);
-    assert.equal(view?.status, "figuresOnly");
-    assert.deepEqual(view?.figures.supply, { id: "100.667,00", en: "100,667.00" });
-    assert.deepEqual(view?.figures.reserve, { id: "100.667,41", en: "100,667.41" });
-  });
-
-  it("does not describe a half-loaded page as a failed one", () => {
-    // The "figures only" line has to name the figures as present. statusFallback
-    // says the opposite, and was what this state used to show.
-    assert.notEqual(t.statusFiguresOnly.id, t.statusFallback.id);
-    assert.match(t.statusFiguresOnly.id, /angka/i);
-    assert.match(t.statusFiguresOnly.en, /figures/i);
+  it("reports live data when the figures arrived", () => {
+    const view = viewOf(payload());
+    assert.equal(view.status, "live");
+    assert.deepEqual(view.figures.supply, { id: "100.667,00", en: "100,667.00" });
+    assert.deepEqual(view.figures.reserve, { id: "100.667,41", en: "100,667.41" });
   });
 
   it("returns null only when there is no payload object to read at all", () => {
     for (const data of [null, undefined, "payload", 7, [], true]) {
-      assert.equal(buildView(data, API), null);
+      assert.equal(buildView(data), null);
     }
   });
 
@@ -473,19 +286,55 @@ describe("buildView", () => {
       {},
     ];
     for (const shape of shapes) {
-      assert.doesNotThrow(() => buildView(shape, API));
+      assert.doesNotThrow(() => buildView(shape));
+    }
+  });
+});
+
+// ── The document list has no say ─────────────────────────────────────────────
+// The "Laporan Atestasi Bulanan" table is gone from the page, so the field that
+// fed it must not reach the screen by another route. While the table existed the
+// status line was derived partly from this list, and a null or malformed one
+// produced "the document list cannot be shown right now" — a sentence about a
+// card that is no longer there.
+
+describe("buildView — the attestation list is ignored", () => {
+  const lists: Array<[string, unknown]> = [
+    ["a list of reports", [attestation()]],
+    ["an empty list", []],
+    ["null", null],
+    ["a missing field", undefined],
+    ["the admin endpoint's shape", { items: [attestation()] }],
+    ["a string", "2026-07"],
+  ];
+
+  for (const [name, value] of lists) {
+    it(`builds the same view whatever the list is: ${name}`, () => {
+      assert.deepEqual(viewOf(payload({ attestations: value })), viewOf(payload()));
+      assert.deepEqual(
+        viewOf(payload({ ...FIGURES_GONE, attestations: value })),
+        viewOf(payload(FIGURES_GONE)),
+      );
+    });
+  }
+
+  it("carries nothing about the list in the view", () => {
+    assert.deepEqual(Object.keys(viewOf(payload())).sort(), ["figures", "status"]);
+  });
+
+  it("does not mention a document list in any status line", () => {
+    const lines = [t.statusLoading, t.statusLive, t.statusFallback, t.statusNoJs];
+    for (const line of lines) {
+      assert.doesNotMatch(line.id, /daftar dokumen/i);
+      assert.doesNotMatch(line.en, /document list/i);
     }
   });
 });
 
 // ── BLOCKER: the status line named figures that were not there ───────────────
-// The status was derived from the document list ALONE — `attestations.state ===
-// "unavailable" ? "partial" : "live"` — which was harmless only while a
-// non-array `attestations` meant a corrupted payload. It stopped being harmless
-// when the backend adopted `attestations: null` as its formal signal that
-// NOTHING could be assembled: the one payload that means "we have nothing"
-// selected the one sentence that says "the figures on this page are live from
-// the USDX API", printed above three cards all reading "Belum tersedia" and a
+// The backend's total-outage payload is a well-formed 200 with every figure
+// null. Reading "a response arrived" as "the data is live" printed "Data
+// langsung dari API USDX" above three cards all reading "Belum tersedia" and a
 // caption stamped with the current minute.
 
 describe("buildView — the status line describes the screen", () => {
@@ -496,8 +345,6 @@ describe("buildView — the status line describes the screen", () => {
     // Which is the same sentence a dropped connection shows, because it is the
     // same screen: nothing arrived either way.
     assert.deepEqual(STATUS_LINE[view.status], t.statusFallback);
-    // And in particular NOT the line that names the figures as present.
-    assert.notEqual(STATUS_LINE[view.status].id, t.statusFiguresOnly.id);
     assert.notEqual(STATUS_LINE[view.status].id, t.statusLive.id);
   });
 
@@ -509,7 +356,6 @@ describe("buildView — the status line describes the screen", () => {
     assert.equal(view.figures.reserve, null);
     assert.equal(view.figures.ratio, null);
     assert.equal(view.figures.peg, null);
-    assert.equal(view.attestations.state, "unavailable");
   });
 
   it("keeps the outage payload's fresh timestamp out of the decision", () => {
@@ -521,20 +367,12 @@ describe("buildView — the status line describes the screen", () => {
     assert.equal(view.status, "unavailable");
   });
 
-  it("names the list, not the figures, when only the list came through", () => {
+  it("claims nothing is live when a healthy API has no figure to send", () => {
     // No outage required: an empty reserve ledger and a failed chain read do
     // this on a completely healthy API.
-    const view = viewOf(
-      payload({
-        circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
-        reserve: null,
-        collateralRatio: null,
-      }),
-    );
-    assert.equal(view.status, "listOnly");
-    assert.equal(view.attestations.state, "list");
-    assert.deepEqual(STATUS_LINE[view.status], t.statusListOnly);
-    assert.notEqual(STATUS_LINE[view.status].id, t.statusLive.id);
+    const view = viewOf(payload(FIGURES_GONE));
+    assert.equal(view.status, "unavailable");
+    assert.deepEqual(STATUS_LINE[view.status], t.statusFallback);
   });
 
   it("reads the status off the screen rather than off the payload", () => {
@@ -560,31 +398,20 @@ describe("buildView — the status line describes the screen", () => {
     assert.equal(view.figures.supply, null);
     assert.equal(view.figures.reserve, null);
     assert.equal(view.figures.ratio, null);
-    assert.equal(view.status, "listOnly");
+    assert.equal(view.status, "unavailable");
   });
 
-  it("gives each of the four corners its own status", () => {
-    const figuresGone = {
-      circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
-      reserve: null,
-      collateralRatio: null,
-    };
-    const corners: Array<[string, unknown, TransparencyStatus]> = [
-      ["figures and list", payload(), "live"],
-      ["figures and an empty list", payload({ attestations: [] }), "live"],
-      ["figures only", payload({ attestations: null }), "figuresOnly"],
-      ["the list only", payload(figuresGone), "listOnly"],
-      ["neither", unavailablePayload(), "unavailable"],
-    ];
-    for (const [name, data, expected] of corners) {
-      assert.equal(buildView(data, API)?.status, expected, `${name} should be "${expected}"`);
-    }
+  it("calls the page live as soon as one figure is on screen", () => {
+    // The supply read survives an empty reserve ledger, and one real number is
+    // enough for "Data langsung dari API USDX" to be true.
+    const view = viewOf(payload({ reserve: null, collateralRatio: null }));
+    assert.deepEqual(view.figures.supply, { id: "100.667,00", en: "100,667.00" });
+    assert.equal(view.figures.reserve, null);
+    assert.equal(view.status, "live");
   });
 
   it("never shows the same sentence for two different screens", () => {
-    // Four states, four sentences. Two states sharing a line means one of them
-    // is being described by the other one's screen.
-    const lines = (["live", "figuresOnly", "listOnly", "unavailable"] as const).map(
+    const lines = (["live", "unavailable"] satisfies TransparencyStatus[]).map(
       (status) => STATUS_LINE[status],
     );
     for (const lang of ["id", "en"] as const) {
@@ -595,17 +422,12 @@ describe("buildView — the status line describes the screen", () => {
   });
 
   it("only promises live figures on a screen that has one", () => {
-    // The single rule this whole state machine exists to keep, checked against
-    // the sentence a reader actually gets rather than against the enum.
-    const claimsLiveFigures = new Set([t.statusLive.id, t.statusFiguresOnly.id]);
+    // The single rule the status exists to keep, checked against the sentence a
+    // reader actually gets rather than against the enum.
     const shapes: unknown[] = [
       unavailablePayload(),
       unavailablePayload({ attestations: [attestation()] }),
-      payload({
-        circulatingSupply: { amount: null, unit: "USDX", source: "onchain", readAt: null },
-        reserve: null,
-        collateralRatio: null,
-      }),
+      payload(FIGURES_GONE),
       payload({ circulatingSupply: null, reserve: null, collateralRatio: null }),
       { attestations: [attestation()] },
       {},
@@ -615,8 +437,9 @@ describe("buildView — the status line describes the screen", () => {
       assert.equal(view.figures.supply, null);
       assert.equal(view.figures.reserve, null);
       assert.equal(view.figures.ratio, null);
-      assert.ok(
-        !claimsLiveFigures.has(STATUS_LINE[view.status].id),
+      assert.notEqual(
+        STATUS_LINE[view.status].id,
+        t.statusLive.id,
         `"${STATUS_LINE[view.status].id}" was shown above three empty figure cards`,
       );
     }
@@ -627,13 +450,7 @@ describe("buildView — the status line describes the screen", () => {
 
 describe("bilingual copy", () => {
   it("carries every new line in both languages", () => {
-    for (const key of [
-      "docsHeading",
-      "listUnavailable",
-      "statusFiguresOnly",
-      "statusListOnly",
-      "reserveBank",
-    ] as const) {
+    for (const key of ["statusLive", "statusFallback", "statusNoJs", "reserveBank"] as const) {
       assert.equal(typeof t[key].id, "string");
       assert.equal(typeof t[key].en, "string");
       assert.notEqual(t[key].id.trim(), "");
@@ -643,7 +460,6 @@ describe("bilingual copy", () => {
 
   it("builds every view string in both languages", () => {
     const view = viewOf(payload());
-    const rows = view.attestations.state === "list" ? view.attestations.rows : [];
     const slots = [
       view.figures.supply,
       view.figures.reserve,
@@ -652,7 +468,6 @@ describe("bilingual copy", () => {
       view.figures.supplyCaption,
       view.figures.reserveCaption,
       view.figures.updatedCaption,
-      ...rows.map((row) => row.month),
     ];
     for (const value of slots) {
       if (!value) throw new Error("a view slot came back empty");

@@ -2,16 +2,17 @@
 //
 // The page's browser script used to hold all of this inside the `<script>` block
 // of transparency.astro, where nothing could import it and therefore nothing
-// could test it. Two of the worst bugs on the page lived in exactly that code:
-// a payload whose `attestations` was not an array threw a TypeError halfway
-// through rendering (after the "loading" line had already been hidden, leaving
-// an empty 98px box), and a payload with no `attestations` field at all was
-// treated as an empty list, so a page whose whole purpose is to list attestation
-// reports announced that none had ever been published. Thirty-six green tests
-// missed both, because not one of them could reach the code.
+// could test it, and the worst bugs on the page lived in exactly that code.
+// Thirty-six green tests missed them, because not one of them could reach it.
 //
 // So the decisions live here as pure functions over `unknown`, and the script is
 // left with nothing but "put this string in that element".
+//
+// THE DOCUMENT LIST IS NOT READ ANY MORE. The response still carries an
+// `attestations` array, and this module used to turn it into the "Laporan
+// Atestasi Bulanan" table. That table was removed from the page on 30 Sep 2026,
+// so nothing below looks at the field: whatever it holds — a list, an empty
+// list, null — changes neither the figures nor the status line.
 //
 // UNKNOWN, not TransparencyData. The response is typed in transparency.ts
 // because that is the contract, but a type annotation is a statement about what
@@ -28,16 +29,10 @@ import {
   formatAmount,
   formatDateTimeWib,
   formatPegLine,
-  formatPeriod,
   formatRatio,
-  parsePeriod,
-  resolveAttestationFileUrl,
 } from "./transparency.ts";
 
 const t = ui.transparency;
-
-/** Shown wherever a value exists but cannot be read. */
-const EM_DASH = "—";
 
 // ── View shapes ──────────────────────────────────────────────────────────────
 
@@ -53,61 +48,28 @@ export interface FiguresView {
   updatedCaption: Translated;
 }
 
-export interface AttestationRow {
-  /** The reporting period, which is the document's public ID. */
-  id: string;
-  title: string;
-  month: Translated;
-  year: string;
-  /** Null when the file link is missing or fails the origin lock. */
-  href: string | null;
-}
-
-/**
- * Which of the attestation card's three states to show.
- *
- * "empty" is a claim about the world — "nothing has been published" — and is
- * therefore reachable from exactly one input: an API response carrying an
- * attestation list with no entries in it. Everything else that is not a usable
- * list is "unavailable", which claims nothing.
- */
-export type AttestationsView =
-  | { state: "list"; rows: AttestationRow[] }
-  | { state: "empty" }
-  | { state: "unavailable" };
-
 /**
  * Which status line belongs under the heading.
  *
- * THE PAGE HAS TWO HALVES THAT FAIL SEPARATELY — the three figures and the
- * document list — so there are four states, not two, and each one gets the
- * sentence that describes it. Collapsing any pair of them puts a sentence on
- * screen that the screen disagrees with, which is the only bug this type has
- * ever had:
+ * The line describes the three figures and nothing else, because they are the
+ * only part of the page that comes over the network:
  *
- * - "figuresOnly" exists because the figures can arrive when the list does not,
- *   and the page used to lie when they did: three numbers rendered from the API
- *   under a status line reading "Live data could not be loaded right now, so
- *   the figures and the document list on this page cannot be shown".
- * - "unavailable" exists for the mirror of that. `attestations: null` is the
- *   backend's formal signal that NOTHING could be assembled (see
- *   `unavailableView` in transparency.service.ts, which sends a null reserve, a
- *   null ratio, a null supply amount and a null attestation list together), and
- *   deriving the status from the document list alone answered that payload with
- *   "The figures on this page are live from the USDX API" — printed above three
- *   cards all reading "Belum tersedia". Every cold start of a replica while the
- *   database is down produces exactly that payload.
- * - "listOnly" is the fourth corner, and reachable without any outage at all:
- *   an empty reserve ledger plus a failed chain read empties all three figures
- *   while the document list comes through intact, and so does a payload whose
- *   currency or unit label disagrees with the ones this page prints (see
+ * - "live" means at least one figure is on screen, read from the API.
+ * - "unavailable" means none is. That is a state a WELL-FORMED response can
+ *   produce, not only a failed one: the backend's total-outage payload (see
+ *   `unavailableView` in transparency.service.ts) sends a null reserve, a null
+ *   ratio and a null supply amount together, an empty reserve ledger plus a
+ *   failed chain read does the same on a healthy API, and so does a payload
+ *   whose currency or unit label disagrees with the ones this page prints (see
  *   buildFiguresView, which withholds every figure that depends on them).
+ *   Answering any of those with "Live data from the USDX API", printed above
+ *   three cards all reading "Belum tersedia", is the bug this type exists to
+ *   prevent.
  */
-export type TransparencyStatus = "live" | "figuresOnly" | "listOnly" | "unavailable";
+export type TransparencyStatus = "live" | "unavailable";
 
 export interface TransparencyView {
   figures: FiguresView;
-  attestations: AttestationsView;
   status: TransparencyStatus;
 }
 
@@ -198,72 +160,6 @@ export function buildFiguresView(data: unknown): FiguresView {
   };
 }
 
-// ── The attestation table ────────────────────────────────────────────────────
-
-interface SortableRow {
-  /** Normalised period, or "" for a row with no readable period. */
-  key: string;
-  row: AttestationRow;
-}
-
-function toRow(entry: Record<string, unknown>, apiBaseUrl: string): SortableRow {
-  const rawPeriod = text(entry.period) ?? "";
-  const parsed = parsePeriod(rawPeriod);
-  const monthLabel = parsed
-    ? { id: formatPeriod(rawPeriod, "id"), en: formatPeriod(rawPeriod, "en") }
-    : { id: rawPeriod || EM_DASH, en: rawPeriod || EM_DASH };
-
-  return {
-    key: parsed ? rawPeriod : "",
-    row: {
-      // The ID is the period itself, so nothing else in the list can move it.
-      // A period that cannot be read gets an em dash rather than an invented ID.
-      id: parsed ? rawPeriod : EM_DASH,
-      title: text(entry.title) ?? EM_DASH,
-      month: monthLabel,
-      year: parsed ? String(parsed.year) : EM_DASH,
-      href: resolveAttestationFileUrl(text(entry.fileUrl), apiBaseUrl),
-    },
-  };
-}
-
-/**
- * Decide what the attestation card shows, from whatever the API sent.
- *
- * ONE ROW MAY NOT TAKE THE TABLE DOWN WITH IT. The old code sorted with
- * `b.period.localeCompare(a.period)`, so a single entry whose `period` was null
- * threw a TypeError, and the whole table — every other document in it —
- * disappeared behind a status line saying the page could not load. Each entry is
- * read on its own terms here, and an unreadable field costs that row a cell.
- *
- * ANYTHING THAT IS NOT AN ARRAY IS "UNAVAILABLE", NOT "EMPTY". `attestations ??
- * []` used to collapse three very different situations — a list with nothing in
- * it, a field that never arrived, and a value of some other shape (the admin
- * endpoint's `{ items: [...] }` being the realistic mistake) — into the single
- * sentence "no document has been published yet". On a page that exists to list
- * attestation reports, that is the most expensive sentence available, and two of
- * those three inputs do not support it.
- */
-export function buildAttestationsView(value: unknown, apiBaseUrl: string): AttestationsView {
-  if (!Array.isArray(value)) return { state: "unavailable" };
-  if (value.length === 0) return { state: "empty" };
-
-  const rows = value.filter(isRecord).map((entry) => toRow(entry, apiBaseUrl));
-  // Entries arrived, but none of them were readable objects. That is a broken
-  // list, not an empty one.
-  if (rows.length === 0) return { state: "unavailable" };
-
-  // Newest period first; rows with no readable period keep their relative order
-  // at the end. Plain comparison rather than localeCompare — "2026-07" against
-  // "2026-11" is a digit comparison, and locale rules have no business in it.
-  const sorted = rows
-    .slice()
-    .sort((a, b) => (a.key < b.key ? 1 : a.key > b.key ? -1 : 0))
-    .map((entry) => entry.row);
-
-  return { state: "list", rows: sorted };
-}
-
 // ── The whole page ───────────────────────────────────────────────────────────
 
 /**
@@ -280,26 +176,16 @@ function hasAnyFigure(figures: FiguresView): boolean {
 }
 
 /**
- * Pick the sentence that matches the screen, from the two halves it describes.
+ * Pick the sentence that matches the screen.
  *
  * "Live" is a claim about what a reader can see, so it is read off the built
- * view — the figures as they will be rendered, the list as it will be rendered
- * — and never off the payload. A field can arrive and still not reach the
- * screen: a rupiah reserve, a supply counted in some other unit, a ratio that
- * fails to parse. Whatever the page withholds, the status line withholds with
- * it.
- *
- * An EMPTY document list counts as live. "No report has been published yet" is
- * a statement the API made, printed as it was made; only "unavailable" means
- * the page could not find out.
+ * view — the figures as they will be rendered — and never off the payload. A
+ * field can arrive and still not reach the screen: a rupiah reserve, a supply
+ * counted in some other unit, a ratio that fails to parse. Whatever the page
+ * withholds, the status line withholds with it.
  */
-function statusFor(figures: FiguresView, attestations: AttestationsView): TransparencyStatus {
-  const figuresLive = hasAnyFigure(figures);
-  const listLive = attestations.state !== "unavailable";
-  if (figuresLive && listLive) return "live";
-  if (figuresLive) return "figuresOnly";
-  if (listLive) return "listOnly";
-  return "unavailable";
+function statusFor(figures: FiguresView): TransparencyStatus {
+  return hasAnyFigure(figures) ? "live" : "unavailable";
 }
 
 /**
@@ -312,11 +198,9 @@ function statusFor(figures: FiguresView, attestations: AttestationsView): Transp
  */
 export const STATUS_LINE: Record<TransparencyStatus, Translated> = {
   live: t.statusLive,
-  figuresOnly: t.statusFiguresOnly,
-  listOnly: t.statusListOnly,
   // The same line a failed fetch shows, and for the same reason: a response
-  // that carried neither a figure nor a list leaves the reader exactly where a
-  // dropped connection would — with nothing on screen to be out of date.
+  // that carried no figure leaves the reader exactly where a dropped
+  // connection would — with nothing on screen to be out of date.
   unavailable: t.statusFallback,
 };
 
@@ -325,12 +209,11 @@ export const STATUS_LINE: Record<TransparencyStatus, Translated> = {
  *
  * Returns null only when there is no object to read at all. Every other shape
  * produces a view: some slots may say "not yet available", and the status line
- * says which parts made it — including the case where the answer is "none of
- * them", which a well-formed response is perfectly able to say.
+ * says whether any figure made it — including the case where the answer is
+ * "none of them", which a well-formed response is perfectly able to say.
  */
-export function buildView(data: unknown, apiBaseUrl: string): TransparencyView | null {
+export function buildView(data: unknown): TransparencyView | null {
   if (!isRecord(data)) return null;
   const figures = buildFiguresView(data);
-  const attestations = buildAttestationsView(data.attestations, apiBaseUrl);
-  return { figures, attestations, status: statusFor(figures, attestations) };
+  return { figures, status: statusFor(figures) };
 }
