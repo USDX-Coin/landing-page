@@ -24,6 +24,16 @@ This is a pause, not a verdict that the site should never name its people: Polyg
 
 To bring the section back, restore both files from `34f40a9`, then re-add the `ui.team` block in `i18n.ts`, the `#team` entry in `navigation.ts` (it feeds the navbar *and* the footer's Quick Links), and the `<Team />` slot in `index.astro`. The rule the section shipped with still holds: real, supplied people only — never placeholder or "coming soon" cards.
 
+### The monthly attestation table (removed 30 Sep 2026)
+
+The "Laporan Atestasi Bulanan" / "Monthly Attestation Reports" card on `/transparency` was removed by request on 30 Sep 2026. It was a table built in the browser from the `attestations` list of `GET /api/v1/public/transparency`; with that list empty it read "No document has been published yet", on the same page as the static card for the one report that *has* been published (the KAP's AUP report, `data/audit.ts`).
+
+Published reports are now listed in that card instead, as a **static** table (ID · name · month · year · download) rendered at build time from `ATTESTATION_REPORTS` in `data/audit.ts`. Publishing a new report means adding its PDF to `public/audit/` and an entry at the end of that list with the next unused `id` (the table is in ID order, oldest first). The table shows `ATTESTATION_PAGE_SIZE` (5) reports per page: every row is in the HTML, rows past the first page ship hidden, and a pager appears under the table once there is a sixth report. The paragraph above the table (`attestationBody` in `i18n.ts`) is management's wording, supplied verbatim on 30 Sep 2026; it uses the word "audit" in a general sense, which is a deliberate exception to "Two different checks" above and does not extend to the document names.
+
+The backend still sends `attestations`, and the page no longer reads it: the status line under the heading is now derived from the three figures alone (`live` / `unavailable`).
+
+To bring the API-fed table back, restore it from `a780470` (the last commit that had it): the card markup and `applyAttestations()` in `transparency.astro`, `buildAttestationsView` and the four-state status in `data/transparencyView.ts`, `resolveAttestationFileUrl` / `parsePeriod` / `formatPeriod` in `data/transparency.ts` (the origin lock on download links is the part not to rewrite from memory), their tests, and the `docsHeading` … `listUnavailable`, `statusFiguresOnly` and `statusListOnly` strings in `i18n.ts`. `statusFallback` and `statusNoJs` have to name "the document list" again when it does.
+
 ## Tech Stack
 
 - **Astro 5** — static site generator (zero JS by default, islands architecture)

@@ -123,10 +123,11 @@ export interface TransparencyData {
   /**
    * The published attestation reports.
    *
-   * DECLARING it an array does not make the network send one. The page never
-   * trusts this field's type — see buildAttestationsView in transparencyView.ts,
-   * which treats anything that is not an array as "list unavailable" rather
-   * than as an empty list.
+   * Part of the contract, and NOT READ BY THE PAGE: the "Laporan Atestasi
+   * Bulanan" table this list fed was removed on 30 Sep 2026. The field is
+   * declared because the backend still sends it. If the table returns, do not
+   * trust this type — the network has sent null here (the total-outage
+   * payload) and can send any other shape.
    */
   attestations: TransparencyAttestation[];
   updatedAt: string;
@@ -137,72 +138,6 @@ export interface TransparencyEnvelope {
   metadata?: unknown;
   data?: TransparencyData | null;
   error?: unknown;
-}
-
-// ── Attestation file links ───────────────────────────────────────────────────
-
-/**
- * Turn an attestation `fileUrl` from the public API into a value that is safe
- * to put in an href — or null if it is not usable.
- *
- * The backend serves attestation files through its own redirect route
- * (`/api/v1/public/transparency/attestations/{id}/file`) and only emits an
- * ABSOLUTE url when `TRANSPARENCY_PUBLIC_BASE_URL` is set on the server. With
- * that env unset the value arrives as a RELATIVE path.
- *
- * That distinction matters here and nowhere else: this site is served from
- * usdx.co.id while the API lives on a different host, so resolving a relative
- * path against the page origin would point every Download button at
- * `https://usdx.co.id/api/v1/...` — a page that does not exist, with no visible
- * error. Relative values therefore resolve against the API base the page is
- * actually talking to.
- *
- * Never assume the server env is set correctly — the site has to be right in
- * both cases.
- *
- * ORIGIN LOCK. Both shapes the backend can emit point at the API's own redirect
- * route, so a resolved url that lands anywhere else means something is wrong,
- * and the something is not benign: the "Download" button on this page carries
- * USDX branding on a page titled Transparency and Audit Documents, which is
- * exactly the surface used to hand out forged "attestation reports". A back
- * office account that has been taken over, or a compromised upstream, would
- * only need to store an off-site fileUrl to borrow that credibility. So the
- * resolved url must share the origin of the API base this page is talking to —
- * same scheme, host and port — and everything else returns null. Callers render
- * the row without a link for null, so a rejected value costs one document its
- * download button and never misleads anyone.
- *
- * Comparing origins (rather than hostnames) also refuses an http:// value
- * against an https:// API — a downgrade is as much a red flag as a foreign
- * host. Non-http(s) schemes (a `javascript:` url, say) fail the same check,
- * since their origin is never the API's.
- *
- * If attestation files are ever legitimately served from object storage on
- * another host, this is the function that has to learn about it — with an
- * explicit allowlist of that host, not by dropping the check.
- */
-export function resolveAttestationFileUrl(
-  fileUrl: string | null | undefined,
-  apiBaseUrl: string,
-): string | null {
-  const raw = fileUrl?.trim();
-  if (!raw) return null;
-  let base: URL;
-  try {
-    base = new URL(apiBaseUrl);
-  } catch {
-    return null;
-  }
-  let url: URL;
-  try {
-    url = new URL(raw, base);
-  } catch {
-    return null;
-  }
-  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
-  // `origin` is "null" for opaque schemes, so this rejects them too.
-  if (url.origin !== base.origin) return null;
-  return url.href;
 }
 
 // ── What the reserve is made of ──────────────────────────────────────────────
@@ -516,44 +451,6 @@ export function formatDateTimeWib(value: string, lang: Lang): string {
     timeZone: WIB_TIME_ZONE,
   }).format(instant.date);
   return `${day}, ${time} WIB`;
-}
-
-/** "2026-07" -> { year: 2026, month: 7 }, or null when it is not a period. */
-export interface AttestationPeriod {
-  year: number;
-  /** 1–12. */
-  month: number;
-}
-
-/**
- * Read a "YYYY-MM" reporting period.
- *
- * The MONTH IS RANGE-CHECKED, which `new Date(Date.UTC(y, m - 1, 1))` is not:
- * it rolls month 13 into January of the next year and month 0 back into
- * December of the previous one. That put a single row on screen reading
- * "ID 2026-13 · Month January 2027 · Year 2026" — three answers, none of them
- * agreeing, all from one malformed value. Out-of-range months are not periods,
- * so callers show the raw string and an em dash instead of inventing a date.
- */
-export function parsePeriod(period: string | null | undefined): AttestationPeriod | null {
-  if (typeof period !== "string") return null;
-  const match = /^(\d{4})-(\d{2})$/.exec(period.trim());
-  if (!match) return null;
-  const month = Number(match[2]);
-  if (month < 1 || month > 12) return null;
-  return { year: Number(match[1]), month };
-}
-
-/** "2026-07" -> "Juli 2026" / "July 2026". Falls back to the raw string. */
-export function formatPeriod(period: string, lang: Lang): string {
-  const parsed = parsePeriod(period);
-  if (!parsed) return period;
-  const date = new Date(Date.UTC(parsed.year, parsed.month - 1, 1));
-  return new Intl.DateTimeFormat(LOCALE[lang], {
-    year: "numeric",
-    month: "long",
-    timeZone: "UTC",
-  }).format(date);
 }
 
 interface Instant {
