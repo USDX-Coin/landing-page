@@ -38,12 +38,12 @@ export const AUDIT_REPORT_URL = "/audit/usdx-smart-contract-audit-cyberscope.pdf
  *    one-line change below — and the page would then owe its readers the
  *    "account numbers are masked" note again, which was removed the same day.
  *
- * The file keeps the name it was supplied under, spaces and "(1)" included, so
- * the path is percent-encoded here. A published report's URL should never move:
- * rename the file before this ships, or not at all.
+ * The file keeps the name the KAP's report was supplied under, with hyphens in
+ * place of its spaces so the URL needs no percent-encoding. It is a published
+ * report's address now, and should not be renamed again.
  */
 export const ATTESTATION_REPORT_URL =
-  "/audit/Laporan%20AUP%20PT%20Macan%20Asia%20Finance_Agustus%202026%20(1).pdf";
+  "/audit/Laporan-AUP-PT-Macan-Asia-Finance_Agustus-2026.pdf";
 
 /** One row of the "Laporan Atestasi Cadangan" table on /transparency. */
 export interface AttestationReport {
